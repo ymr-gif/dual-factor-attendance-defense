@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S.A.F.E. — Research Proposal Defense</title>
+
+  <link rel="stylesheet" href="src/css/reset.css">
+  <link rel="stylesheet" href="src/css/variables.css">
+  <link rel="stylesheet" href="src/css/layout.css">
+  <link rel="stylesheet" href="src/css/animations.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="presentation">
+
+    <!-- Slide 1: Title -->
+    <section class="slide slide--title active" data-slide="1">
+      <div class="slide__content">
+        <div class="title-icon">
+          <svg viewBox="0 0 120 120" class="shield-icon">
+            <path d="M60 10 L110 35 L110 75 C110 100 60 115 60 115 C60 115 10 100 10 75 L10 35 Z"
+                  fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M45 60 L55 70 L78 47" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round" class="checkmark"/>
+          </svg>
+        </div>
+        <h1 class="scramble-target title-main">S.A.F.E.</h1>
+        <div class="title-divider"></div>
+        <p class="title-sub">Proposal Defense</p>
+      </div>
+    </section>
+
+    <!-- Slide 2: The Problem -->
+    <section class="slide slide--problem" data-slide="2">
+      <div class="slide__content">
+        <div class="problem-icon">
+          <svg viewBox="0 0 120 120" class="fingerprint-icon">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+            <circle cx="60" cy="60" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+            <circle cx="60" cy="60" r="20" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+            <circle cx="60" cy="60" r="8" fill="currentColor" opacity="0.9"/>
+          </svg>
+          <div class="reject-stamp">REJECTED</div>
+        </div>
+        <h2 class="problem-title">The Problem</h2>
+        <p class="problem-subtitle">Manual. Unverified. Unsafe.</p>
+      </div>
+    </section>
+
+    <!-- Slide 3: NFC + Face -->
+    <section class="slide slide--solution" data-slide="3">
+      <div class="slide__content">
+        <div class="solution-icons">
+          <div class="solution-icon solution-icon--nfc">
+            <svg viewBox="0 0 100 100">
+              <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="50" cy="50" r="5" fill="currentColor"/>
+            </svg>
+            <span>NFC</span>
+          </div>
+          <div class="solution-plus">+</div>
+          <div class="solution-icon solution-icon--face">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="40" r="25" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="42" cy="35" r="3" fill="currentColor"/>
+              <circle cx="58" cy="35" r="3" fill="currentColor"/>
+              <path d="M42 50 Q50 58 58 50" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M30 75 Q50 85 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>Face</span>
+          </div>
+        </div>
+        <div class="solution-merge">=</div>
+        <div class="solution-result">
+          <span class="solution-result-text">Identity Verified</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Liveness Detection -->
+    <section class="slide slide--liveness" data-slide="4">
+      <div class="slide__content">
+        <div class="liveness-scene">
+          <div class="liveness-photo">
+            <svg viewBox="0 0 100 100">
+              <rect x="15" y="10" width="70" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="50" cy="40" r="15" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M25 75 L40 55 L55 65 L70 45 L85 75" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="liveness-scan-line"></div>
+          <div class="liveness-stamp">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/>
+              <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" stroke-width="4"/>
+              <line x1="75" y1="25" x2="25" y2="75" stroke="currentColor" stroke-width="4"/>
+            </svg>
+          </div>
+        </div>
+        <h2 class="liveness-title">Liveness</h2>
+        <p class="liveness-subtitle">Passive. Real-time. Spoof-proof.</p>
+      </div>
+    </section>
+
+    <!-- Slide 5: Architecture -->
+    <section class="slide slide--architecture" data-slide="5">
+      <div class="slide__content">
+        <h2 class="arch-title">Architecture</h2>
+        <div class="arch-flow">
+          <div class="arch-node arch-node--1">
+            <div class="arch-node__icon">📱</div>
+            <div class="arch-node__label">NFC Card</div>
+          </div>
+          <div class="arch-arrow arch-arrow--1"></div>
+          <div class="arch-node arch-node--2">
+            <div class="arch-node__icon">📡</div>
+            <div class="arch-node__label">RC522</div>
+          </div>
+          <div class="arch-arrow arch-arrow--2"></div>
+          <div class="arch-node arch-node--3">
+            <div class="arch-node__icon">🔌</div>
+            <div class="arch-node__label">Arduino</div>
+          </div>
+          <div class="arch-arrow arch-arrow--3"></div>
+          <div class="arch-node arch-node--4">
+            <div class="arch-node__icon">🖥️</div>
+            <div class="arch-node__label">FastAPI</div>
+          </div>
+          <div class="arch-arrow arch-arrow--4"></div>
+          <div class="arch-node arch-node--5">
+            <div class="arch-node__icon">📷</div>
+            <div class="arch-node__label">Camera</div>
+          </div>
+          <div class="arch-arrow arch-arrow--5"></div>
+          <div class="arch-node arch-node--6">
+            <div class="arch-node__icon">✅</div>
+            <div class="arch-node__label">Verified</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: RQ 1 -->
+    <section class="slide slide--rq" data-slide="6">
+      <div class="slide__content">
+        <div class="rq-number">1</div>
+        <div class="rq-icon">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M50 30 L50 55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="50" cy="70" r="3" fill="currentColor"/>
+          </svg>
+        </div>
+        <p class="rq-label">Spoof Rejection Rate</p>
+        <div class="rq-data">
+          <span class="rq-stat">60</span>
+          <span class="rq-stat-label">spoof attempts</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: RQ 2 -->
+    <section class="slide slide--rq" data-slide="7">
+      <div class="slide__content">
+        <div class="rq-number">2</div>
+        <div class="rq-icon">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M50 25 L50 50 L70 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="3" fill="currentColor"/>
+          </svg>
+        </div>
+        <p class="rq-label">System Performance</p>
+        <div class="rq-data">
+          <span class="rq-stat">100</span>
+          <span class="rq-stat-label">entry attempts</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 8: RQ 3 -->
+    <section class="slide slide--rq" data-slide="8">
+      <div class="slide__content">
+        <div class="rq-number">3</div>
+        <div class="rq-icon">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M35 55 L45 65 L68 38" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="rq-label">Acceptability</p>
+        <div class="rq-data">
+          <span class="rq-stat">70</span>
+          <span class="rq-stat-label">participants</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 9: Instruments -->
+    <section class="slide slide--instruments" data-slide="9">
+      <div class="slide__content">
+        <h2 class="instruments-title">Instruments</h2>
+        <div class="instruments-grid">
+          <div class="instrument-card">
+            <div class="instrument-icon">
+              <svg viewBox="0 0 60 60">
+                <rect x="10" y="5" width="40" height="50" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line x1="18" y1="18" x2="42" y2="18" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="18" y1="28" x2="42" y2="28" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="18" y1="38" x2="35" y2="38" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <span>Attendance Log</span>
+          </div>
+          <div class="instrument-card">
+            <div class="instrument-icon">
+              <svg viewBox="0 0 60 60">
+                <rect x="10" y="5" width="40" height="50" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="30" cy="25" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="25" y1="42" x2="35" y2="42" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="22" y1="47" x2="38" y2="47" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <span>Spoof Trial Record</span>
+          </div>
+          <div class="instrument-card">
+            <div class="instrument-icon">
+              <svg viewBox="0 0 60 60">
+                <rect x="10" y="5" width="40" height="50" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                <rect x="18" y="15" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="18" y="28" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="18" y="41" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="32" y1="19" x2="42" y2="19" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="32" y1="32" x2="42" y2="32" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="32" y1="45" x2="42" y2="45" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <span>Survey Questionnaire</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 10: Hardware Specs -->
+    <section class="slide slide--specs" data-slide="10">
+      <div class="slide__content">
+        <h2 class="specs-title">Hardware</h2>
+        <div class="specs-grid">
+          <div class="spec-card" data-row="1">
+            <div class="spec-icon">
+              <svg viewBox="0 0 50 50">
+                <rect x="5" y="10" width="40" height="30" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="25" cy="25" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <span class="spec-name">RC522</span>
+            <span class="spec-detail">NFC Reader</span>
+          </div>
+          <div class="spec-card" data-row="1">
+            <div class="spec-icon">
+              <svg viewBox="0 0 50 50">
+                <rect x="10" y="5" width="30" height="40" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="15" y="12" width="20" height="15" fill="none" stroke="currentColor" stroke-width="1"/>
+                <circle cx="25" cy="37" r="3" fill="none" stroke="currentColor" stroke-width="1"/>
+              </svg>
+            </div>
+            <span class="spec-name">Arduino</span>
+            <span class="spec-detail">Microcontroller</span>
+          </div>
+          <div class="spec-card" data-row="1">
+            <div class="spec-icon">
+              <svg viewBox="0 0 50 50">
+                <circle cx="25" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="25" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="1"/>
+                <rect x="10" y="35" width="30" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <span class="spec-name">Webcam</span>
+            <span class="spec-detail">Logitech 1080p</span>
+          </div>
+          <div class="spec-card" data-row="2">
+            <div class="spec-icon">
+              <svg viewBox="0 0 50 50">
+                <rect x="5" y="15" width="40" height="25" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="25" cy="27" r="8" fill="none" stroke="currentColor" stroke-width="1"/>
+                <text x="25" y="30" text-anchor="middle" fill="currentColor" font-size="8">NFC</text>
+              </svg>
+            </div>
+            <span class="spec-name">NFC Cards</span>
+            <span class="spec-detail">MIFARE Classic</span>
+          </div>
+          <div class="spec-card" data-row="2">
+            <div class="spec-icon">
+              <svg viewBox="0 0 50 50">
+                <rect x="5" y="8" width="40" height="34" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="10" y="13" width="30" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+                <line x1="15" y1="38" x2="35" y2="38" stroke="currentColor" stroke-width="1"/>
+              </svg>
+            </div>
+            <span class="spec-name">Laptop</span>
+            <span class="spec-detail">Acer Nitro 5</span>
+          </div>
+          <div class="spec-card" data-row="2">
+            <div class="spec-icon">
+              <svg viewBox="0 0 50 50">
+                <rect x="8" y="8" width="34" height="34" rx="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <text x="25" y="22" text-anchor="middle" fill="currentColor" font-size="6">API</text>
+                <text x="25" y="32" text-anchor="middle" fill="currentColor" font-size="5">DB</text>
+              </svg>
+            </div>
+            <span class="spec-name">Backend</span>
+            <span class="spec-detail">FastAPI + PostgreSQL</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 11: Testing Protocols -->
+    <section class="slide slide--protocols" data-slide="11">
+      <div class="slide__content">
+        <div class="protocols-split">
+          <div class="protocol protocol--1">
+            <div class="protocol-header">
+              <span class="protocol-num">1</span>
+              <span class="protocol-label">Spoof Rejection</span>
+            </div>
+            <div class="protocol-icon">
+              <svg viewBox="0 0 80 80">
+                <rect x="10" y="5" width="60" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line x1="25" y1="25" x2="55" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <line x1="55" y1="25" x2="25" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="protocol-stat">60</span>
+            <span class="protocol-unit">trials</span>
+          </div>
+          <div class="protocol-divider"></div>
+          <div class="protocol protocol--2">
+            <div class="protocol-header">
+              <span class="protocol-num">2</span>
+              <span class="protocol-label">Performance</span>
+            </div>
+            <div class="protocol-icon">
+              <svg viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M40 20 L40 40 L55 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="protocol-stat">100</span>
+            <span class="protocol-unit">attempts</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 12: Survey Student -->
+    <section class="slide slide--survey" data-slide="12">
+      <div class="slide__content">
+        <h2 class="survey-title">Survey</h2>
+        <div class="survey-bar-chart">
+          <div class="survey-bar" data-level="5">
+            <div class="survey-bar__fill"></div>
+            <span class="survey-bar__label">Strongly Agree</span>
+          </div>
+          <div class="survey-bar" data-level="4">
+            <div class="survey-bar__fill"></div>
+            <span class="survey-bar__label">Agree</span>
+          </div>
+          <div class="survey-bar" data-level="3">
+            <div class="survey-bar__fill"></div>
+            <span class="survey-bar__label">Neutral</span>
+          </div>
+          <div class="survey-bar" data-level="2">
+            <div class="survey-bar__fill"></div>
+            <span class="survey-bar__label">Disagree</span>
+          </div>
+          <div class="survey-bar" data-level="1">
+            <div class="survey-bar__fill"></div>
+            <span class="survey-bar__label">Strongly Disagree</span>
+          </div>
+        </div>
+        <p class="survey-participants">40 Students + 30 Guardians</p>
+      </div>
+    </section>
+
+    <!-- Slide 13: Survey Scale -->
+    <section class="slide slide--scale" data-slide="13">
+      <div class="slide__content">
+        <div class="scale-meter">
+          <div class="scale-track">
+            <div class="scale-fill"></div>
+            <div class="scale-marker"></div>
+          </div>
+          <div class="scale-labels">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+          </div>
+        </div>
+        <div class="scale-interpretation">
+          <span class="scale-label scale-label--high">Highly Acceptable</span>
+          <span class="scale-label scale-label--mid">Acceptable</span>
+          <span class="scale-label scale-label--low">Not Acceptable</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 14: Acceptability -->
+    <section class="slide slide--acceptability" data-slide="14">
+      <div class="slide__content">
+        <div class="accept-ring">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" stroke-width="2" opacity="0.2"/>
+            <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" stroke-width="4"
+                    stroke-dasharray="534" stroke-dashoffset="534" class="accept-ring__progress"/>
+            <text x="100" y="95" text-anchor="middle" fill="currentColor" font-size="36" class="accept-ring__value">0%</text>
+            <text x="100" y="120" text-anchor="middle" fill="currentColor" font-size="12" opacity="0.6">Acceptability</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 15: Thank You -->
+    <section class="slide slide--thanks" data-slide="15">
+      <div class="slide__content">
+        <div class="thanks-text">
+          <span class="thanks-word">Thank</span>
+          <span class="thanks-word">You</span>
+        </div>
+        <div class="thanks-sub">Questions?</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress-bar__fill"></div>
+  </div>
+
+  <!-- Slide Counter -->
+  <div class="slide-counter">
+    <span class="slide-counter__current">1</span>
+    <span class="slide-counter__sep">/</span>
+    <span class="slide-counter__total">15</span>
+  </div>
+
+  <!-- Nav Hint -->
+  <div class="nav-hint">
+    <span>← →</span>
+    <span>Space</span>
+    <span>Click</span>
+  </div>
+
+  <script src="src/js/animations.js"></script>
+  <script src="src/js/timeline.js"></script>
+  <script src="src/js/main.js"></script>
+
+</body>
+</html>
