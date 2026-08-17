@@ -1,0 +1,51 @@
+/* Shared animation utility classes */
+
+.fade-in {
+  opacity: 0;
+}
+
+.slide-up {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.scale-in {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* Background pulse */
+@keyframes pulse {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.08; }
+}
+
+/* Scan line */
+@keyframes scan {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(200px); opacity: 0; }
+}
+
+/* Marker slide along track */
+@keyframes marker-slide {
+  0% { left: 0%; }
+  100% { left: var(--marker-pos, 80%); }
+}
+
+/* Ring progress */
+@keyframes ring-fill {
+  0% { stroke-dashoffset: 534; }
+  100% { stroke-dashoffset: var(--ring-offset, 107); }
+}
+
+/* Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Glow pulse */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 5px var(--accent-glow); }
+  50% { box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow); }
+}
