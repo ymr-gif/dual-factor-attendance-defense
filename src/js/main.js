@@ -36,9 +36,11 @@
 
     currentSlide = num;
 
-    // Show new
+    // Show new — stripped back to its CSS resting state *before* it becomes
+    // visible, so a revisited slide can never paint the state it was left in
     const newEl = document.querySelector(`[data-slide="${currentSlide}"]`);
     if (newEl) {
+      masterTimeline.reset(currentSlide, newEl);
       newEl.classList.add('active');
     }
 

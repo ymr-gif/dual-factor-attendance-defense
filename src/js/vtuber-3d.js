@@ -1,15 +1,27 @@
 // Real-time 3D vtuber portrait for slide 3.
 //
-// Displays a face/head bust from a baked Blender model with idle turntable
-// rotation and studio lighting. No explode — just a showcase. The model
-// arrives as base64 typed arrays (same pipeline as the Arduino on slide 8).
+// Displays the top half (head to torso) of a baked Blender character model
+// with studio lighting. Static — no rotation, no explode. The model arrives
+// as base64 typed arrays (same pipeline as the Arduino on slide 8).
 //
 // Exposed as window.vtuber3D — animations.js drives mount/stop.
 (function () {
   'use strict';
 
   const TARGET_WIDTH = 0.55;   // normalise model to this width in scene units
-  const ROTATION_SPEED = 0.25; // radians per second (slow turntable)
+
+  // Fraction of the model's height, measured down from the top of the hair,
+  // that the camera frames. From the model's own width profile: head and hair
+  // are the top 25%, the neck is the narrowest slice at 25%, shoulders run
+  // 29-37%, arms spread past 42%. 0.26 lands on the shoulder line.
+  //
+  // Framing fits this band by HEIGHT only. The shoulders are wider than the
+  // canvas at this zoom and are meant to run off both sides — fitting their
+  // width instead would pull the camera back and shrink the face.
+  const PORTRAIT = 0.26;
+
+  // Breathing room above the hair, as a fraction of the visible height
+  const TOP_MARGIN = 0.06;
 
   // A two-tone gradient standing in for a softbox — same approach as
   // hardware-3d.js. Without an environment map, metalness reads as black.
@@ -72,50 +84,73 @@
     scene.environment = studioEnvironment(renderer);
 
     // Portrait lens — slightly wider than the Arduino's product-shot look
-    const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 10);
+    const camera = new THREE.PerspectiveCamera(28, 1, 0.01, 50);
 
     // Build the model — model-loader handles re-centring and scaling
     const model = window.modelLoader.build(window.vtuberModel, TARGET_WIDTH);
     const group = new THREE.Group();
     Object.keys(model).forEach((name) => group.add(model[name]));
+    // The world matrix swaps Y↔Z (Z-up → Y-up conversion). Rotate to
+    // stand upright (−π/2 around X) and face the camera (π around Y).
+    group.rotation.x = Math.PI / 2;
     scene.add(group);
 
-    // Key light — warm, from upper-right
-    const key = new THREE.DirectionalLight(0xfff5e8, 1.2);
-    key.position.set(2, 3, 2);
+    // Key light — warm, from upper-right-front
+    const key = new THREE.DirectionalLight(0xfff5e8, 1.3);
+    key.position.set(2, 3, 3);
     scene.add(key);
 
     // Fill — cool, from left
-    const fill = new THREE.DirectionalLight(0xc8d8f0, 0.45);
-    fill.position.set(-3, 1, 1);
+    const fill = new THREE.DirectionalLight(0xc8d8f0, 0.5);
+    fill.position.set(-3, 1, 2);
     scene.add(fill);
 
     // Rim — subtle back-light for edge separation
-    const rim = new THREE.DirectionalLight(0x88aaff, 0.35);
-    rim.position.set(0, 1, -3);
+    const rim = new THREE.DirectionalLight(0x88aaff, 0.3);
+    rim.position.set(0, 2, -3);
     scene.add(rim);
 
-    // Centre the camera on the model's vertical midpoint
-    // model-loader re-centres to y=0, so the model sits around y=0
-    const VIEW_DIR = new THREE.Vector3(0, 0.15, 1).normalize();
+    // Camera looks straight at the model from the front.
+    // VIEW_DIR points from the model toward the camera.
+    const VIEW_DIR = new THREE.Vector3(0, 0.05, 1).normalize();
     const lookAt = new THREE.Vector3(0, 0, 0);
 
-    function frame() {
-      // Compute bounding box of the model group
-      const box = new THREE.Box3().setFromObject(group);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
+    // Reused across frame() calls so a resize does not churn allocations
+    const _v = new THREE.Vector3();
 
+    function frame() {
+      const full = new THREE.Box3().setFromObject(group);
+      const cutY = full.max.y - (full.max.y - full.min.y) * PORTRAIT;
+
+      // Raising full.min.y would crop the height but keep the box's X extent,
+      // which spans the outstretched arms — well below the cut. The camera
+      // would then pull back to fit geometry it is not even showing. Measure
+      // the vertices above the cut instead, so the width is the chest's.
+      const box = new THREE.Box3();
+      group.updateWorldMatrix(true, true);
+      group.traverse((node) => {
+        const pos = node.geometry && node.geometry.attributes && node.geometry.attributes.position;
+        if (!pos) return;
+        for (let i = 0; i < pos.count; i++) {
+          _v.fromBufferAttribute(pos, i).applyMatrix4(node.matrixWorld);
+          if (_v.y >= cutY) box.expandByPoint(_v);
+        }
+      });
+      if (box.isEmpty()) box.copy(full);
+
+      const center = box.getCenter(new THREE.Vector3());
       lookAt.copy(center);
 
       const fovV = (camera.fov * Math.PI) / 180;
       const tanV = Math.tan(fovV / 2);
-      const tanH = tanV * camera.aspect;
 
       const forward = VIEW_DIR.clone().negate();
       const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
       const up = new THREE.Vector3().crossVectors(right, forward).normalize();
 
+      // Height-only fit. Starting at 2 used to clamp every result, so the
+      // camera never moved in and the whole body stayed in frame no matter
+      // what TARGET_WIDTH was set to.
       let distance = 0;
       const corner = new THREE.Vector3();
       for (let i = 0; i < 8; i++) {
@@ -124,15 +159,18 @@
           i & 2 ? box.max.y : box.min.y,
           i & 4 ? box.max.z : box.min.z
         ).sub(center);
-        const depth = corner.dot(forward);
-        const needed = Math.max(
-          Math.abs(corner.dot(right)) / tanH,
-          Math.abs(corner.dot(up)) / tanV
-        ) - depth;
+        const needed = Math.abs(corner.dot(up)) / tanV - corner.dot(forward);
         distance = Math.max(distance, needed);
       }
+      distance *= 1.06;
 
-      camera.position.copy(VIEW_DIR).multiplyScalar(distance * 1.15).add(center);
+      // Anchor the top of the hair near the top of the canvas rather than
+      // centring the band, so the face sits high and the shoulders fill the
+      // bottom — centring leaves a wide empty gap above the head.
+      const visibleHalf = distance * tanV;
+      lookAt.set(center.x, box.max.y - visibleHalf + visibleHalf * 2 * TOP_MARGIN, center.z);
+
+      camera.position.copy(VIEW_DIR).multiplyScalar(distance).add(lookAt);
       camera.lookAt(lookAt);
     }
 
@@ -146,30 +184,16 @@
     }
 
     let loop = null;
-    let angle = 0;
-    let lastTime = 0;
-
     function render() { renderer.render(scene, camera); }
-
-    function tick(time) {
-      if (!lastTime) lastTime = time;
-      const dt = (time - lastTime) / 1000;
-      lastTime = time;
-
-      angle += ROTATION_SPEED * dt;
-      group.rotation.y = angle;
-
-      render();
-      if (api.onFrame) api.onFrame();
-      loop = requestAnimationFrame(tick);
-    }
-
     function start() {
       if (loop) return;
-      lastTime = 0;
+      const tick = () => {
+        render();
+        if (api.onFrame) api.onFrame();
+        loop = requestAnimationFrame(tick);
+      };
       loop = requestAnimationFrame(tick);
     }
-
     function stop() {
       if (loop) cancelAnimationFrame(loop);
       loop = null;

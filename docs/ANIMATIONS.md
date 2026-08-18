@@ -14,14 +14,18 @@
 - Queries are scoped with `q()` / `qa()` — never global selectors
 - Anything animated in from 0 must also rest at 0 in CSS — see the no-flash
   rules in `ARCHITECTURE.md`
+- **Do not use `'<'` to mean "start with the previous animation".** In the
+  vendored anime build it appends, exactly like the default position. Verified
+  with a two-tween timeline: the result ran 2000ms, not 1000ms. For a genuine
+  overlap use `'-=<previous duration>'`, or an absolute number of milliseconds
 
 ## Phase 1 — Skeleton (all shipped)
 
 | data-anim | Current animation |
 |-----------|-------------------|
 | `title` | School fades, shield scales, checkmark draws, S.A.F.E. scrambles, team staggers |
-| `problem` | **3 steps.** Logbook page fills by hand (rows, times, drawn signatures); a fifth signature is forged in a hand already on the page and both flag red; UNVERIFIED stamps down |
-| `solution` | NFC and Face slide in from opposite sides, `+` pops, verdict rises |
+| `problem` | **3 steps.** A week of the attendance sheet fills by hand (names drawn, ticks, blanks, lates); a tick is then drawn into a box that was blank and flagged red; UNVERIFIED stamps down |
+| `solution` | NFC and Face slide in, the vtuber portrait fades up, a reticle locks on, a glowing line sweeps top to bottom while a 16x19 projector dot grid lights row by row behind it, then IDENTITY VERIFIED |
 | `liveness` | Photo appears, scan line sweeps, ✕ stamp slams |
 | `notify` | Verified badge pops, dot trail fires across, phone slides in, envelope pops, chips rise |
 | `framework` | IPO stages stagger left to right, arrows draw, list items cascade, feedback bar widens |
@@ -92,7 +96,10 @@ animate('.title', { innerHTML: scrambleText({ chars: 'A-Z0-9' }) });
 | 2026-08-18 | `notify`, `framework`, `scope`, `output` | New slides and animations | Guardian notification, IPO paradigm, scope, and expected output were missing from the deck |
 | 2026-08-18 | `survey`, `scale` | Replaced invented bar chart and percentage ring with instrument structure and interpretation ranges | Proposal stage — the study has no results yet |
 | 2026-08-18 | `problem` | Fingerprint icon → logbook; REJECTED → UNVERIFIED | The study uses no fingerprints; the problem is the manual logbook |
-| 2026-08-19 | `problem` | 200px icon → full ruled logbook page on three presenter-driven steps; signatures drawn as SVG paths via `createDrawable`; row 5 forged in row 2's hand, both flagged by red overlay paths | The slide holds a 1:15 slot and stopped moving after 3s. Proxy attendance is now shown — two identical signatures — instead of asserted. Paper and ink deliberately oppose slide 3's scan |
+| 2026-08-19 | `problem` | 200px icon → full ruled logbook page on three presenter-driven steps; handwriting drawn as SVG paths via `createDrawable` | The slide holds a 1:15 slot and stopped moving after 3s. Paper and ink deliberately oppose slide 3's scan |
+| 2026-08-19 | `problem` | Signature column → a week of tick boxes (`FULL NAME` + MON–FRI, ticks, blanks for absent, `L` for late). Beat 2 draws a tick into a box that was blank and rings it: PRESENT OR ABSENT? Subtitle softened to "Recorded by hand, without verification" | A tick box shows the gap better than a signature does — the sheet records a mark, never who made it. The softer subtitle describes the process instead of judging it, so the panel is not invited to argue |
+| 2026-08-19 | All | Slides are stripped back to their CSS resting state when left, and again before being shown | A revisited slide painted the state it was left in — finished handwriting appeared for a moment, then animated again |
+| 2026-08-19 | `solution` | Scan overlay added: reticle, sweeping glow line, and a 16x19 dot grid revealed row by row; IDENTITY VERIFIED moved to after the scan; `.solution-merge` given the resting state and entrance it never had | The dot grid is the pattern a real face scanner projects, so the beat shows the mechanism the study relies on. The verdict has to land after the scan, not before it |
 | 2026-08-18 | `architecture` | Reordered flow, added notify node, emoji → SVG icons | Camera fired after the backend; notification was missing; emoji render inconsistently on projector laptops |
 | 2026-08-18 | `rq` | Added "RESEARCH QUESTION" eyebrow above the number | Panel could not tell at a glance that slides 9–11 are the research questions |
 | 2026-08-18 | `survey` | 12 → 20 items per version, per-characteristic count badges | Instrument revised to 5 items per characteristic |

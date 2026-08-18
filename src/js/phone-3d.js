@@ -299,8 +299,11 @@
       group.position.set(18, -4, -15);
       group.rotation.set(0.1, -Math.PI * 1.5, 0);
 
-      // Start container off-screen right
-      gsap.set(container, { x: '100%' });
+      // Start container off-screen right. '100%' would be relative to the
+      // container's own (280px) width, which isn't enough to clear the free
+      // space around it in the layout — use a viewport-relative unit so it
+      // actually starts beyond the visible frame.
+      gsap.set(container, { x: '100vw' });
 
       entranceTimeline = gsap.timeline({
         onComplete: () => { entranceTimeline = null; },
@@ -308,7 +311,7 @@
 
       // Phase 0: slide container in from right (matches 3D entrance timing)
       entranceTimeline.to(container, {
-        x: '0%',
+        x: 0,
         duration: 4,
         ease: 'power2.out',
       }, 0);
