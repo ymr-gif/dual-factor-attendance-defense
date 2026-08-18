@@ -295,7 +295,7 @@
 
       // Starting pose — off-screen right, mid-spin
       group.position.set(12, -3, -5);
-      group.rotation.set(0.1, -Math.PI * 2.5, 0);
+      group.rotation.set(0.1, -Math.PI * 1.5, 0);
 
       entranceTimeline = gsap.timeline({
         onComplete: () => { entranceTimeline = null; },
@@ -309,7 +309,7 @@
       }, 0);
 
       entranceTimeline.to(group.rotation, {
-        y: -0.2,
+        y: Math.PI - 0.2,
         x: 0.1,
         z: 0,
         duration: 1.2,
