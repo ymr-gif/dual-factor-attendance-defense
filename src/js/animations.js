@@ -378,7 +378,7 @@ const slideAnimations = {
 
     // Each row dims 416ms after it lights, so the bright band trails the line
     .add(dots, {
-      opacity: 0.38,
+      opacity: 0.5,
       delay: stagger(STEP, { grid: GRID, axis: 'y', from: 'first' }),
       duration: 520,
     }, `-=${REVEAL - 416}`)

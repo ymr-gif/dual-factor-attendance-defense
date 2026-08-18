@@ -75,7 +75,7 @@ fires if the vendored file is missing.
 | # | data-anim | Slide |
 |---|-----------|-------|
 | 1 | `title` | Title — school, S.A.F.E., team, section |
-| 2 | `problem` | Manual logbook page, forged signature, UNVERIFIED stamp (3 steps) |
+| 2 | `problem` | A week of the manual attendance sheet, a tick added to an empty box, UNVERIFIED stamp (3 steps) |
 | 3 | `solution` | NFC + Face converge — 3D vtuber portrait on right |
 | 4 | `liveness` | Spoof rejected |
 | 5 | `notify` | Guardian notified — email, Messenger, < 60s |
