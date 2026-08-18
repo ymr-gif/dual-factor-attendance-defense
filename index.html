@@ -187,6 +187,9 @@
         </div>
         <div class="vtuber-3d">
           <canvas class="vtuber-3d__canvas"></canvas>
+          <!-- Edge fade sits between the model and the scan, so it softens the
+               shoulders leaving frame without dimming the scan on top of it. -->
+          <div class="vtuber-3d__fade"></div>
           <!-- Scan overlay. Nothing here touches the model — the dot grid is
                the projector pattern a real face scanner throws, so it reads as
                the mechanism rather than as decoration. -->
