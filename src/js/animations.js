@@ -18,10 +18,10 @@ const slideAnimations = {
       const main = q(el, '.title-main');
       const rest = q(el, '.title-rest');
       const board3d = q(el, '.title-board-3d');
-      utils.set(intro, { opacity: 0, y: 0, scale: 1 });
-      utils.set(school, { opacity: 0, y: 0 });
-      utils.set(main, { opacity: 0, y: 60 });
-      utils.set(rest, { opacity: 0, y: 80 });
+      utils.set(intro, { opacity: 0 });
+      utils.set(school, { opacity: 0 });
+      utils.set(main, { opacity: 0 });
+      utils.set(rest, { opacity: 0 });
       utils.set(board3d, { opacity: 0 });
 
       // Mount 3D view if available
@@ -52,7 +52,7 @@ const slideAnimations = {
       return tl;
     };
 
-    // Step 2 — intro+school move up, S.A.F.E. appears via scramble, board explodes, rest reveals
+    // Step 2 — all motion happens simultaneously from t=0
     const step2 = () => {
       const intro = q(el, '.title-intro');
       const school = q(el, '.title-school');
@@ -61,7 +61,7 @@ const slideAnimations = {
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-      // Board explosion starts at the same time as text (offset 0)
+      // 3D board explosion — staggered from t=0
       if (view) {
         const risers = Object.keys(view.parts).filter((name) => view.riseFor(name) > 0);
         risers.forEach((name, i) => {
@@ -69,55 +69,58 @@ const slideAnimations = {
             y: view.rest[name] + view.riseFor(name),
             duration: 1400,
             ease: 'outQuint',
-          }, 0 + i * 0.09);
+          }, i * 0.09);
         });
       }
 
-      // Move intro and school upward
+      // Proposal Defense — shrinks up
       tl.add(intro, {
-        y: -100,
-        scale: 0.5,
-        opacity: 0.6,
-        duration: 800,
-      })
+        y: [0, -180],
+        scale: [1, 0.4],
+        opacity: [1, 0],
+        duration: 1000,
+      }, 0)
+
+      // School name — shifts up
       .add(school, {
-        y: -70,
-        opacity: 0.5,
-        duration: 800,
-      }, '<')
+        y: [0, -130],
+        opacity: [1, 0],
+        duration: 1000,
+      }, 0)
 
-      // S.A.F.E. appears via scramble text, moves up to position
-      .add(main, {
-        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
-        opacity: [0, 1],
-        y: 0,
-        duration: 1200,
-      }, '-=600')
-
-      // Fade in rest (divider, full description, team, section) — moves down
+      // Rest container — slides down from below
       .add(rest, {
-        opacity: 1,
-        y: 0,
-        duration: 600,
-      }, '-=800')
+        y: [200, 0],
+        opacity: [0, 1],
+        duration: 1200,
+      }, 0.3)
       .add(q(el, '.title-divider'), {
         scaleX: [0, 1],
-        duration: 600,
-      }, '-=600')
+        duration: 800,
+      }, 0.5)
       .add(q(el, '.title-full'), {
         opacity: [0, 1],
-        duration: 600,
-      }, '-=300')
+        duration: 800,
+      }, 0.7)
       .add(qa(el, '.title-team li'), {
         opacity: [0, 1],
-        y: [10, 0],
-        delay: stagger(80),
-        duration: 400,
-      }, '-=200')
+        y: [20, 0],
+        delay: stagger(100),
+        duration: 500,
+      }, 0.9)
       .add(q(el, '.title-section'), {
         opacity: [0, 1],
-        duration: 400,
-      }, '-=100');
+        duration: 500,
+      }, 1.4);
+
+      // S.A.F.E. — separate animate() so scrambleText can't break the timeline chain
+      animate(main, {
+        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
+        opacity: [0, 1],
+        y: [120, 0],
+        duration: 1400,
+        ease: 'outExpo',
+      });
 
       return tl;
     };
