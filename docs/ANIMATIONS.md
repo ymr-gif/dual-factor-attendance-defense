@@ -26,7 +26,7 @@
 | `notify` | Verified badge pops, dot trail fires across, phone slides in, envelope pops, chips rise |
 | `framework` | IPO stages stagger left to right, arrows draw, list items cascade, feedback bar widens |
 | `architecture` | Seven nodes cascade with scale, arrows draw between them |
-| `hardware` | **Step 1:** rig units drop in, jumper wires draw themselves, labels attach. **Step 2:** context clears, camera pushes into the board, parts lift along the isometric axis and label themselves |
+| `hardware` | **Step 1:** rig units drop in, jumper wires draw themselves, labels attach. **Step 2:** the rig clears and a real-time WebGL Arduino takes over — parts lift off the board under studio lighting while callout labels track them. Falls back to the isometric explode without WebGL |
 | `rq` | "RESEARCH QUESTION" eyebrow fades in with drawing rules, number elastic-scales, icon pops, label and stat rise (shared by slides 9–11) |
 | `instruments` | Three cards stagger up |
 | `protocols` | Two halves enter from opposite sides, divider draws |
@@ -95,5 +95,6 @@ animate('.title', { innerHTML: scrambleText({ chars: 'A-Z0-9' }) });
 | 2026-08-18 | `architecture` | Reordered flow, added notify node, emoji → SVG icons | Camera fired after the backend; notification was missing; emoji render inconsistently on projector laptops |
 | 2026-08-18 | `rq` | Added "RESEARCH QUESTION" eyebrow above the number | Panel could not tell at a glance that slides 9–11 are the research questions |
 | 2026-08-18 | `survey` | 12 → 20 items per version, per-characteristic count badges | Instrument revised to 5 items per characteristic |
+| 2026-08-18 | `hardware` | Step 2 rebuilt in WebGL: PBR board built from primitives, studio environment, camera framed on the exploded bounds, HTML callouts tracking projected part positions | Apple-style product explosion; the isometric version stays as the fallback |
 | 2026-08-18 | All | Added CSS resting states for every entrance, reset inline styles on slide entry, play on the next frame instead of a 100ms timer, slide cross-fade 800ms → 260ms with an instant exit | Slides painted their finished content for a beat before animating, and the outgoing slide ghosted over the incoming one |
 | 2026-08-18 | `hardware` | Spec card grid replaced with the isometric rig and the exploded Arduino, on two presenter-driven steps | The hero moment of the deck; spec text now labels the objects it describes |

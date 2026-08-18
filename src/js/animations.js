@@ -269,12 +269,19 @@ const slideAnimations = {
     const risers = parts.filter((p) => Number(p.dataset.rise) > 0);
     // everything that clears away when the camera pushes into the board
     const context = qa(el, '.rig-context');
+    const stage3d = q(el, '.board-3d');
+    const labels3d = qa(el, '.label3d');
     let rigTl = null;
+    let view = null;   // the 3D board, built the first time it is needed
 
     // Step 1 — the guardpost rig drops in and the jumpers draw themselves
     const rig = () => {
       utils.set(stage, { scale: 1, x: 0, y: 0 });
       utils.set(parts, { y: 0 });
+      utils.set(q(el, '.rig-svg'), { opacity: 1 });
+      utils.set(stage3d, { opacity: 0 });
+      utils.set(labels3d, { opacity: 0 });
+      if (view) { view.stop(); view.assemble(); }
       utils.set(units, { opacity: 0 });
       utils.set(context, { opacity: 1 });
       utils.set(qa(el, '.part-label'), { opacity: 0 });
@@ -321,9 +328,10 @@ const slideAnimations = {
       return tl;
     };
 
-    // Step 2 — everything else clears, the camera pushes into the board,
-    // and the parts lift off along the isometric axis
-    const explode = () => {
+    // Step 2 — everything else clears and the board comes apart. The 3D board
+    // is the real thing; the isometric explode below stands in wherever WebGL
+    // is unavailable, so the slide always has a second beat.
+    const handoff = () => {
       // The presenter may hit step 2 before step 1 has settled. Stop that
       // timeline and jump to its end state, or its tweens finish after ours
       // and put the rig back.
@@ -332,38 +340,100 @@ const slideAnimations = {
       utils.set(wires, { opacity: 0.9 });
       utils.set(qa(el, '.rig-label'), { opacity: 1 });
       utils.set([q(el, '.specs-title'), caption, q(el, '.specs-stack')], { opacity: 1 });
-
       caption.textContent = 'Arduino · exploded';
+    };
+
+    // Labels sit in fixed callout columns either side of the board — the way a
+    // product diagram does it — and only the leader line moves, re-aimed at the
+    // part every frame while it travels.
+    const trackLabels = () => {
+      const box = q(el, '.board-3d').getBoundingClientRect();
+      labels3d.forEach((label) => {
+        const point = view.project(label.dataset.part);
+        if (!point) return;
+
+        const left = label.dataset.side === 'left';
+        const x = box.width * (left ? 0.28 : 0.72);
+        const y = box.height * (0.2 + Number(label.dataset.slot) * 0.19);
+        label.style.transform = `translate(${x}px, ${y}px)`;
+
+        const dx = point.x - x;
+        const dy = point.y - y;
+        label.querySelector('.label3d__leader').style.width = Math.hypot(dx, dy) + 'px';
+        label.querySelector('.label3d__leader').style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+        label.querySelector('.label3d__dot').style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+    };
+
+    const explode3D = () => {
+      if (!view) {
+        view = window.hardware3D.mount(q(el, '.board-3d__canvas'));
+        view.onFrame = trackLabels;
+      }
+      view.resize();
+      view.assemble();
+      view.start();
+      utils.set(labels3d, { opacity: 0 });
+      trackLabels();
+
+      const risers = Object.keys(view.explode).filter((name) => view.explode[name] > 0);
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-      tl.add(qa(el, '.rig-label'), {
-        opacity: 0,
-        duration: 300,
-      })
-      .add(context, {
-        opacity: 0,
-        duration: 450,
-      }, '-=200')
-      .add(stage, {
-        scale: 1.45,
-        x: -54.1,
-        y: -71.5,
-        duration: 1100,
-        ease: 'inOutQuad',
-      }, '-=350')
-      .add(risers, {
-        y: (p) => -Number(p.dataset.rise),
-        delay: stagger(70),
-        duration: 900,
-      }, '-=600')
-      .add(qa(el, '.part-label'), {
+      tl.add(qa(el, '.rig-label'), { opacity: 0, duration: 300 })
+        .add(context.concat([q(el, '.rig-svg')]), { opacity: 0, duration: 450 }, '-=200')
+        .add(stage3d, { opacity: [0, 1], duration: 600 }, '-=250');
+
+      risers.forEach((name, i) => {
+        tl.add(view.parts[name].position, {
+          y: view.rest[name] + view.explode[name],
+          duration: 1400,
+          ease: 'outQuint',
+        }, i === 0 ? '-=300' : `-=${1400 - 90}`);
+      });
+
+      tl.add(labels3d, {
         opacity: [0, 1],
         delay: stagger(90),
         duration: 400,
-      }, '-=400');
+      }, '-=500');
 
       return tl;
+    };
+
+    // Isometric fallback: same beat, no WebGL
+    const explodeSVG = () => {
+      const parts = qa(el, '.part');
+      const risers = parts.filter((p) => Number(p.dataset.rise) > 0);
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(qa(el, '.rig-label'), { opacity: 0, duration: 300 })
+        .add(context, { opacity: 0, duration: 450 }, '-=200')
+        .add(q(el, '.rig-stage'), {
+          scale: 1.45,
+          x: -54.1,
+          y: -71.5,
+          duration: 1100,
+          ease: 'inOutQuad',
+        }, '-=350')
+        .add(risers, {
+          y: (p) => -Number(p.dataset.rise),
+          delay: stagger(70),
+          duration: 900,
+        }, '-=600')
+        .add(qa(el, '.part-label'), {
+          opacity: [0, 1],
+          delay: stagger(90),
+          duration: 400,
+        }, '-=400');
+
+      return tl;
+    };
+
+    const explode = () => {
+      handoff();
+      const can3D = stage3d && window.hardware3D && window.hardware3D.supported();
+      return can3D ? explode3D() : explodeSVG();
     };
 
     return { steps: [rig, explode] };

@@ -36,7 +36,12 @@
 - Remove progress bar or slide counter
 - Hand-edit the slide-8 SVG in `index.html` — regenerate it with
   `python3 tools/scene/compose.py && python3 tools/scene/embed.py`
-- Remove `src/vendor/anime.umd.min.js` — it is what makes the deck work offline
+- Use ES modules or import maps — they do not load over `file://`, which is how
+  the deck is opened at the venue
+- Upgrade three.js past r149 without a plan for that: later releases dropped the
+  plain-script build
+- Remove `src/vendor/anime.umd.min.js` or `src/vendor/three.min.js` — they are
+  what make the deck work offline
 - Change the anime.js version without checking compatibility
 - Use `autoplay: true` on slide animations (trigger on nav only)
 - Hardcode colors (use CSS variables)

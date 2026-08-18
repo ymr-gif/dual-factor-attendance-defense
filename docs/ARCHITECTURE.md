@@ -23,9 +23,11 @@ ppt-js/
 │   ├── js/
 │   │   ├── main.js           # Init, keyboard nav, slide engine
 │   │   ├── timeline.js       # Dispatch by data-anim
-│   │   └── animations.js     # One function per data-anim name
+│   │   ├── animations.js     # One function per data-anim name
+│   │   └── hardware-3d.js    # WebGL Arduino for slide 8, step 2
 │   └── vendor/
-│       └── anime.umd.min.js  # anime.js v4.5.0, local copy
+│       ├── anime.umd.min.js  # anime.js v4.5.0, local copy
+│       └── three.min.js      # three.js r149, local copy
 ├── tools/
 │   └── scene/                # Isometric SVG generator for slide 8
 └── index.html                # Main entry — 18 slides
@@ -43,6 +45,14 @@ ppt-js/
 | Package | Version | Source | Purpose |
 |---------|---------|--------|---------|
 | anime.js | 4.5.0 | `src/vendor/` (CDN fallback) | Animation engine |
+| three.js | r149 | `src/vendor/` | WebGL board on slide 8 |
+
+r149 is deliberate: it is the last release shipping a plain-script build. ES
+modules and import maps do not load over `file://`, and the deck has to run from
+the filesystem with no network.
+| Three.js | 0.170.0 | CDN (import map) | WebGL 3D rendering |
+| GLTFLoader | (Three.js addon) | CDN | Load .glb 3D models |
+| DRACOLoader | (Three.js addon) | CDN | Decompress Draco geometry |
 
 Load order in `index.html`:
 
@@ -164,9 +174,27 @@ step 2 animates, otherwise the older tweens land after the newer ones.
 
 ## Slide 8 Scene
 
-The isometric rig is generated, not hand-written — see `tools/scene/README.md`.
-`data-rise` on each part group carries how far it lifts in the exploded view, so
-the geometry stays the single source of truth for the animation.
+Step 1 is the isometric rig — generated, not hand-written, see
+`tools/scene/README.md`. `data-rise` on each part group carries how far it lifts,
+so the geometry stays the single source of truth for the animation.
+
+Step 2 hands over to WebGL. `hardware-3d.js` builds the Arduino from primitives,
+lights it with a procedural studio environment, frames the camera on the board's
+exploded bounds, and exposes `project(part)` so HTML callout labels can track
+each part as it travels. If WebGL is missing the same step runs the isometric
+explode instead, so the slide always has a second beat. `stopAll()` halts the
+render loop on every slide change — see `docs/3D_DECONSTRUCTION.md`.
+
+## 3D Exploded View
+
+Slide 8 includes a hyper-realistic 3D exploded view of the Arduino Uno,
+inspired by Apple's product visualizations. See `docs/3D_DECONSTRUCTION.md`
+for full technical details on:
+
+- Blender workflow (modeling, materials, export)
+- Three.js integration (GLTF loading, PBR rendering)
+- Animation sequence (assembled → exploded)
+- File structure and dependencies
 
 ## Theming
 
