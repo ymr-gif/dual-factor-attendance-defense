@@ -307,10 +307,11 @@ const slideAnimations = {
     const corners = qa(el, '.scan__corner');
     const line = q(el, '.scan__line');
     const GRID = [16, 19];
-    const STEP = 79;                          // per-row stagger, = SWEEP / rows
-    const SWEEP = 1500;                       // line travel, top to bottom
-    const REVEAL = STEP * (GRID[1] - 1) + 260;  // 1682
-    const SETTLE = STEP * (GRID[1] - 1) + 520;  // 1942
+    const ROWS = GRID[1];
+    const SWEEP = 2100;                      // line travel, top to bottom
+    const STEP = Math.round(SWEEP / ROWS);   // one row per step, or the two drift
+    const BAND = 600;                        // how long one row stays lit, rise to fall
+    const DOTS_BLOCK = STEP * (ROWS - 1) + BAND;
     let vtuberView = null;
 
     tl.add(q(el, '.solution-icon--nfc'), {
@@ -368,24 +369,25 @@ const slideAnimations = {
       duration: SWEEP,
       ease: 'linear',   // must match the linear row stagger or the two drift apart
     }, '-=220')
-    .add(dots, {
-      opacity: [0, 1],
-      scale: [0, 1],
-      delay: stagger(STEP, { grid: GRID, axis: 'y', from: 'first' }),
-      duration: 260,
-      ease: 'outBack',
-    }, `-=${SWEEP}`)
 
-    // Each row dims 416ms after it lights, so the bright band trails the line
+    // Each row lights as the line reaches it and goes dark again once the line
+    // has moved on, so what travels down the portrait is a band of live points
+    // tracking the beam rather than a pattern that fills in and stays.
+    //
+    // Rise and fall are one keyframed tween, not two adds. Two overlapping
+    // tweens on the same property cancel each other — the fade-out was killing
+    // the pending pop for every row the line had not reached yet.
     .add(dots, {
-      opacity: 0.5,
+      opacity: [0, 1, 0],
+      scale: [0.3, 1, 0.6],
       delay: stagger(STEP, { grid: GRID, axis: 'y', from: 'first' }),
-      duration: 520,
-    }, `-=${REVEAL - 416}`)
+      duration: BAND,
+      ease: 'inOutQuad',
+    }, `-=${SWEEP}`)
     .add(line, {
       opacity: 0,
       duration: 320,
-    }, `-=${416 + SETTLE - SWEEP}`)
+    }, `-=${DOTS_BLOCK - SWEEP}`)
     .add(corners, {
       opacity: 0.35,
       duration: 420,
@@ -560,22 +562,23 @@ const slideAnimations = {
       duration: 150,
     }, 6700);
 
+    // Phone wave — smooth rocking instead of sharp shake
     tl.add(device, {
-      x: [0, -3, 3, -3, 3, -2, 2, -1, 1, 0],
-      rotate: [0, -1.5, 1.5, -1.5, 1.5, -1, 1, 0],
-      duration: 500,
-      ease: 'linear',
+      x: [0, -4, 4, -3, 3, -1, 0],
+      rotate: [0, -2, 2, -1.5, 1.5, -0.5, 0],
+      duration: 700,
+      ease: 'inOutSine',
     }, 6700);
 
-    // Smooth wave — each corner pulses outward and rotates, staggered
-    const CORNER_DELAY = 80;
+    // Corner wave — each corner pulses outward in a smooth arc, staggered
+    const CORNER_DELAY = 100;
     corners.forEach((corner, i) => {
       tl.add(corner, {
-        scale: [1, 1.3, 1],
-        rotate: [0, (i % 2 === 0 ? 8 : -8), 0],
-        x: [0, (i % 2 === 0 ? 3 : -3), 0],
-        y: [0, (i < 2 ? -3 : 3), 0],
-        duration: 500,
+        scale: [1, 1.4, 1],
+        rotate: [0, (i % 2 === 0 ? 12 : -12), 0],
+        x: [0, (i % 2 === 0 ? 5 : -5), 0],
+        y: [0, (i < 2 ? -5 : 5), 0],
+        duration: 700,
         ease: 'inOutSine',
       }, 6700 + i * CORNER_DELAY);
     });
