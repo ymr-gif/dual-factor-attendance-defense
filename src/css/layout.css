@@ -73,6 +73,26 @@
   opacity: 0;
 }
 
+/* Step 1 — "Proposal Defense" appears centered, large */
+.title-intro {
+  font-size: clamp(32px, 6vw, 64px);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: none;
+}
+
+/* Step 2 container — hidden until the second beat */
+.title-rest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  opacity: 0;
+}
+
 .title-school {
   font-size: clamp(11px, 1.6vw, 15px);
   color: var(--text-secondary);
