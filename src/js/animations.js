@@ -147,7 +147,6 @@ const slideAnimations = {
     const stamp = q(el, '.reject-stamp');
 
     let fillTl = null;
-    let forgeTl = null;
 
     // A half-drawn path keeps the dash values createDrawable wrote. Clearing
     // them is how an interrupted beat gets handed over fully inked.
@@ -220,8 +219,8 @@ const slideAnimations = {
       return tl;
     };
 
-    // Step 2 — a tick lands in a box nobody filled
-    const forge = () => {
+    // Steps 2+3 — forged tick + reject stamp, played as one continuous beat
+    const forgeAndReject = () => {
       if (fillTl) fillTl.pause();
       utils.set(page, { opacity: 1, scale: 1 });
       utils.set(margin, { opacity: 0.4 });
@@ -237,6 +236,7 @@ const slideAnimations = {
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
+      // Forge — tick lands in empty box
       tl.add(forged, {
         opacity: [0, 0.9],
         duration: 180,
@@ -258,30 +258,16 @@ const slideAnimations = {
       .add(tell, {
         opacity: [0, 1],
         duration: 420,
-      }, '-=200');
+      }, '-=200')
 
-      forgeTl = tl;
-      return tl;
-    };
-
-    // Step 3 — the record is worth nothing
-    const reject = () => {
-      if (forgeTl) forgeTl.pause();
-      utils.set(forged, { opacity: 0.9 });
-      inked(forged);
-      utils.set(cellFlag, { opacity: 0.9, scale: 1 });
-      utils.set(markFlag, { opacity: 1 });
-      utils.set(tell, { opacity: 1 });
-
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-      tl.add(stamp, {
+      // Reject — continuous after forge
+      .add(stamp, {
         opacity: [0, 1],
         scale: [3, 1],
         rotate: [-26, -11],
         duration: 440,
         ease: 'outBack',
-      })
+      }, '-=80')
       .add(q(el, '.problem-title'), {
         opacity: [0, 1],
         y: [20, 0],
@@ -295,7 +281,7 @@ const slideAnimations = {
       return tl;
     };
 
-    return { steps: [fill, forge, reject] };
+    return { steps: [fill, forgeAndReject] };
   },
 
   // Solution — NFC and Face converge, the subject is scanned, then the verdict.
@@ -570,29 +556,26 @@ const slideAnimations = {
       ease: 'inOutSine',
     }, 6700);
 
-    // Corner domino wave — clockwise: TL → TR → BR → BL
-    // Main pulse at the corner, then echo travels outward from phone
-    const CORNER_ORDER = [0, 1, 3, 2]; // tl, tr, br, bl
-    const CORNER_STAGGER = 250;
-    const ECHO_OFFSET = 200;
+    // Corner burst — all 4 pulse together, then all echo outward together
+    const ECHO_OFFSET = 300;
 
-    CORNER_ORDER.forEach((idx, seq) => {
-      const base = 6700 + seq * CORNER_STAGGER;
-      const corner = corners[idx];
-      // Outward direction from phone center
-      const outX = (idx === 0 || idx === 2) ? -20 : 20;
-      const outY = (idx < 2) ? -20 : 20;
+    corners.forEach((corner, idx) => {
       const dirRot = (idx % 2 === 0) ? 12 : -12;
 
-      // Main pulse — corner appears and pulses in place
+      // All corners pulse in place simultaneously
       tl.add(corner, {
         scale: [1, 1.4, 1],
         rotate: [0, dirRot, 0],
         duration: 500,
         ease: 'inOutSine',
-      }, base);
+      }, 6700);
+    });
 
-      // Echo — travels outward from phone, fades out
+    // All echoes travel outward simultaneously
+    corners.forEach((corner, idx) => {
+      const outX = (idx === 0 || idx === 2) ? -20 : 20;
+      const outY = (idx < 2) ? -20 : 20;
+
       tl.add(corner, {
         x: [0, outX],
         y: [0, outY],
@@ -600,7 +583,7 @@ const slideAnimations = {
         opacity: [1, 0],
         duration: 500,
         ease: 'outQuad',
-      }, base + ECHO_OFFSET);
+      }, 6700 + ECHO_OFFSET);
     });
 
     // --- Corners fade out (7.1 s) ---
