@@ -117,7 +117,7 @@ const slideAnimations = {
       animate(main, {
         innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
         opacity: [0, 1],
-        y: [300, 0],
+        y: [600, 0],
         duration: 1400,
         ease: 'outExpo',
       });
