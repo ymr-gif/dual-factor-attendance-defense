@@ -1,39 +1,45 @@
 # Defense Plan — Delivery
 
 > **Assumptions — correct these if wrong:** 15-minute presentation, 15–20 min panel Q&A,
-> all 4 members present and speaking, prototype demo expected.
+> prototype demo expected.
+>
+> **Aragon presents the whole deck.** The other three sit in and field questions
+> in their own areas — Cabucos on the system and liveness, De Guzman on hardware
+> and the RQs, Loreno on instruments and protocols.
 > Slide numbers match the built deck (18 slides, as of 2026-08-18).
 
 ## Running Order
 
-| # | Slide | Time | Speaker |
-|---|-------|------|---------|
-| 1 | Title | 0:30 | Aragon |
-| 2 | The Problem | 1:15 | Aragon |
-| 3 | NFC + Face | 1:00 | Aragon |
-| 4 | Liveness | 1:00 | Cabucos |
-| 5 | Guardian Notification | 0:45 | Cabucos |
-| 6 | Conceptual Framework | 1:15 | Cabucos |
-| 7 | Architecture | 1:30 | Cabucos |
-| 8 | Prototype — rig, then exploded Arduino (2 presses) | 1:15 | De Guzman |
-| 9 | RQ1 — Spoof Rejection | 0:45 | De Guzman |
-| 10 | RQ2 — Performance | 0:45 | De Guzman |
-| 11 | RQ3 — Acceptability | 0:45 | De Guzman |
-| 12 | Instruments | 0:45 | Loreno |
-| 13 | Testing Protocols | 1:15 | Loreno |
-| 14 | Survey Structure | 0:45 | Loreno |
-| 15 | Interpretation Scale | 0:30 | Loreno |
-| 16 | Scope & Delimitation | 0:45 | Loreno |
-| 17 | Expected Output | 0:30 | Aragon |
-| 18 | Thank You | 0:15 | All |
+| # | Slide | Time |
+|---|-------|------|
+| 1 | Title | 0:30 |
+| 2 | The Problem | 1:15 |
+| 3 | NFC + Face | 1:00 |
+| 4 | Liveness | 1:00 |
+| 5 | Guardian Notification | 0:45 |
+| 6 | Conceptual Framework | 1:15 |
+| 7 | Architecture | 1:30 |
+| 8 | Prototype — rig, then exploded Arduino (2 presses) | 1:15 |
+| 9 | RQ1 — Spoof Rejection | 0:45 |
+| 10 | RQ2 — Performance | 0:45 |
+| 11 | RQ3 — Acceptability | 0:45 |
+| 12 | Instruments | 0:45 |
+| 13 | Testing Protocols | 1:15 |
+| 14 | Survey Structure | 0:45 |
+| 15 | Interpretation Scale | 0:30 |
+| 16 | Scope & Delimitation | 0:45 |
+| 17 | Expected Output | 0:30 |
+| 18 | Thank You | 0:15 |
 
 **Total: ~14:45.** Leaves buffer. Demo runs after, or during slide 7.
 
-Rule: slides carry 3–5 words. Everything below is spoken, never shown.
+Rule: slides carry 3–5 words. Everything below is spoken, never shown. One
+voice for fifteen minutes is a lot — mark the slide-8 second beat and the scope
+slide as places to slow down and breathe.
 
 ## Narration Cues
 
-**1 — Title.** Name, school, section. One line: "We propose S.A.F.E., a dual-factor attendance system." Sit down.
+**1 — Title.** Name the school, the team and the section, then one line: "We propose S.A.F.E., a dual-factor attendance system." Do not read the four names off the slide — they are already on it.
 
 **2 — Problem.** HSCI logs attendance by hand at the guardpost. No one verifies who signed. Proxy attendance is possible. Parents learn nothing. Card-only systems verify the card, not the person.
 
@@ -69,7 +75,7 @@ Second beat: inside the Arduino. Card ID arrives at the headers, the ATmega rela
 
 **17 — Expected Output.** A working prototype, three measured outcomes, and a validated acceptability rating.
 
-**18 — Thank You.** Stop talking. Do not summarize.
+**18 — Thank You.** Stop talking. Do not summarize. Hand the floor to the panel.
 
 ## Q&A Bank
 
@@ -119,14 +125,14 @@ Every answer: one sentence, then stop. Do not defend beyond the question.
 - Test on the exact laptop and projector that will be used.
 - Disable sleep, screensaver, and system notifications. Full battery plus charger.
 - Copy the whole `ppt-js` folder to a USB drive. Second copy on a phone.
-- One person drives the deck the entire time — not whoever is speaking.
+- Have a teammate drive the deck so Aragon's hands stay free. If he drives it himself, keep the clicker in one hand the whole time and never look back at the screen to find his place — the caption under the prototype scene tells him which beat he is on.
 
 ## Day-Before Checklist
 
-- [ ] Full run-through, timed, all four speakers, no stopping
+- [ ] Full run-through, timed, start to finish, no stopping
 - [ ] Deck opens with wifi off
 - [ ] All 18 slides advance and animate on the venue resolution
 - [ ] Demo video exported and playable offline
 - [ ] Prototype packed: reader, Arduino, cards, webcam, cables, laptop
 - [ ] Printed copy of the proposal for each panelist
-- [ ] Each member can answer any Q&A item, not only their own slides
+- [ ] Aragon can answer every Q&A item unaided; the other three ready to take detail questions in their areas
