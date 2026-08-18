@@ -38,17 +38,17 @@ const slideAnimations = {
       tl.add(intro, {
         opacity: [0, 1],
         scale: [0.8, 1],
-        duration: 1200,
+        duration: 700,
       })
       .add(school, {
         opacity: [0, 1],
         y: [-10, 0],
-        duration: 600,
-      }, '-=800')
+        duration: 350,
+      }, '-=500')
       .add(board3d, {
         opacity: can3D ? [0, 1] : 0,
-        duration: 800,
-      }, '-=600');
+        duration: 500,
+      }, '-=400');
 
       return tl;
     };
