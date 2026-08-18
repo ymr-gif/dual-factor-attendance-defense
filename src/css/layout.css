@@ -397,7 +397,7 @@
 
 .solution-result-text {
   color: var(--success);
-  font-size: 20px;
+  font-size: clamp(28px, 2.6vw, 44px);
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -411,16 +411,29 @@
   overflow: hidden;
   opacity: 0;
   position: relative;
-  /* The portrait crop puts the forearms at the canvas edge, where they end in
-     a hard vertical cut. Fade the sides so they leave frame instead. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 13%, #000 87%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0, #000 13%, #000 87%, transparent 100%);
 }
 
 .vtuber-3d__canvas {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+/* The portrait crop puts the forearms at the canvas edge, where they end in a
+   hard vertical cut. Painting the page background over the sides softens that,
+   and because it sits *under* .scan the sweep and dots stay at full strength —
+   a mask on .vtuber-3d faded them along with the model. */
+.vtuber-3d__fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    var(--bg-primary) 0,
+    transparent 13%,
+    transparent 87%,
+    var(--bg-primary) 100%
+  );
 }
 
 /* Scan overlay — sits over the portrait, never moves the model */
@@ -439,7 +452,7 @@
 }
 
 .scan__dot {
-  fill: var(--accent);
+  fill: var(--success);
   /* Cyan alone disappears against the blouse and the lit side of the face.
      A dark halo keeps every dot readable over both the subject and the
      background without needing a filter on 304 nodes. */
@@ -453,7 +466,7 @@
 
 .scan__corner {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--success);
   stroke-width: 3;
   stroke-linecap: square;
   opacity: 0;
@@ -474,15 +487,15 @@
   background: linear-gradient(
     to right,
     transparent 0,
-    var(--accent) 18%,
+    var(--success) 18%,
     #ffffff 50%,
-    var(--accent) 82%,
+    var(--success) 82%,
     transparent 100%
   );
   box-shadow:
-    0 0 12px var(--accent),
-    0 0 34px var(--accent-glow),
-    0 0 70px var(--accent-glow);
+    0 0 12px var(--success),
+    0 0 34px var(--success-glow),
+    0 0 70px var(--success-glow);
 }
 
 /* Liveness Slide */
@@ -1234,28 +1247,28 @@
   top: 0; left: 0;
   border-top: 2px solid var(--accent);
   border-left: 2px solid var(--accent);
-  border-radius: 8px 0 0 0;
+  border-radius: 100% 0 0 0;
 }
 
 .notify-corner--tr {
   top: 0; right: 0;
   border-top: 2px solid var(--accent);
   border-right: 2px solid var(--accent);
-  border-radius: 0 8px 0 0;
+  border-radius: 0 100% 0 0;
 }
 
 .notify-corner--bl {
   bottom: 0; left: 0;
   border-bottom: 2px solid var(--accent);
   border-left: 2px solid var(--accent);
-  border-radius: 0 0 0 8px;
+  border-radius: 0 0 0 100%;
 }
 
 .notify-corner--br {
   bottom: 0; right: 0;
   border-bottom: 2px solid var(--accent);
   border-right: 2px solid var(--accent);
-  border-radius: 0 0 8px 0;
+  border-radius: 0 0 100% 0;
 }
 
 .notify-banner {
