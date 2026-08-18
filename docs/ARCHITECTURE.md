@@ -24,11 +24,14 @@ ppt-js/
 │   │   ├── main.js           # Init, keyboard nav, slide engine
 │   │   ├── timeline.js       # Dispatch by data-anim
 │   │   ├── animations.js     # One function per data-anim name
-│   │   └── hardware-3d.js    # WebGL Arduino for slide 8, step 2
+│   │   ├── hardware-3d.js    # WebGL Arduino for slide 8, step 2
+│   │   └── model-loader.js   # Builds meshes from a baked Blender model
 │   └── vendor/
 │       ├── anime.umd.min.js  # anime.js v4.5.0, local copy
 │       └── three.min.js      # three.js r149, local copy
+├── src/models/               # Baked Blender model, or a placeholder
 ├── tools/
+│   ├── model/                # .glb → baked JS geometry
 │   └── scene/                # Isometric SVG generator for slide 8
 └── index.html                # Main entry — 18 slides
 ```
@@ -184,6 +187,10 @@ exploded bounds, and exposes `project(part)` so HTML callout labels can track
 each part as it travels. If WebGL is missing the same step runs the isometric
 explode instead, so the slide always has a second beat. `stopAll()` halts the
 render loop on every slide change — see `docs/3D_DECONSTRUCTION.md`.
+
+A modelled board can replace the built-in geometry: `tools/model/bake.js` turns
+a `.glb` into base64 geometry that loads without a fetch or a loader, which is
+what `file://` forces. The handover spec is in `docs/3D_MODEL_PIPELINE.md`.
 
 ## 3D Exploded View
 

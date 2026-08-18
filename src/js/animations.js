@@ -350,7 +350,11 @@ const slideAnimations = {
       const box = q(el, '.board-3d').getBoundingClientRect();
       labels3d.forEach((label) => {
         const point = view.project(label.dataset.part);
-        if (!point) return;
+        if (!point) {                       // model has no part by that name
+          label.style.visibility = 'hidden';
+          return;
+        }
+        label.style.visibility = '';
 
         const left = label.dataset.side === 'left';
         const x = box.width * (left ? 0.28 : 0.72);
@@ -376,7 +380,7 @@ const slideAnimations = {
       utils.set(labels3d, { opacity: 0 });
       trackLabels();
 
-      const risers = Object.keys(view.explode).filter((name) => view.explode[name] > 0);
+      const risers = Object.keys(view.parts).filter((name) => view.riseFor(name) > 0);
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
@@ -386,7 +390,7 @@ const slideAnimations = {
 
       risers.forEach((name, i) => {
         tl.add(view.parts[name].position, {
-          y: view.rest[name] + view.explode[name],
+          y: view.rest[name] + view.riseFor(name),
           duration: 1400,
           ease: 'outQuint',
         }, i === 0 ? '-=300' : `-=${1400 - 90}`);
