@@ -7,54 +7,81 @@ const qa = (el, sel) => Array.from(el.querySelectorAll(sel));
 
 const slideAnimations = {
 
-  // Title — shield draws, S.A.F.E. scrambles in, team staggers
+  // Title — two steps: "Proposal Defense" first, then full title
   title(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    // Step 1 — "Proposal Defense" appears centered
+    const step1 = () => {
+      const intro = q(el, '.title-intro');
+      const rest = q(el, '.title-rest');
+      utils.set(intro, { opacity: 0, y: 0, scale: 1 });
+      utils.set(rest, { opacity: 0 });
+      return animate(intro, {
+        opacity: [0, 1],
+        scale: [0.8, 1],
+        duration: 1200,
+        ease: 'outExpo',
+      });
+    };
 
-    tl.add(q(el, '.title-school'), {
-      opacity: [0, 1],
-      y: [-10, 0],
-      duration: 500,
-    })
-    .add(q(el, '.shield-icon'), {
-      opacity: [0, 1],
-      scale: [0.5, 1],
-      duration: 800,
-    }, '-=200')
-    .add(q(el, '.checkmark'), {
-      strokeDashoffset: [100, 0],
-      duration: 600,
-    }, '-=300')
-    .add(q(el, '.title-main'), {
-      innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
-      opacity: [0, 1],
-      duration: 1200,
-    }, '-=400')
-    .add(q(el, '.title-divider'), {
-      scaleX: [0, 1],
-      duration: 600,
-    }, '-=600')
-    .add(q(el, '.title-full'), {
-      opacity: [0, 1],
-      duration: 600,
-    }, '-=300')
-    .add(q(el, '.title-sub'), {
-      opacity: [0, 1],
-      y: [15, 0],
-      duration: 500,
-    }, '-=300')
-    .add(qa(el, '.title-team li'), {
-      opacity: [0, 1],
-      y: [10, 0],
-      delay: stagger(80),
-      duration: 400,
-    }, '-=200')
-    .add(q(el, '.title-section'), {
-      opacity: [0, 1],
-      duration: 400,
-    }, '-=100');
+    // Step 2 — "Proposal Defense" shrinks up, full title reveals
+    const step2 = () => {
+      const intro = q(el, '.title-intro');
+      const rest = q(el, '.title-rest');
 
-    return tl;
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(intro, {
+        y: -80,
+        scale: 0.5,
+        opacity: 0.6,
+        duration: 800,
+      })
+      .add(rest, {
+        opacity: 1,
+        duration: 600,
+      }, '-=400')
+      .add(q(el, '.title-school'), {
+        opacity: [0, 1],
+        y: [-10, 0],
+        duration: 500,
+      }, '-=300')
+      .add(q(el, '.shield-icon'), {
+        opacity: [0, 1],
+        scale: [0.5, 1],
+        duration: 800,
+      }, '-=200')
+      .add(q(el, '.checkmark'), {
+        strokeDashoffset: [100, 0],
+        duration: 600,
+      }, '-=300')
+      .add(q(el, '.title-main'), {
+        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
+        opacity: [0, 1],
+        duration: 1200,
+      }, '-=400')
+      .add(q(el, '.title-divider'), {
+        scaleX: [0, 1],
+        duration: 600,
+      }, '-=600')
+      .add(q(el, '.title-full'), {
+        opacity: [0, 1],
+        duration: 600,
+      }, '-=300')
+      .add(qa(el, '.title-team li'), {
+        opacity: [0, 1],
+        y: [10, 0],
+        delay: stagger(80),
+        duration: 400,
+      }, '-=200')
+      .add(q(el, '.title-section'), {
+        opacity: [0, 1],
+        duration: 400,
+      }, '-=100');
+
+      return tl;
+    };
+
+    return { steps: [step1, step2] };
   },
 
   // Problem — logbook lines scrawl in, UNVERIFIED stamps down
