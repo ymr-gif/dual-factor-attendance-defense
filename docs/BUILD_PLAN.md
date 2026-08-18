@@ -48,9 +48,10 @@ Verified by headless render of all 18 slides at 1920×1080.
 
 ## P1 — Credibility
 
-### 7. Per-slide steps
-`ARCHITECTURE.md` promises `data-step` beats. Not implemented — every slide autoplays as one blob.
-Presenter cannot pause mid-slide. Add stepping to slides 3, 5, 11 at minimum.
+### 7. Per-slide steps — engine done 2026-08-18
+Animations can now return `{ steps: [...] }`; the presenter's arrow press advances
+the step before the slide. Slide 8 uses it. Still worth adding beats to the
+architecture flow (7) and the protocols split (13).
 
 ### 8. Presenter notes overlay
 Four speakers, one deck. Press `N` → cue card for the current slide. Hidden from projector output if possible.
@@ -67,7 +68,8 @@ Four speakers, one deck. Press `N` → cue card for the current slide. Hidden fr
 
 1. ~~P0 batch~~ — done 2026-08-18
 2. Fill in remaining content the panel will ask for (budget ₱4,245, participants, ethics)
-3. Phase 2 heavy animations — see `ANIMATIONS.md` (hardware exploded view first)
+3. Phase 2 heavy animations — hardware exploded view shipped; architecture packet
+   flow is next in `ANIMATIONS.md`
 4. P1.7 + P1.8 stepping and presenter notes
 5. P2 pass
 6. Full run on venue hardware

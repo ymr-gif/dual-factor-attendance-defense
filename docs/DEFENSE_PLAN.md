@@ -15,7 +15,7 @@
 | 5 | Guardian Notification | 0:45 | Cabucos |
 | 6 | Conceptual Framework | 1:15 | Cabucos |
 | 7 | Architecture | 1:30 | Cabucos |
-| 8 | Hardware | 0:45 | De Guzman |
+| 8 | Prototype — rig, then exploded Arduino (2 presses) | 1:15 | De Guzman |
 | 9 | RQ1 — Spoof Rejection | 0:45 | De Guzman |
 | 10 | RQ2 — Performance | 0:45 | De Guzman |
 | 11 | RQ3 — Acceptability | 0:45 | De Guzman |
@@ -27,7 +27,7 @@
 | 17 | Expected Output | 0:30 | Aragon |
 | 18 | Thank You | 0:15 | All |
 
-**Total: ~14:15.** Leaves buffer. Demo runs after, or during slide 7.
+**Total: ~14:45.** Leaves buffer. Demo runs after, or during slide 7.
 
 Rule: slides carry 3–5 words. Everything below is spoken, never shown.
 
@@ -47,7 +47,9 @@ Rule: slides carry 3–5 words. Everything below is spoken, never shown.
 
 **7 — Architecture.** Walk the flow once, left to right. Name each hop. Do not read specs — they are on the next slide.
 
-**8 — Hardware.** RC522 reader, Arduino, 1080p webcam, MIFARE cards, laptop. Off-the-shelf, low cost, already acquired.
+**8 — Prototype.** Two beats, two presses.
+First beat: the rig. RC522 reader, MIFARE card, Arduino, 1080p webcam, laptop. Off-the-shelf, ₱4,245 total, already acquired.
+Second beat: inside the Arduino. Card ID arrives at the headers, the ATmega relays it over USB to the laptop. Do not narrate every part — name the path the card ID takes and move on.
 
 **9 — RQ1.** 60 spoof attempts: 30 printed photos, 30 screen replays. Measured as spoof rejection rate, frequency and percentage.
 

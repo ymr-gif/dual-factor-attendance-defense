@@ -25,6 +25,9 @@
 
     isAnimating = true;
 
+    // Leaving a slide clears its step state, so re-entering replays from step 1
+    masterTimeline.resetSlide(currentSlide);
+
     // Hide current
     const currentEl = document.querySelector(`[data-slide="${currentSlide}"]`);
     if (currentEl) {
@@ -49,6 +52,9 @@
   }
 
   function nextSlide() {
+    // A stepped slide consumes the press until its last step has played
+    if (masterTimeline.nextStep(currentSlide)) return;
+
     if (currentSlide < totalSlides) {
       goToSlide(currentSlide + 1);
     }

@@ -20,6 +20,9 @@
 - Use `stagger()` for sequential animations
 - Use `createTimeline()` for sequenced slide animations
 - Key animations by `data-anim` name, one function per name, in `animations.js`
+- Return `{ steps: [...] }` for slides the presenter walks through in beats
+- Assume a step can start before the previous one finished — pause it and set its
+  end state first
 - Scope every query to the passed slide element with `q()` / `qa()`
 
 ## Don't
@@ -28,6 +31,8 @@
 - Use jQuery or other animation libraries
 - Break keyboard navigation
 - Remove progress bar or slide counter
+- Hand-edit the slide-8 SVG in `index.html` — regenerate it with
+  `python3 tools/scene/compose.py && python3 tools/scene/embed.py`
 - Remove `src/vendor/anime.umd.min.js` — it is what makes the deck work offline
 - Change the anime.js version without checking compatibility
 - Use `autoplay: true` on slide animations (trigger on nav only)
