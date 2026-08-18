@@ -22,6 +22,8 @@ const masterTimeline = {
     if (this.currentSlide === slideNum) return;
     this.currentSlide = slideNum;
 
+    this.reset(slideNum, slideEl);
+
     const animName = slideEl.dataset.anim;
     const fn = animName && slideAnimations[animName];
 
@@ -34,10 +36,21 @@ const masterTimeline = {
 
     if (result && Array.isArray(result.steps)) {
       this.stepped[slideNum] = { fns: result.steps, index: 0, el: slideEl };
-      result.steps[0](slideEl);
+      this.timelines[slideNum] = result.steps[0](slideEl);
     } else {
       this.timelines[slideNum] = result;
     }
+  },
+
+  // A slide keeps the inline styles its last visit wrote, so revisiting it would
+  // show the finished state for a frame before the animation grabbed it again.
+  // Stop whatever is still running and hand the slide back to its CSS.
+  reset(slideNum, slideEl) {
+    const running = this.timelines[slideNum];
+    if (running && typeof running.pause === 'function') running.pause();
+    delete this.timelines[slideNum];
+
+    slideEl.querySelectorAll('[style]').forEach((node) => node.removeAttribute('style'));
   },
 
   // Returns true when the press was consumed by a step, false to move on
@@ -46,7 +59,7 @@ const masterTimeline = {
     if (!state || state.index >= state.fns.length - 1) return false;
 
     state.index += 1;
-    state.fns[state.index](state.el);
+    this.timelines[slideNum] = state.fns[state.index](state.el);
     return true;
   },
 
