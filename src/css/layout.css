@@ -400,6 +400,10 @@
   border-radius: 12px;
   overflow: hidden;
   opacity: 0;
+  /* The portrait crop puts the forearms at the canvas edge, where they end in
+     a hard vertical cut. Fade the sides so they leave frame instead. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 13%, #000 87%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 13%, #000 87%, transparent 100%);
 }
 
 .vtuber-3d__canvas {
@@ -1140,23 +1144,45 @@
   font-weight: 700;
 }
 
-.notify-ripples {
+.notify-corners {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  inset: -12px;
   pointer-events: none;
 }
 
-.notify-ripple {
+.notify-corner {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 2px solid var(--accent);
-  border-radius: 12px;
+  width: 20px;
+  height: 20px;
   opacity: 0;
-  transform: scale(0.8);
+}
+
+.notify-corner--tl {
+  top: 0; left: 0;
+  border-top: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+  border-radius: 4px 0 0 0;
+}
+
+.notify-corner--tr {
+  top: 0; right: 0;
+  border-top: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+  border-radius: 0 4px 0 0;
+}
+
+.notify-corner--bl {
+  bottom: 0; left: 0;
+  border-bottom: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 0 0 4px;
+}
+
+.notify-corner--br {
+  bottom: 0; right: 0;
+  border-bottom: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+  border-radius: 0 0 4px 0;
 }
 
 .notify-banner {

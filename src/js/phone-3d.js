@@ -293,35 +293,47 @@
     function playEntrance() {
       if (entranceTimeline) return;
 
-      // Starting pose — off-screen right, mid-spin
-      group.position.set(12, -3, -5);
+      const container = canvas.parentElement; // .phone-3d
+
+      // Starting pose — far off-screen right and behind camera
+      group.position.set(18, -4, -15);
       group.rotation.set(0.1, -Math.PI * 1.5, 0);
+
+      // Start container off-screen right
+      gsap.set(container, { x: '100%' });
 
       entranceTimeline = gsap.timeline({
         onComplete: () => { entranceTimeline = null; },
       });
 
-      // Phase 1: entrance spin
+      // Phase 0: slide container in from right (matches 3D entrance timing)
+      entranceTimeline.to(container, {
+        x: '0%',
+        duration: 4,
+        ease: 'power2.out',
+      }, 0);
+
+      // Phase 1: entrance spin (slow-mo for preview)
       entranceTimeline.to(group.position, {
         x: 0, y: 0, z: 0,
-        duration: 1.2,
-        ease: 'power3.out',
+        duration: 4,
+        ease: 'power2.out',
       }, 0);
 
       entranceTimeline.to(group.rotation, {
         y: Math.PI - 0.2,
         x: 0.1,
         z: 0,
-        duration: 1.2,
-        ease: 'power3.out',
+        duration: 4,
+        ease: 'power2.out',
       }, 0);
 
       // Phase 2: screen scroll — overlaps the end of the entrance
       entranceTimeline.to(screenTexture.offset, {
         y: 2 / 3,
-        duration: 1.5,
+        duration: 2.5,
         ease: 'power2.inOut',
-      }, 0.6);
+      }, 2.5);
     }
 
     // ── API ────────────────────────────────────────────────────────
