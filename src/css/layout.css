@@ -381,6 +381,16 @@
   transform: scale(0);
 }
 
+/* Had no rule at all and no animation, so it painted at full strength while
+   everything around it animated in. */
+.solution-merge {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--text-dim);
+  opacity: 0;
+  transform: scale(0.6);
+}
+
 .solution-result {
   opacity: 0;
 }
@@ -400,6 +410,7 @@
   border-radius: 12px;
   overflow: hidden;
   opacity: 0;
+  position: relative;
   /* The portrait crop puts the forearms at the canvas edge, where they end in
      a hard vertical cut. Fade the sides so they leave frame instead. */
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 13%, #000 87%, transparent 100%);
@@ -410,6 +421,63 @@
   width: 100%;
   height: 100%;
   display: block;
+}
+
+/* Scan overlay — sits over the portrait, never moves the model */
+.scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scan__dots,
+.scan__reticle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scan__dot {
+  fill: var(--accent);
+  opacity: 0;
+  transform: scale(0);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.scan__corner {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: square;
+  opacity: 0;
+  transform: scale(1.25);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Sweeps top to bottom. `top` is animated rather than a transform because a
+   percentage translate would resolve against the 3px line, not the frame. */
+.scan__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  opacity: 0;
+  background: linear-gradient(
+    to right,
+    transparent 0,
+    var(--accent) 18%,
+    #ffffff 50%,
+    var(--accent) 82%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 12px var(--accent),
+    0 0 34px var(--accent-glow),
+    0 0 70px var(--accent-glow);
 }
 
 /* Liveness Slide */
@@ -1187,32 +1255,33 @@
 
 .notify-banner {
   position: absolute;
-  top: 30px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 85%;
-  padding: 10px 14px;
+  gap: 8px;
+  width: 90%;
+  padding: 8px 10px;
   background: var(--bg-secondary);
   border: 1px solid var(--accent);
-  border-radius: 10px;
+  border-radius: 8px;
   opacity: 0;
+  box-sizing: border-box;
 }
 
 .notify-banner-icon {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
 .notify-banner-text {
-  font-size: 12px;
+  font-size: 9px;
   color: var(--text-primary);
-  white-space: nowrap;
   font-family: var(--font-mono);
   letter-spacing: 0.04em;
+  line-height: 1.3;
 }
 
 .notify-envelope {

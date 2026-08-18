@@ -307,6 +307,10 @@ const slideAnimations = {
     const corners = qa(el, '.scan__corner');
     const line = q(el, '.scan__line');
     const GRID = [16, 19];
+    const STEP = 79;                          // per-row stagger, = SWEEP / rows
+    const SWEEP = 1500;                       // line travel, top to bottom
+    const REVEAL = STEP * (GRID[1] - 1) + 260;  // 1682
+    const SETTLE = STEP * (GRID[1] - 1) + 520;  // 1942
     let vtuberView = null;
 
     tl.add(q(el, '.solution-icon--nfc'), {
@@ -349,38 +353,43 @@ const slideAnimations = {
       duration: 420,
     }, '-=350')
 
-    // The sweep, and the projector pattern lighting up row by row behind it
+    // The sweep, and the projector pattern lighting up row by row behind it.
+    //
+    // Offsets are all '-=' because '<' does NOT mean "start with previous" in
+    // the vendored anime build — it appends, exactly like the default. Every
+    // overlap here is therefore stated as an explicit rollback from the
+    // timeline's current end. Reveal block = 18 rows x 74ms + 260ms = 1592ms.
     .add(line, {
       opacity: [0, 1],
       duration: 220,
     }, '-=80')
     .add(line, {
       top: ['0%', '100%'],
-      duration: 1500,
-      ease: 'inOutSine',
-    }, '<')
+      duration: SWEEP,
+      ease: 'linear',   // must match the linear row stagger or the two drift apart
+    }, '-=220')
     .add(dots, {
       opacity: [0, 1],
       scale: [0, 1],
-      delay: stagger(74, { grid: GRID, axis: 'y', from: 'first' }),
+      delay: stagger(STEP, { grid: GRID, axis: 'y', from: 'first' }),
       duration: 260,
       ease: 'outBack',
-    }, '<+=60')
+    }, `-=${SWEEP}`)
 
-    // Pattern settles, sweep leaves
+    // Each row dims 416ms after it lights, so the bright band trails the line
     .add(dots, {
-      opacity: 0.26,
-      delay: stagger(74, { grid: GRID, axis: 'y', from: 'first' }),
+      opacity: 0.38,
+      delay: stagger(STEP, { grid: GRID, axis: 'y', from: 'first' }),
       duration: 520,
-    }, '-=1150')
+    }, `-=${REVEAL - 416}`)
     .add(line, {
       opacity: 0,
       duration: 320,
-    }, '-=380')
+    }, `-=${416 + SETTLE - SWEEP}`)
     .add(corners, {
       opacity: 0.35,
       duration: 420,
-    }, '-=200')
+    }, '-=250')
 
     .add(q(el, '.solution-merge'), {
       opacity: [0, 1],
@@ -583,27 +592,27 @@ const slideAnimations = {
       duration: 250,
     }, 7100);
 
-    // --- Banner drops in (7.0 s) ---
+    // --- Banner drops in (7.4 s) ---
     tl.add(banner, {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 350,
       ease: 'outBack',
-    }, 7000);
+    }, 7400);
 
-    // --- Envelope + chips (7.3 s) ---
+    // --- Envelope + chips (7.6 s) ---
     tl.add(envelopes, {
       opacity: [0, 1],
       scale: [0.5, 1],
       duration: 350,
       ease: 'outBack',
-    }, 7300)
+    }, 7600)
     .add(chips, {
       opacity: [0, 1],
       y: [12, 0],
       delay: stagger(80),
       duration: 350,
-    }, 7500);
+    }, 7800);
 
     return tl;
   },
