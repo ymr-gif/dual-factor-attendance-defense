@@ -19,9 +19,9 @@ const slideAnimations = {
       const rest = q(el, '.title-rest');
       const board3d = q(el, '.title-board-3d');
       utils.set(intro, { opacity: 0, y: 0, scale: 1 });
-      utils.set(school, { opacity: 0 });
-      utils.set(main, { opacity: 0 });
-      utils.set(rest, { opacity: 0 });
+      utils.set(school, { opacity: 0, y: 0 });
+      utils.set(main, { opacity: 0, y: 20 });
+      utils.set(rest, { opacity: 0, y: 40 });
       utils.set(board3d, { opacity: 0 });
 
       // Mount 3D view if available
@@ -74,16 +74,18 @@ const slideAnimations = {
         duration: 800,
       }, '<')
 
-      // S.A.F.E. appears via scramble text
+      // S.A.F.E. appears via scramble text, moves up to position
       .add(main, {
         innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
         opacity: [0, 1],
+        y: 0,
         duration: 1200,
       }, '-=600')
 
-      // Fade in rest (divider, full description, team, section)
+      // Fade in rest (divider, full description, team, section) — moves down
       .add(rest, {
         opacity: 1,
+        y: 0,
         duration: 600,
       }, '-=800')
       .add(q(el, '.title-divider'), {
