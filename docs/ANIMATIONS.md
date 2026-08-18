@@ -24,7 +24,7 @@
 | `notify` | Verified badge pops, dot trail fires across, phone slides in, envelope pops, chips rise |
 | `framework` | IPO stages stagger left to right, arrows draw, list items cascade, feedback bar widens |
 | `architecture` | Seven nodes cascade with scale, arrows draw between them |
-| `hardware` | Spec cards stagger by row |
+| `hardware` | **Step 1:** rig units drop in, jumper wires draw themselves, labels attach. **Step 2:** context clears, camera pushes into the board, parts lift along the isometric axis and label themselves |
 | `rq` | "RESEARCH QUESTION" eyebrow fades in with drawing rules, number elastic-scales, icon pops, label and stat rise (shared by slides 9–11) |
 | `instruments` | Three cards stagger up |
 | `protocols` | Two halves enter from opposite sides, divider draws |
@@ -38,19 +38,16 @@
 
 Do these one at a time. Each is a full scene, not an entrance.
 
-### 1. Hardware exploded view — `hardware`
-The centrepiece. Arduino and laptop separate into layers — board, headers, chip,
-casing — drifting apart along a depth axis, labels drawing out to each part on
-leader lines, then reassembling.
+### 1. Hardware exploded view — `hardware` — SHIPPED 2026-08-18
+Two beats on one slide. The guardpost rig assembles — RC522, MIFARE card,
+Arduino, webcam, laptop, jumper wires drawing between them. Next press: the rest
+fades, the camera pushes into the Arduino, and thirteen parts lift off the board
+with leader lines naming them.
 
-- Hook: `<!-- ANIM HOOK -->` comment sits above `.specs-grid` in `index.html`
-- Needs: layered SVG (one group per part) drawn to a shared viewBox
-- Technique: staggered `translate` + `scale` on groups, `svg.createDrawable()` for
-  leader lines, driven by a scrubbed timeline so the presenter controls the beat
-- References:
-  - [createDrawable](https://animejs.com/documentation/svg/createdrawable/) — line drawing
-  - [createMotionPath](https://animejs.com/documentation/svg/createmotionpath/) — parts along a path
-  - [Advanced staggering](https://codepen.io/juliangarnier/pen/MZXQNV)
+- Art: generated isometric SVG, `tools/scene/` — original, drawn from reference
+- Lift distances live on `data-rise`; the camera lives in `compose.py`
+- Still open: parts fan only along Z. Adding a slight lateral drift, and a
+  reassembly on the way back, would sell it further.
 
 ### 2. Architecture packet flow — `architecture`
 A pulse travels the seven nodes: card tap lights the reader, packet moves to
@@ -96,3 +93,4 @@ animate('.title', { innerHTML: scrambleText({ chars: 'A-Z0-9' }) });
 | 2026-08-18 | `architecture` | Reordered flow, added notify node, emoji → SVG icons | Camera fired after the backend; notification was missing; emoji render inconsistently on projector laptops |
 | 2026-08-18 | `rq` | Added "RESEARCH QUESTION" eyebrow above the number | Panel could not tell at a glance that slides 9–11 are the research questions |
 | 2026-08-18 | `survey` | 12 → 20 items per version, per-characteristic count badges | Instrument revised to 5 items per characteristic |
+| 2026-08-18 | `hardware` | Spec card grid replaced with the isometric rig and the exploded Arduino, on two presenter-driven steps | The hero moment of the deck; spec text now labels the objects it describes |

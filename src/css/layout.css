@@ -440,52 +440,75 @@
   letter-spacing: 0.05em;
 }
 
-/* Specs Slide */
+/* Specs Slide — isometric prototype rig */
+.slide--specs .slide__content {
+  width: 100%;
+  max-width: 1640px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
 .specs-title {
   font-size: clamp(20px, 4vw, 36px);
   font-weight: 700;
   color: var(--text-primary);
-}
-
-.specs-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-md);
-}
-
-.spec-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-md);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
   opacity: 0;
-  transform: translateY(15px);
 }
 
-.spec-icon {
-  width: 50px;
-  height: 50px;
-  color: var(--accent);
-}
-
-.spec-icon svg {
+.rig-svg {
   width: 100%;
-  height: 100%;
+  max-width: 1600px;
+  height: auto;
+  align-self: center;
+  display: block;
+  overflow: visible;
 }
 
-.spec-name {
+/* the whole stage zooms about the Arduino's centre in step 2 */
+.rig-stage {
+  transform-box: view-box;
+  transform-origin: 620.1px 423.5px;
+}
+
+.unit {
+  opacity: 0;
+}
+
+.wire {
+  opacity: 0;
+}
+
+.lbl {
+  font-family: var(--font-display);
+  font-size: 15px;
+  fill: var(--text-primary);
+}
+
+.lbl-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--text-secondary);
+}
+
+.rig-label,
+.part-label {
+  opacity: 0;
+}
+
+.specs-caption {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  opacity: 0;
 }
 
-.spec-detail {
-  font-size: 10px;
+.specs-stack {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
   color: var(--text-dim);
-  letter-spacing: 0.05em;
+  opacity: 0;
 }
 
 /* Protocols Slide */
@@ -1037,8 +1060,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .instruments-grid,
-  .specs-grid {
+  .instruments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 

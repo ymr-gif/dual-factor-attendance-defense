@@ -26,6 +26,8 @@ ppt-js/
 │   │   └── animations.js     # One function per data-anim name
 │   └── vendor/
 │       └── anime.umd.min.js  # anime.js v4.5.0, local copy
+├── tools/
+│   └── scene/                # Isometric SVG generator for slide 8
 └── index.html                # Main entry — 18 slides
 ```
 
@@ -65,7 +67,7 @@ fires if the vendored file is missing.
 | 5 | `notify` | Guardian notified — email, Messenger, < 60s |
 | 6 | `framework` | Conceptual framework (IPO) |
 | 7 | `architecture` | Tap → reader → API → capture → match → log → notify |
-| 8 | `hardware` | Component grid |
+| 8 | `hardware` | Prototype rig, then the Arduino exploded — **2 steps** |
 | 9 | `rq` | RQ1 — spoof rejection rate |
 | 10 | `rq` | RQ2 — system performance |
 | 11 | `rq` | RQ3 — acceptability |
@@ -117,6 +119,19 @@ function scopes its own queries.
 
 Unknown `data-anim` values log a console warning instead of failing silently.
 
+### Stepped slides
+
+An animation returns either a timeline, or `{ steps: [fn, fn, ...] }` for a slide
+the presenter advances through in beats. Step 1 plays on entry; each further
+arrow press calls `masterTimeline.nextStep()`, which returns `true` while it
+still has steps left — `nextSlide()` in `main.js` only moves on once it returns
+`false`. Leaving the slide clears its step state, so coming back replays from
+step 1. Slide 8 is the only stepped slide today.
+
+A later step must not assume the previous one finished — the presenter can press
+early. `hardware()` pauses the step-1 timeline and sets its end state before
+step 2 animates, otherwise the older tweens land after the newer ones.
+
 ## Animation Engine (animations.js)
 
 - One function per `data-anim` name, each receiving the slide element
@@ -133,6 +148,12 @@ Unknown `data-anim` values log a console warning instead of failing silently.
 | `F` | Toggle fullscreen |
 | `R` | Restart |
 | `P` | Reserved — not implemented |
+
+## Slide 8 Scene
+
+The isometric rig is generated, not hand-written — see `tools/scene/README.md`.
+`data-rise` on each part group carries how far it lifts in the exploded view, so
+the geometry stays the single source of truth for the animation.
 
 ## Theming
 

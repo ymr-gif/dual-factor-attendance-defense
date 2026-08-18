@@ -257,23 +257,115 @@ const slideAnimations = {
     return tl;
   },
 
-  // Hardware — spec grid lights up row by row
+  // Prototype — two steps: the rig assembles, then the Arduino explodes.
+  // Step 2 fires on the next arrow press (see timeline.js step handling).
   hardware(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const stage = q(el, '.rig-stage');
+    const units = qa(el, '.unit');
+    const parts = qa(el, '.part');
+    const wires = qa(el, '.wire');
+    const caption = q(el, '.specs-caption');
+    const risers = parts.filter((p) => Number(p.dataset.rise) > 0);
+    // everything that clears away when the camera pushes into the board
+    const context = qa(el, '.rig-context');
+    let rigTl = null;
 
-    tl.add(q(el, '.specs-title'), {
-      opacity: [0, 1],
-      y: [-20, 0],
-      duration: 500,
-    })
-    .add(qa(el, '.spec-card'), {
-      opacity: [0, 1],
-      y: [20, 0],
-      delay: stagger(100),
-      duration: 400,
-    }, '-=200');
+    // Step 1 — the guardpost rig drops in and the jumpers draw themselves
+    const rig = () => {
+      utils.set(stage, { scale: 1, x: 0, y: 0 });
+      utils.set(parts, { y: 0 });
+      utils.set(units, { opacity: 0 });
+      utils.set(context, { opacity: 1 });
+      utils.set(qa(el, '.part-label'), { opacity: 0 });
+      utils.set(qa(el, '.rig-label'), { opacity: 0 });
+      caption.textContent = 'Guardpost rig';
 
-    return tl;
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(q(el, '.specs-title'), {
+        opacity: [0, 1],
+        y: [-20, 0],
+        duration: 500,
+      })
+      .add(units, {
+        opacity: [0, 1],
+        y: [-40, 0],
+        delay: stagger(140),
+        duration: 700,
+      }, '-=250')
+      .add(wires, {
+        opacity: [0, 0.9],
+        duration: 200,
+      }, '-=400')
+      .add(svg.createDrawable(wires), {
+        draw: ['0 0', '0 1'],
+        duration: 900,
+        ease: 'inOutQuad',
+      }, '<')
+      .add(qa(el, '.rig-label'), {
+        opacity: [0, 1],
+        delay: stagger(110),
+        duration: 450,
+      }, '-=500')
+      .add(q(el, '.specs-caption'), {
+        opacity: [0, 1],
+        duration: 400,
+      }, '-=300')
+      .add(q(el, '.specs-stack'), {
+        opacity: [0, 1],
+        duration: 400,
+      }, '-=250');
+
+      rigTl = tl;
+      return tl;
+    };
+
+    // Step 2 — everything else clears, the camera pushes into the board,
+    // and the parts lift off along the isometric axis
+    const explode = () => {
+      // The presenter may hit step 2 before step 1 has settled. Stop that
+      // timeline and jump to its end state, or its tweens finish after ours
+      // and put the rig back.
+      if (rigTl) rigTl.pause();
+      utils.set(units, { opacity: 1, y: 0 });
+      utils.set(wires, { opacity: 0.9 });
+      utils.set(qa(el, '.rig-label'), { opacity: 1 });
+      utils.set([q(el, '.specs-title'), caption, q(el, '.specs-stack')], { opacity: 1 });
+
+      caption.textContent = 'Arduino · exploded';
+
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(qa(el, '.rig-label'), {
+        opacity: 0,
+        duration: 300,
+      })
+      .add(context, {
+        opacity: 0,
+        duration: 450,
+      }, '-=200')
+      .add(stage, {
+        scale: 1.45,
+        x: -54.1,
+        y: -71.5,
+        duration: 1100,
+        ease: 'inOutQuad',
+      }, '-=350')
+      .add(risers, {
+        y: (p) => -Number(p.dataset.rise),
+        delay: stagger(70),
+        duration: 900,
+      }, '-=600')
+      .add(qa(el, '.part-label'), {
+        opacity: [0, 1],
+        delay: stagger(90),
+        duration: 400,
+      }, '-=400');
+
+      return tl;
+    };
+
+    return { steps: [rig, explode] };
   },
 
   // Research questions — shared by all three RQ slides
