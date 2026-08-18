@@ -102,7 +102,40 @@ function applyMatrix(positions, m, isDirection) {
   return out;
 }
 
-function material(gltf, index) {
+// Pulls the raw encoded bytes for a glTF image straight out of the .glb's
+// binary chunk. The bytes are already JPEG (blender_prep.py recompresses
+// everything to keep the baked file small) — bake.js never decodes pixels,
+// it just re-wraps the same bytes as a data: URI, so no image library is
+// needed at authoring time. Cached per-image so a texture shared by several
+// materials (or several primitives) is only base64-encoded once; the cache
+// is keyed on the gltf object itself so back-to-back bake() calls in one
+// process (tests, watch mode) never see another file's images.
+const imageCaches = new WeakMap();
+function imageDataUri(gltf, bin, index) {
+  let cache = imageCaches.get(gltf);
+  if (!cache) { cache = new Map(); imageCaches.set(gltf, cache); }
+  if (cache.has(index)) return cache.get(index);
+  const img = gltf.json.images[index];
+  if (img.bufferView === undefined) throw new Error('external image URIs are not supported — pack textures before export');
+  const view = gltf.json.bufferViews[img.bufferView];
+  const start = view.byteOffset || 0;
+  const bytes = bin.subarray(start, start + view.byteLength);
+  const uri = `data:${img.mimeType};base64,${Buffer.from(bytes).toString('base64')}`;
+  cache.set(index, uri);
+  return uri;
+}
+
+// Resolves a glTF textureInfo (the {index, texCoord} objects baseColorTexture
+// / metallicRoughnessTexture point to) down to the embeddable image behind it.
+function textureUri(gltf, bin, textureInfo) {
+  if (!textureInfo) return null;
+  const texture = gltf.json.textures[textureInfo.index];
+  const source = texture.source !== undefined ? texture.source : texture.extensions?.KHR_texture_basisu?.source;
+  if (source === undefined) return null;
+  return imageDataUri(gltf, bin, source);
+}
+
+function material(gltf, bin, index) {
   const mat = (gltf.json.materials || [])[index];
   if (!mat) return { color: 0xcccccc, roughness: 0.8, metalness: 0 };
   const pbr = mat.pbrMetallicRoughness || {};
@@ -115,6 +148,10 @@ function material(gltf, index) {
     roughness: pbr.roughnessFactor !== undefined ? pbr.roughnessFactor : 1,
     metalness: pbr.metallicFactor !== undefined ? pbr.metallicFactor : 1,
     emissive: (toHex(emissive[0]) << 16) | (toHex(emissive[1]) << 8) | toHex(emissive[2]),
+    // null when the material is a flat colour — model-loader.js falls back
+    // to the factors above whenever these are absent
+    map: textureUri(gltf, bin, pbr.baseColorTexture),
+    roughnessMap: textureUri(gltf, bin, pbr.metallicRoughnessTexture),
   };
 }
 
@@ -135,11 +172,25 @@ function bake(file) {
     if (node.mesh !== undefined) {
       const mesh = json.meshes[node.mesh];
       const name = node.name || mesh.name || 'part' + nodeIndex;
-      mesh.primitives.forEach((prim, i) => {
-        const key = mesh.primitives.length > 1 ? `${name}__${i}` : name;
+      // A part is everything the explode animation and the callout labels
+      // move as one rigid body, looked up by this exact name — see mount()
+      // in hardware-3d.js and trackLabels() in animations.js. A part can
+      // still have more than one material (the PCB has top/bottom/side
+      // faces; a joined part like "usb" can carry a shell material and a
+      // socket material), so each part bakes to an ARRAY of primitives
+      // rather than a single geometry+material pair. Splitting multi-
+      // material nodes into separate keys (the old `${name}__${i}` scheme)
+      // silently broke every name-keyed lookup for any part with more than
+      // one material, which is now the common case once parts are grouped
+      // in Blender.
+      parts[name] = mesh.primitives.map((prim) => {
         const position = applyMatrix(accessor(gltf, bin, prim.attributes.POSITION), world, false);
         const normal = prim.attributes.NORMAL !== undefined
           ? applyMatrix(accessor(gltf, bin, prim.attributes.NORMAL), world, true)
+          : null;
+        // UVs are 2D and unaffected by the node's 3D transform — no applyMatrix
+        const uv = prim.attributes.TEXCOORD_0 !== undefined
+          ? accessor(gltf, bin, prim.attributes.TEXCOORD_0)
           : null;
         const index = prim.indices !== undefined ? accessor(gltf, bin, prim.indices) : null;
 
@@ -150,13 +201,14 @@ function bake(file) {
           }
         }
 
-        parts[key] = {
+        return {
           position: b64(position),
           normal: normal ? b64(normal) : null,
+          uv: uv ? b64(uv) : null,
           index: index ? b64(index) : null,
           indexBits: index ? index.BYTES_PER_ELEMENT * 8 : 0,
           vertices: position.length / 3,
-          material: material(gltf, prim.material),
+          material: material(gltf, bin, prim.material),
         };
       });
     }
@@ -187,8 +239,10 @@ function main() {
     'window.arduinoModel = ' + JSON.stringify(model, null, 1) + ';\n');
 
   const size = (fs.statSync(out).size / 1024).toFixed(0);
+  const textured = names.filter((n) => model.parts[n].some((p) => p.material.map || p.material.roughnessMap));
   console.log(`baked ${names.length} parts → src/models/arduino-model.js (${size} KB)`);
   console.log('parts:', names.join(', '));
+  console.log('textured parts:', textured.length ? textured.join(', ') : 'none');
   const span = model.bounds.max.map((v, i) => (v - model.bounds.min[i]).toFixed(3));
   console.log('bounds (x y z):', span.join(' × '));
 }

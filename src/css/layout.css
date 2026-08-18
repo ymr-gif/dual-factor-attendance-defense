@@ -620,6 +620,15 @@
   opacity: 0;
 }
 
+/* CC BY 4.0 requires visible attribution — nested inside .specs-stack so it
+   fades in with that line rather than needing its own animation entry, and
+   dimmed a step further so it reads as a credit, not a spec. */
+.specs-credit {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
 /* Protocols Slide */
 .protocols-split {
   display: flex;
