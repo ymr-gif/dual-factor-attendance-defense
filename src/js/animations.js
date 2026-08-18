@@ -286,6 +286,7 @@ const slideAnimations = {
   // Solution — NFC and Face converge into one verdict
   solution(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    let vtuberView = null;
 
     tl.add(q(el, '.solution-icon--nfc'), {
       x: [-100, 0],
@@ -306,7 +307,23 @@ const slideAnimations = {
       opacity: [0, 1],
       y: [20, 0],
       duration: 600,
-    }, '+=300');
+    }, '+=300')
+    .add(q(el, '.vtuber-3d'), {
+      opacity: [0, 1],
+      duration: 800,
+      begin() {
+        const vtuberEl = q(el, '.vtuber-3d');
+        const can3D = vtuberEl && window.vtuber3D && window.vtuber3D.supported();
+        if (can3D) {
+          vtuberView = window.vtuber3D.mount(q(el, '.vtuber-3d__canvas'));
+          if (vtuberView) {
+            vtuberView.resize();
+            vtuberView.render();
+            vtuberView.start();
+          }
+        }
+      },
+    }, '-=300');
 
     return tl;
   },

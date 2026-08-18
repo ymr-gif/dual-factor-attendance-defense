@@ -1,8 +1,8 @@
-# Model Pipeline — Blender to Slide 8
+# Model Pipeline — Blender to Slides 3 and 8
 
-How a modelled Arduino gets into the deck, and exactly what the file has to look
-like. The 3D board on slide 8 works without one; a model replaces its built-in
-geometry with something more detailed.
+How a modelled asset gets into the deck, and exactly what the file has to look
+like. Both the Arduino on slide 8 and the vtuber portrait on slide 3 use the
+same bake-and-decode pipeline; each has its own bake script and model file.
 
 ---
 
@@ -21,6 +21,7 @@ works over `http://` if the deck is ever hosted.
 
 ```
 arduino.glb → python3 tools/model/blender_prep.py → processed.glb → node tools/model/bake.js → src/models/arduino-model.js → browser
+vtuber.glb  → node tools/model/bake-vtuber.js → src/models/vtuber-model.js → browser
 ```
 
 The Blender step is only needed when the source .glb does not already meet
@@ -160,6 +161,37 @@ comment it shipped with.
 
 ---
 
+## Slide 3 — Vtuber portrait
+
+`tools/model/bake-vtuber.js` works like `bake.js` but filters meshes by name.
+It keeps face, hair, eyes, eyelashes, highlights, and face-mask meshes and
+discards the body. The mesh-inclusion patterns are in the `MESH_INCLUDE` array
+at the top of the file — edit them when a new character uses different naming.
+
+```
+node tools/model/bake-vtuber.js ~/Downloads/character.glb
+```
+
+Writes `src/models/vtuber-model.js` (`window.vtuberModel`), which
+`src/js/vtuber-3d.js` reads at runtime. The scene is a simple turntable — no
+explode, no labels — with portrait framing and studio lighting.
+
+### Mesh filtering
+
+bake-vtuber.js walks the same glTF node tree as bake.js. For each mesh, it
+tests `mesh.name` against `MESH_INCLUDE` regexes. Matching meshes are baked;
+everything else is skipped. The part names in the output are cleaned-up mesh
+names (prefixes stripped, underscores → hyphens).
+
+### Vertex counts to expect
+
+A typical character model has 15-30K vertices across face/hair meshes. The
+current model (Mint from Neverness to Everness) bakes to ~7K vertices across
+7 parts, with ~6MB of embedded textures. Running the model through
+`blender_prep.py` first (which downscales textures) reduces this significantly.
+
+---
+
 ## Checking a model without the deck
 
 `tools/model/bake.js` prints bounds and part names, which catches the two
@@ -170,13 +202,13 @@ and Draco left switched on.
 
 ## Attribution
 
-Record the model's source and license here when one is added.
-
 | Model | Author | License | Added |
 |-------|--------|---------|-------|
 | [Arduino UNO](https://sketchfab.com/3d-models/arduino-uno-51dd4e0cdfad4c4c95354bc5e29dcf1a) (Sketchfab) | Helindu | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | 2026-08-18 |
+| [Mint — Neverness to Everness](https://sketchfab.com/3d-models) (Sketchfab) | — | — | 2026-08-19 |
 
 CC BY requires visible attribution, not just a credit buried in the repo —
 the deck is hosted publicly, so slide 8 carries an on-screen credit line
 ("Arduino model by Helindu · CC BY 4.0") under the spec-stack text, in both
-steps of the slide.
+steps of the slide. The vtuber model attribution should be added once the
+license is confirmed.
