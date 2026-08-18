@@ -310,7 +310,11 @@
 
     const board = new THREE.Group();
     const mat = materials();
-    const parts = buildBoard(mat);
+    // A baked Blender model wins when one is present; the primitives stay as
+    // the always-available version. See docs/3D_MODEL_PIPELINE.md.
+    const parts = (window.modelLoader && window.modelLoader.available())
+      ? window.modelLoader.build(window.arduinoModel, W)
+      : buildBoard(mat);
     Object.keys(parts).forEach((name) => board.add(parts[name]));
     board.rotation.y = -0.42;
     scene.add(board);
@@ -336,7 +340,7 @@
       const held = {};
       Object.keys(parts).forEach((name) => {
         held[name] = parts[name].position.y;
-        parts[name].position.y = rest[name] + (EXPLODE[name] || 0);
+        parts[name].position.y = rest[name] + riseFor(name);
       });
       const box = new THREE.Box3().setFromObject(board);
       Object.keys(parts).forEach((name) => { parts[name].position.y = held[name]; });
@@ -399,7 +403,7 @@
     window.addEventListener('resize', () => { resize(); render(); });
 
     const api = {
-      renderer, scene, camera, board, parts, rest, explode: EXPLODE,
+      renderer, scene, camera, board, parts, rest, explode: EXPLODE, riseFor,
       onFrame: null,
       resize, render, start, stop, frame,
 
@@ -436,5 +440,10 @@
     return api;
   }
 
-  window.hardware3D = { supported, mount, stopAll, EXPLODE, MM, W, D, T };
+  // Parts the explode table does not name still travel, just less far
+  function riseFor(name) {
+    return EXPLODE[name] !== undefined ? EXPLODE[name] : 1.5;
+  }
+
+  window.hardware3D = { supported, mount, stopAll, riseFor, EXPLODE, MM, W, D, T };
 })();
