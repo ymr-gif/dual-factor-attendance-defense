@@ -1,87 +1,116 @@
 const { animate, stagger, createTimeline, svg, utils, scrambleText } = anime;
 
+// Every animation is keyed by the slide's data-anim value and receives that
+// slide element. Queries are scoped to the slide so a name can repeat (see rq).
+const q = (el, sel) => el.querySelector(sel);
+const qa = (el, sel) => Array.from(el.querySelectorAll(sel));
+
 const slideAnimations = {
 
-  // Slide 1: Title — Scramble text + icon reveal
-  slide1() {
+  // Title — shield draws, S.A.F.E. scrambles in, team staggers
+  title(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.shield-icon', {
+    tl.add(q(el, '.title-school'), {
+      opacity: [0, 1],
+      y: [-10, 0],
+      duration: 500,
+    })
+    .add(q(el, '.shield-icon'), {
       opacity: [0, 1],
       scale: [0.5, 1],
       duration: 800,
-    })
-    .add('.checkmark', {
+    }, '-=200')
+    .add(q(el, '.checkmark'), {
       strokeDashoffset: [100, 0],
       duration: 600,
     }, '-=300')
-    .add('.title-main', {
+    .add(q(el, '.title-main'), {
       innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
       duration: 1200,
     }, '-=400')
-    .add('.title-divider', {
+    .add(q(el, '.title-divider'), {
       scaleX: [0, 1],
       duration: 600,
     }, '-=600')
-    .add('.title-sub', {
+    .add(q(el, '.title-full'), {
+      opacity: [0, 1],
+      duration: 600,
+    }, '-=300')
+    .add(q(el, '.title-sub'), {
       opacity: [0, 1],
       y: [15, 0],
-      duration: 600,
-    }, '-=300');
+      duration: 500,
+    }, '-=300')
+    .add(qa(el, '.title-team li'), {
+      opacity: [0, 1],
+      y: [10, 0],
+      delay: stagger(80),
+      duration: 400,
+    }, '-=200')
+    .add(q(el, '.title-section'), {
+      opacity: [0, 1],
+      duration: 400,
+    }, '-=100');
 
     return tl;
   },
 
-  // Slide 2: Problem — Fingerprint + reject stamp
-  slide2() {
+  // Problem — logbook lines scrawl in, UNVERIFIED stamps down
+  problem(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.fingerprint-icon circle', {
-      scale: [0, 1],
+    tl.add(q(el, '.logbook-icon rect'), {
       opacity: [0, 1],
-      delay: stagger(100),
+      scale: [0.8, 1],
       duration: 600,
     })
-    .add('.problem-title', {
-      opacity: [0, 1],
-      y: [20, 0],
-      duration: 600,
-    }, '-=200')
-    .add('.problem-subtitle', {
-      opacity: [0, 1],
+    .add(qa(el, '.logbook-line'), {
+      scaleX: [0, 1],
+      opacity: [0, 0.7],
+      delay: stagger(120),
       duration: 400,
-    }, '-=300')
-    .add('.reject-stamp', {
+    }, '-=200')
+    .add(q(el, '.reject-stamp'), {
       opacity: [0, 1],
       scale: [3, 1],
-      rotate: ['-30deg', '-15deg'],
+      rotate: [-25, -12],
       duration: 400,
       ease: 'outBack',
-    }, '+=500');
+    }, '+=200')
+    .add(q(el, '.problem-title'), {
+      opacity: [0, 1],
+      y: [20, 0],
+      duration: 500,
+    }, '-=100')
+    .add(q(el, '.problem-subtitle'), {
+      opacity: [0, 1],
+      duration: 400,
+    }, '-=200');
 
     return tl;
   },
 
-  // Slide 3: Solution — Icons converge
-  slide3() {
+  // Solution — NFC and Face converge into one verdict
+  solution(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.solution-icon--nfc', {
+    tl.add(q(el, '.solution-icon--nfc'), {
       x: [-100, 0],
       opacity: [0, 1],
       duration: 800,
     })
-    .add('.solution-icon--face', {
+    .add(q(el, '.solution-icon--face'), {
       x: [100, 0],
       opacity: [0, 1],
       duration: 800,
     }, '<')
-    .add('.solution-plus', {
+    .add(q(el, '.solution-plus'), {
       opacity: [0, 1],
       scale: [0, 1],
       duration: 400,
     }, '-=300')
-    .add('.solution-result', {
+    .add(q(el, '.solution-result'), {
       opacity: [0, 1],
       y: [20, 0],
       duration: 600,
@@ -90,34 +119,34 @@ const slideAnimations = {
     return tl;
   },
 
-  // Slide 4: Liveness — Scan line + reject
-  slide4() {
+  // Liveness — scan line sweeps, spoof is rejected
+  liveness(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.liveness-photo', {
+    tl.add(q(el, '.liveness-photo'), {
       opacity: [0, 1],
       scale: [0.8, 1],
       duration: 600,
     })
-    .add('.liveness-scan-line', {
+    .add(q(el, '.liveness-scan-line'), {
       opacity: [0, 1, 1, 0],
       y: [0, 0, 180, 200],
       duration: 1200,
       ease: 'linear',
     }, '-=200')
-    .add('.liveness-stamp', {
+    .add(q(el, '.liveness-stamp'), {
       opacity: [0, 1],
       scale: [2.5, 1],
       rotate: ['-30deg', -15],
       duration: 300,
       ease: 'outBack',
     }, '-=200')
-    .add('.liveness-title', {
+    .add(q(el, '.liveness-title'), {
       opacity: [0, 1],
       y: [20, 0],
       duration: 500,
     }, '-=100')
-    .add('.liveness-subtitle', {
+    .add(q(el, '.liveness-subtitle'), {
       opacity: [0, 1],
       duration: 400,
     }, '-=200');
@@ -125,60 +154,158 @@ const slideAnimations = {
     return tl;
   },
 
-  // Slide 5: Architecture — Nodes cascade + arrows draw
-  slide5() {
+  // Notify — verified badge fires a trail to the guardian's phone
+  notify(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.arch-title', {
+    tl.add(q(el, '.notify-title'), {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 500,
-    });
-
-    const nodes = document.querySelectorAll('.arch-node');
-    const arrows = document.querySelectorAll('.arch-arrow');
-
-    nodes.forEach((node, i) => {
-      const pos = i * 300;
-      tl.add(node, {
-        opacity: [0, 1],
-        y: [20, 0],
-        duration: 400,
-      }, `-=200`);
-    });
-
-    arrows.forEach((arrow, i) => {
-      tl.add(arrow, {
-        opacity: [0, 1],
-        scaleX: [0, 1],
-        duration: 300,
-      }, '-=100');
-    });
+    })
+    .add(q(el, '.notify-source'), {
+      opacity: [0, 1],
+      scale: [0.6, 1],
+      duration: 600,
+    }, '-=200')
+    .add(qa(el, '.notify-dot'), {
+      opacity: [0, 1],
+      scale: [0, 1],
+      delay: stagger(90),
+      duration: 300,
+    }, '-=200')
+    .add(q(el, '.notify-device'), {
+      opacity: [0, 1],
+      x: [40, 0],
+      duration: 600,
+    }, '-=100')
+    .add(qa(el, '.notify-envelope'), {
+      opacity: [0, 1],
+      scale: [0.5, 1],
+      duration: 400,
+      ease: 'outBack',
+    }, '-=200')
+    .add(qa(el, '.notify-chip'), {
+      opacity: [0, 1],
+      y: [12, 0],
+      delay: stagger(100),
+      duration: 400,
+    }, '-=100');
 
     return tl;
   },
 
-  // Slide 6-8: Research Questions — Number bounce + data reveal
-  rqSlide(slideEl) {
+  // Framework — IPO stages build left to right, feedback loop closes
+  framework(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add(slideEl.querySelector('.rq-number'), {
+    tl.add(q(el, '.framework-title'), {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 500,
+    })
+    .add(qa(el, '.ipo-stage'), {
+      opacity: [0, 1],
+      y: [30, 0],
+      delay: stagger(220),
+      duration: 600,
+    }, '-=200')
+    .add(qa(el, '.ipo-arrow'), {
+      opacity: [0, 1],
+      scaleX: [0, 1],
+      delay: stagger(220),
+      duration: 400,
+    }, '-=800')
+    .add(qa(el, '.ipo-list li'), {
+      opacity: [0, 1],
+      x: [-10, 0],
+      delay: stagger(50),
+      duration: 300,
+    }, '-=400')
+    .add(q(el, '.ipo-feedback'), {
+      opacity: [0, 1],
+      scaleX: [0.6, 1],
+      duration: 600,
+    }, '-=200');
+
+    return tl;
+  },
+
+  // Architecture — nodes cascade, arrows draw between them
+  architecture(el) {
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+    tl.add(q(el, '.arch-title'), {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 500,
+    })
+    .add(qa(el, '.arch-node'), {
+      opacity: [0, 1],
+      y: [20, 0],
+      scale: [0.85, 1],
+      delay: stagger(160),
+      duration: 450,
+    }, '-=200')
+    .add(qa(el, '.arch-arrow'), {
+      opacity: [0, 1],
+      scaleX: [0, 1],
+      delay: stagger(160),
+      duration: 300,
+    }, '-=1100');
+
+    return tl;
+  },
+
+  // Hardware — spec grid lights up row by row
+  hardware(el) {
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+    tl.add(q(el, '.specs-title'), {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 500,
+    })
+    .add(qa(el, '.spec-card'), {
+      opacity: [0, 1],
+      y: [20, 0],
+      delay: stagger(100),
+      duration: 400,
+    }, '-=200');
+
+    return tl;
+  },
+
+  // Research questions — shared by all three RQ slides
+  rq(el) {
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+    tl.add(q(el, '.rq-eyebrow'), {
+      opacity: [0, 1],
+      y: [-12, 0],
+      duration: 450,
+    })
+    .add(qa(el, '.rq-eyebrow__rule'), {
+      scaleX: [0, 1],
+      duration: 500,
+    }, '-=250')
+    .add(q(el, '.rq-number'), {
       opacity: [0, 1],
       scale: [0.3, 1],
       duration: 800,
       ease: 'outElastic(1, 0.5)',
-    })
-    .add(slideEl.querySelector('.rq-icon'), {
+    }, '-=250')
+    .add(q(el, '.rq-icon'), {
       opacity: [0, 1],
       scale: [0, 1],
       duration: 500,
     }, '-=400')
-    .add(slideEl.querySelector('.rq-label'), {
+    .add(q(el, '.rq-label'), {
       opacity: [0, 1],
       y: [15, 0],
       duration: 500,
     }, '-=200')
-    .add(slideEl.querySelector('.rq-data'), {
+    .add(q(el, '.rq-data'), {
       opacity: [0, 1],
       y: [15, 0],
       duration: 500,
@@ -187,16 +314,16 @@ const slideAnimations = {
     return tl;
   },
 
-  // Slide 9: Instruments — Cards stagger in
-  slide9() {
+  // Instruments — three cards stagger in
+  instruments(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.instruments-title', {
+    tl.add(q(el, '.instruments-title'), {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 500,
     })
-    .add('.instrument-card', {
+    .add(qa(el, '.instrument-card'), {
       opacity: [0, 1],
       y: [30, 0],
       delay: stagger(150),
@@ -206,40 +333,21 @@ const slideAnimations = {
     return tl;
   },
 
-  // Slide 10: Hardware Specs — Grid lights up
-  slide10() {
+  // Protocols — two halves enter from opposite sides
+  protocols(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.specs-title', {
-      opacity: [0, 1],
-      y: [-20, 0],
-      duration: 500,
-    })
-    .add('.spec-card', {
-      opacity: [0, 1],
-      y: [20, 0],
-      delay: stagger(100),
-      duration: 400,
-    }, '-=200');
-
-    return tl;
-  },
-
-  // Slide 11: Protocols — Split entrance
-  slide11() {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-    tl.add('.protocol--1', {
+    tl.add(q(el, '.protocol--1'), {
       opacity: [0, 1],
       x: [-50, 0],
       duration: 700,
     })
-    .add('.protocol--2', {
+    .add(q(el, '.protocol--2'), {
       opacity: [0, 1],
       x: [50, 0],
       duration: 700,
     }, '-=500')
-    .add('.protocol-divider', {
+    .add(q(el, '.protocol-divider'), {
       scaleY: [0, 1],
       opacity: [0, 0.3],
       duration: 400,
@@ -248,94 +356,126 @@ const slideAnimations = {
     return tl;
   },
 
-  // Slide 12: Survey — Bars grow
-  slide12() {
+  // Survey — instrument structure, no result claims
+  survey(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.survey-title', {
+    tl.add(q(el, '.survey-title'), {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 500,
-    });
-
-    const bars = document.querySelectorAll('.survey-bar');
-    const widths = ['85%', '70%', '40%', '20%', '10%'];
-
-    bars.forEach((bar, i) => {
-      const fill = bar.querySelector('.survey-bar__fill');
-      tl.add(bar, {
-        opacity: [0, 1],
-        duration: 300,
-      }, '-=200');
-      tl.add(fill, {
-        width: [0, widths[i]],
-        duration: 600,
-      }, '-=200');
-    });
-
-    tl.add('.survey-participants', {
+    })
+    .add(qa(el, '.survey-version'), {
+      opacity: [0, 1],
+      scale: [0.8, 1],
+      delay: stagger(160),
+      duration: 500,
+    }, '-=200')
+    .add(qa(el, '.survey-trait'), {
+      opacity: [0, 1],
+      y: [16, 0],
+      delay: stagger(110),
+      duration: 400,
+    }, '-=200')
+    .add(q(el, '.survey-participants'), {
       opacity: [0, 1],
       duration: 400,
-    }, '-=200');
+    }, '-=100');
 
     return tl;
   },
 
-  // Slide 13: Scale — Meter fills
-  slide13() {
+  // Scale — interpretation ladder builds from the bottom band up
+  scale(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    tl.add('.scale-fill', {
-      width: ['0%', '80%'],
-      duration: 1200,
+    tl.add(q(el, '.scale-title'), {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 500,
     })
-    .add('.scale-marker', {
-      left: ['0%', '80%'],
-      duration: 1200,
+    .add(qa(el, '.scale-row'), {
+      opacity: [0, 1],
+      x: [-30, 0],
+      delay: stagger(120, { from: 'last' }),
+      duration: 450,
+    }, '-=200')
+    .add(q(el, '.scale-footnote'), {
+      opacity: [0, 1],
+      duration: 400,
+    }, '-=100');
+
+    return tl;
+  },
+
+  // Scope — in-scope and out-of-scope columns split apart
+  scope(el) {
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+    tl.add(q(el, '.scope-title'), {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 500,
+    })
+    .add(q(el, '.scope-col--in'), {
+      opacity: [0, 1],
+      x: [-40, 0],
+      duration: 600,
+    }, '-=200')
+    .add(q(el, '.scope-col--out'), {
+      opacity: [0, 1],
+      x: [40, 0],
+      duration: 600,
     }, '<')
-    .add('.scale-label', {
+    .add(q(el, '.scope-divider'), {
+      scaleY: [0, 1],
+      opacity: [0, 0.3],
+      duration: 400,
+    }, '-=400')
+    .add(qa(el, '.scope-list li'), {
       opacity: [0, 1],
       y: [10, 0],
-      delay: stagger(200),
+      delay: stagger(60),
+      duration: 300,
+    }, '-=300');
+
+    return tl;
+  },
+
+  // Expected output — three deliverable cards
+  output(el) {
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+    tl.add(q(el, '.output-title'), {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 500,
+    })
+    .add(qa(el, '.output-card'), {
+      opacity: [0, 1],
+      y: [30, 0],
+      delay: stagger(180),
+      duration: 600,
+    }, '-=200')
+    .add(q(el, '.output-note'), {
+      opacity: [0, 1],
       duration: 400,
-    }, '-=400');
+    }, '-=100');
 
     return tl;
   },
 
-  // Slide 14: Acceptability — Ring fills
-  slide14() {
+  // Thanks — words rise into place
+  thanks(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    const ring = document.querySelector('.accept-ring__progress');
-    if (ring) {
-      tl.add(ring, {
-        strokeDashoffset: [534, 107],
-        duration: 1500,
-      });
-    }
-
-    tl.add('.accept-ring__value', {
-      innerHTML: ['0%', '80%'],
-      duration: 1500,
-      ease: 'linear',
-      modifier: (v) => Math.round(parseFloat(v)) + '%',
-    }, '<');
-
-    return tl;
-  },
-
-  // Slide 15: Thanks — Words scatter then reassemble
-  slide15() {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-    tl.add('.thanks-word', {
+    tl.add(qa(el, '.thanks-word'), {
       opacity: [0, 1],
       y: [60, 0],
       delay: stagger(200),
       duration: 800,
     })
-    .add('.thanks-sub', {
+    .add(q(el, '.thanks-sub'), {
       opacity: [0, 1],
       y: [20, 0],
       duration: 600,

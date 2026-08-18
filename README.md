@@ -16,6 +16,8 @@ Open index.html in Chrome → F11 for fullscreen
 - [Animations](docs/ANIMATIONS.md) — Animation concepts (mutable)
 - [Hosting](docs/HOSTING.md) — Deploy instructions
 - [Guidelines](docs/GUIDELINES.md) — Rules for cold sessions
+- [Build Plan](docs/BUILD_PLAN.md) — What still needs work
+- [Defense Plan](docs/DEFENSE_PLAN.md) — Running order, script, Q&A prep
 
 ## Presentation Controls
 

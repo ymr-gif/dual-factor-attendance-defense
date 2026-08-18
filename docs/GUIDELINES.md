@@ -9,16 +9,18 @@
 
 ## Do
 
-- Keep text minimal (3-5 words max per slide)
+- Keep text minimal (3-5 words max per slide; diagram slides may use short labels)
+- Never show numbers the study has not measured — this is a proposal, not a final defense
 - Use anime.js v4 syntax (not v3)
   - v4: `import { animate, stagger } from 'animejs';`
   - v3: `anime({ targets: ... })` — DO NOT USE
-- Test all slides after changes
+- Test all 18 slides after changes
 - Update `ANIMATIONS.md` when changing animations
 - Use CSS variables for theming
 - Use `stagger()` for sequential animations
 - Use `createTimeline()` for sequenced slide animations
-- Keep one function per slide in `animations.js`
+- Key animations by `data-anim` name, one function per name, in `animations.js`
+- Scope every query to the passed slide element with `q()` / `qa()`
 
 ## Don't
 
@@ -26,7 +28,8 @@
 - Use jQuery or other animation libraries
 - Break keyboard navigation
 - Remove progress bar or slide counter
-- Change CDN link without checking version compatibility
+- Remove `src/vendor/anime.umd.min.js` — it is what makes the deck work offline
+- Change the anime.js version without checking compatibility
 - Use `autoplay: true` on slide animations (trigger on nav only)
 - Hardcode colors (use CSS variables)
 - Add npm/node dependencies
@@ -44,7 +47,7 @@
 
 1. Read `docs/ANIMATIONS.md` for current state
 2. Edit `src/js/animations.js`
-3. Test ALL 15 slides (not just the changed one)
+3. Test ALL 18 slides (not just the changed one)
 4. Update `docs/ANIMATIONS.md`:
    - What changed
    - Why it changed
@@ -61,17 +64,18 @@
 
 ## When Adding New Slides
 
-1. Add `<section class="slide">` to `index.html`
-2. Add slide styles to `src/css/slides.css`
-3. Add animation function to `src/js/animations.js`
-4. Register in timeline in `src/js/timeline.js`
-5. Update slide counter total
-6. Update all docs referencing slide count
+1. Add `<section class="slide" data-slide="N" data-anim="name">` to `index.html`
+2. Renumber the `data-slide` values after the insertion point
+3. Add slide styles to `src/css/layout.css`
+4. Add a `name(el)` function to `src/js/animations.js`
+5. Nothing to register — `timeline.js` dispatches on `data-anim`, and both the
+   counter total and `totalSlides` are read from the DOM
+6. Update the slide table in `ARCHITECTURE.md` and the running order in `DEFENSE_PLAN.md`
 
 ## Tech Stack (Do Not Change)
 
 - anime.js v4.5.0
-- CDN: `https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js`
+- Loaded from `src/vendor/anime.umd.min.js`, CDN only as fallback
 - Vanilla JS (no framework)
 - No build tools
 - No npm/node
