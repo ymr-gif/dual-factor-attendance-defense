@@ -406,7 +406,7 @@ const slideAnimations = {
     const banner = q(el, '.notify-banner');
     const envelopes = qa(el, '.notify-envelope');
     const chips = qa(el, '.notify-chip');
-    const ripples = qa(el, '.notify-ripple');
+    const corners = qa(el, '.notify-corner');
 
     // --- Title + Badge (0 – 0.8 s) ---
     tl.add(q(el, '.notify-title'), {
@@ -491,50 +491,59 @@ const slideAnimations = {
       ease: 'outBack',
     }, 6100);
 
-    // --- Phone vibrate + ripples (6.4 s) ---
+    // --- Corners appear + phone vibrate (6.7 s) ---
+    tl.add(corners, {
+      opacity: [0, 1],
+      duration: 150,
+    }, 6700);
+
     tl.add(device, {
       x: [0, -3, 3, -3, 3, -2, 2, -1, 1, 0],
       rotate: [0, -1.5, 1.5, -1.5, 1.5, -1, 1, 0],
       duration: 500,
       ease: 'linear',
-    }, 6400);
+    }, 6700);
 
-    ripples.forEach((ripple, i) => {
-      tl.add(ripple, {
-        opacity: [0, 0.6, 0],
-        scale: [0.8, 1.5],
-        duration: 600,
-        ease: 'outQuad',
-      }, 6400 + i * 150);
-    });
+    tl.add(corners, {
+      x: [0, -2, 2, -2, 2, -1, 1, 0],
+      y: [0, -2, 2, -2, 2, -1, 1, 0],
+      duration: 500,
+      ease: 'linear',
+    }, 6700);
 
-    // --- Phone settle (6.8 s) ---
+    // --- Corners fade out (7.1 s) ---
+    tl.add(corners, {
+      opacity: [1, 0],
+      duration: 200,
+    }, 7100);
+
+    // --- Phone settle (7.1 s) ---
     tl.add(device, {
       scale: [1.2, 1],
       duration: 250,
-    }, 6800);
+    }, 7100);
 
-    // --- Banner drops in (6.7 s) ---
+    // --- Banner drops in (7.0 s) ---
     tl.add(banner, {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 350,
       ease: 'outBack',
-    }, 6700);
+    }, 7000);
 
-    // --- Envelope + chips (7.0 s) ---
+    // --- Envelope + chips (7.3 s) ---
     tl.add(envelopes, {
       opacity: [0, 1],
       scale: [0.5, 1],
       duration: 350,
       ease: 'outBack',
-    }, 7000)
+    }, 7300)
     .add(chips, {
       opacity: [0, 1],
       y: [12, 0],
       delay: stagger(80),
       duration: 350,
-    }, 7200);
+    }, 7500);
 
     return tl;
   },
