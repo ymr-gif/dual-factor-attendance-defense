@@ -562,7 +562,7 @@ const slideAnimations = {
       duration: 150,
     }, 6700);
 
-    // Phone wave — smooth rocking instead of sharp shake
+    // Phone wave — smooth rocking
     tl.add(device, {
       x: [0, -4, 4, -3, 3, -1, 0],
       rotate: [0, -2, 2, -1.5, 1.5, -0.5, 0],
@@ -570,17 +570,38 @@ const slideAnimations = {
       ease: 'inOutSine',
     }, 6700);
 
-    // Corner wave — each corner pulses outward in a smooth arc, staggered
-    const CORNER_DELAY = 100;
-    corners.forEach((corner, i) => {
+    // Corner domino wave — clockwise: TL → TR → BR → BL
+    // Each corner pulses, then an echo pulse follows 200 ms later
+    const CORNER_ORDER = [0, 1, 3, 2]; // tl, tr, br, bl
+    const CORNER_STAGGER = 250;
+    const ECHO_OFFSET = 200;
+
+    CORNER_ORDER.forEach((idx, seq) => {
+      const base = 6700 + seq * CORNER_STAGGER;
+      const corner = corners[idx];
+      const dirX = (idx === 0 || idx === 2) ? 5 : -5;
+      const dirY = (idx < 2) ? -5 : 5;
+      const dirRot = (idx % 2 === 0) ? 12 : -12;
+
+      // Main pulse
       tl.add(corner, {
         scale: [1, 1.4, 1],
-        rotate: [0, (i % 2 === 0 ? 12 : -12), 0],
-        x: [0, (i % 2 === 0 ? 5 : -5), 0],
-        y: [0, (i < 2 ? -5 : 5), 0],
+        rotate: [0, dirRot, 0],
+        x: [0, dirX, 0],
+        y: [0, dirY, 0],
         duration: 700,
         ease: 'inOutSine',
-      }, 6700 + i * CORNER_DELAY);
+      }, base);
+
+      // Echo pulse — smaller, faster
+      tl.add(corner, {
+        scale: [1, 1.2, 1],
+        rotate: [0, dirRot * 0.5, 0],
+        x: [0, dirX * 0.5, 0],
+        y: [0, dirY * 0.5, 0],
+        duration: 400,
+        ease: 'inOutSine',
+      }, base + ECHO_OFFSET);
     });
 
     // --- Corners fade out (7.1 s) ---
