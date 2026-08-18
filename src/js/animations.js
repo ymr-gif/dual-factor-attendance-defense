@@ -20,8 +20,8 @@ const slideAnimations = {
       const board3d = q(el, '.title-board-3d');
       utils.set(intro, { opacity: 0, y: 0, scale: 1 });
       utils.set(school, { opacity: 0, y: 0 });
-      utils.set(main, { opacity: 0, y: 20 });
-      utils.set(rest, { opacity: 0, y: 40 });
+      utils.set(main, { opacity: 0, y: 60 });
+      utils.set(rest, { opacity: 0, y: 80 });
       utils.set(board3d, { opacity: 0 });
 
       // Mount 3D view if available
@@ -61,15 +61,27 @@ const slideAnimations = {
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
+      // Board explosion starts at the same time as text (offset 0)
+      if (view) {
+        const risers = Object.keys(view.parts).filter((name) => view.riseFor(name) > 0);
+        risers.forEach((name, i) => {
+          tl.add(view.parts[name].position, {
+            y: view.rest[name] + view.riseFor(name),
+            duration: 1400,
+            ease: 'outQuint',
+          }, 0 + i * 0.09);
+        });
+      }
+
       // Move intro and school upward
       tl.add(intro, {
-        y: -60,
+        y: -100,
         scale: 0.5,
         opacity: 0.6,
         duration: 800,
       })
       .add(school, {
-        y: -40,
+        y: -70,
         opacity: 0.5,
         duration: 800,
       }, '<')
@@ -106,18 +118,6 @@ const slideAnimations = {
         opacity: [0, 1],
         duration: 400,
       }, '-=100');
-
-      // Explode the 3D board if available
-      if (view) {
-        const risers = Object.keys(view.parts).filter((name) => view.riseFor(name) > 0);
-        risers.forEach((name, i) => {
-          tl.add(view.parts[name].position, {
-            y: view.rest[name] + view.riseFor(name),
-            duration: 1400,
-            ease: 'outQuint',
-          }, i === 0 ? '-=300' : `-=${1400 - 90}`);
-        });
-      }
 
       return tl;
     };
