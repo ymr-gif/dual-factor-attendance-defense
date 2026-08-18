@@ -10,113 +10,132 @@ ppt-js/
 │   ├── CONTEXT.md
 │   ├── ARCHITECTURE.md
 │   ├── ANIMATIONS.md
+│   ├── BUILD_PLAN.md
+│   ├── DEFENSE_PLAN.md
 │   ├── HOSTING.md
 │   └── GUIDELINES.md
 ├── src/
 │   ├── css/
 │   │   ├── reset.css         # Normalize
 │   │   ├── variables.css     # Theme tokens
-│   │   ├── layout.css        # Slide container, grid
-│   │   └── animations.css    # Keyframes, transition classes
+│   │   ├── layout.css        # Slide container, per-slide styles
+│   │   └── animations.css    # Shared keyframes, utility classes
 │   ├── js/
 │   │   ├── main.js           # Init, keyboard nav, slide engine
-│   │   ├── timeline.js       # Master timeline (all slides)
-│   │   └── animations.js     # All slide animations
-│   └── assets/
-│       └── icons/            # SVG icons
-└── index.html                # Main entry
+│   │   ├── timeline.js       # Dispatch by data-anim
+│   │   └── animations.js     # One function per data-anim name
+│   └── vendor/
+│       └── anime.umd.min.js  # anime.js v4.5.0, local copy
+└── index.html                # Main entry — 18 slides
 ```
 
 ## Tech Stack
 
 - **HTML5** — semantic markup, fullscreen slides
-- **CSS3** — custom properties, grid, transforms, transitions
+- **CSS3** — custom properties, flexbox, transforms, transitions
 - **Vanilla JS** — no framework, no build tools
-- **anime.js v4.5.0** — animation engine via CDN
+- **anime.js v4.5.0** — animation engine, loaded locally
 
 ## Dependencies
 
 | Package | Version | Source | Purpose |
 |---------|---------|--------|---------|
-| anime.js | 4.5.0 | jsDelivr CDN | Animation engine |
+| anime.js | 4.5.0 | `src/vendor/` (CDN fallback) | Animation engine |
 
-CDN URL: `https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js`
+Load order in `index.html`:
+
+```html
+<script src="src/vendor/anime.umd.min.js"></script>
+<script>
+  window.anime || document.write('<script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js">\x3C/script>');
+</script>
+```
+
+Local first so the deck works with no internet at the venue. The CDN line only
+fires if the vendored file is missing.
+
+## Slide Order (18)
+
+| # | data-anim | Slide |
+|---|-----------|-------|
+| 1 | `title` | Title — school, S.A.F.E., team, section |
+| 2 | `problem` | Manual logbook, UNVERIFIED stamp |
+| 3 | `solution` | NFC + Face converge |
+| 4 | `liveness` | Spoof rejected |
+| 5 | `notify` | Guardian notified — email, Messenger, < 60s |
+| 6 | `framework` | Conceptual framework (IPO) |
+| 7 | `architecture` | Tap → reader → API → capture → match → log → notify |
+| 8 | `hardware` | Component grid |
+| 9 | `rq` | RQ1 — spoof rejection rate |
+| 10 | `rq` | RQ2 — system performance |
+| 11 | `rq` | RQ3 — acceptability |
+| 12 | `instruments` | Three instruments |
+| 13 | `protocols` | Protocol 1 and 2 |
+| 14 | `survey` | Instrument structure |
+| 15 | `scale` | Interpretation ranges |
+| 16 | `scope` | In scope / out of scope |
+| 17 | `output` | Expected output |
+| 18 | `thanks` | Thank you |
 
 ## DOM Structure
 
 ```html
 <body>
   <div class="presentation">
-    <section class="slide slide--1 active" data-slide="1">
-      <!-- Slide content -->
-    </section>
-    <section class="slide slide--2" data-slide="2">
-      <!-- Slide content -->
+    <section class="slide slide--title active" data-slide="1" data-anim="title">
+      <div class="slide__content"><!-- slide content --></div>
     </section>
     <!-- ... -->
   </div>
 
-  <div class="progress-bar">
-    <div class="progress-bar__fill"></div>
-  </div>
-
+  <div class="progress-bar"><div class="progress-bar__fill"></div></div>
   <div class="slide-counter">
-    <span class="current">1</span> / <span class="total">15</span>
+    <span class="slide-counter__current">1</span>
+    <span class="slide-counter__sep">/</span>
+    <span class="slide-counter__total">18</span>
   </div>
-
   <div class="nav-hint">← → Space Click</div>
 </body>
 ```
 
 ## Slide Engine (main.js)
 
-1. On load: hide all slides except first
-2. Keyboard/click listener → advance to next step or slide
-3. Each slide has internal steps (sub-animations) tracked by `data-step`
-4. When all steps done → transition to next slide
-5. Progress bar updates on each step
+1. `totalSlides` is read from the DOM — adding a section is enough
+2. Counter total is written from that same count on init
+3. Keyboard/click/touch listener → `goToSlide()`
+4. `.active` moves to the new section; CSS transitions opacity + visibility
+5. After 100ms, `masterTimeline.playSlide()` runs that slide's animation
+6. Progress bar updates on every move
 
-## Timeline Engine (timeline.js)
+## Dispatch (timeline.js)
 
-- Master timeline with labeled sections per slide
-- `timeline.add('slide-1', ...)` — each slide is a label
-- Navigation calls `timeline.play('slide-N')` to jump
-- Each slide timeline contains sub-animations sequenced
+`playSlide(n)` reads `data-anim` from the section and calls
+`slideAnimations[name](slideEl)`. Animations are keyed by **name, not index**,
+so slides can be reordered or inserted without touching animation code.
+Three RQ slides share one `rq` function — the element is passed in, so the
+function scopes its own queries.
+
+Unknown `data-anim` values log a console warning instead of failing silently.
 
 ## Animation Engine (animations.js)
 
-- Contains all animation definitions per slide
-- Functions: `animateSlide1()`, `animateSlide2()`, etc.
-- Called by timeline engine when slide becomes active
-- Uses anime.js v4 API: `animate()`, `stagger()`, `createTimeline()`
+- One function per `data-anim` name, each receiving the slide element
+- `q(el, sel)` / `qa(el, sel)` scope every query to that slide
+- Uses anime.js v4 API: `createTimeline()`, `animate()`, `stagger()`, `scrambleText()`
+- Returns the timeline so the caller can hold or reverse it later
 
 ## Keyboard Controls
 
 | Key | Action |
 |-----|--------|
-| `→` | Next step / slide |
-| `←` | Previous step |
-| `Space` | Next step / slide |
-| `Click` | Next step / slide |
+| `→` / `Space` / `Click` | Next slide |
+| `←` | Previous slide |
 | `F` | Toggle fullscreen |
-| `R` | Restart presentation |
-| `P` | Pause / resume |
+| `R` | Restart |
+| `P` | Reserved — not implemented |
 
 ## Theming
 
-All colors defined as CSS custom properties in `variables.css`:
-
-```css
-:root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --text-primary: #e0e0e0;
-  --text-secondary: #888;
-  --accent: #00d4ff;
-  --accent-secondary: #7b2ff7;
-  --success: #00ff88;
-  --danger: #ff3366;
-}
-```
-
-Change these to retheme the entire presentation.
+All colors are CSS custom properties in `variables.css` (`--accent`,
+`--success`, `--danger`, `--warning`, background and text ramps). Change them
+there to retheme every slide.

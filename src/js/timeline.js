@@ -1,3 +1,5 @@
+// Dispatches slide animations by data-anim name, not by index, so slides can be
+// reordered or inserted without renumbering any animation code.
 const masterTimeline = {
   timelines: {},
   currentSlide: null,
@@ -15,14 +17,13 @@ const masterTimeline = {
     if (this.currentSlide === slideNum) return;
     this.currentSlide = slideNum;
 
-    // Run the appropriate animation
-    const animKey = `slide${slideNum}`;
-    const rqKey = slideNum >= 6 && slideNum <= 8 ? 'rqSlide' : null;
+    const animName = slideEl.dataset.anim;
+    const fn = animName && slideAnimations[animName];
 
-    if (slideNum >= 6 && slideNum <= 8) {
-      slideAnimations.rqSlide(slideEl);
-    } else if (slideAnimations[animKey]) {
-      slideAnimations[animKey]();
+    if (typeof fn === 'function') {
+      this.timelines[slideNum] = fn(slideEl);
+    } else if (animName) {
+      console.warn(`No animation registered for data-anim="${animName}"`);
     }
   },
 

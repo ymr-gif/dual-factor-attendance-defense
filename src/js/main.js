@@ -2,12 +2,16 @@
   'use strict';
 
   let currentSlide = 1;
-  let totalSlides = 15;
   let isAnimating = false;
 
   const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
   const progressFill = document.querySelector('.progress-bar__fill');
   const counterCurrent = document.querySelector('.slide-counter__current');
+  const counterTotal = document.querySelector('.slide-counter__total');
+
+  // Counter total is derived from the DOM — adding a slide needs no edit here
+  if (counterTotal) counterTotal.textContent = totalSlides;
 
   function updateProgress() {
     const pct = (currentSlide / totalSlides) * 100;
