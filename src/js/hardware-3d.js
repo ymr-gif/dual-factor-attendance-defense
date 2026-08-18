@@ -244,6 +244,28 @@
     return env;
   }
 
+  // Where a part's callout leader line should point, in the part group's own
+  // local space (before that group's position/rotation/scale are applied).
+  // Procedural parts (buildBoard) put their true board position on the group
+  // itself via place() and leave their meshes near local (0,0,0), so their
+  // anchor comes out close to the origin — fine, that already worked. Baked
+  // model parts (model-loader.js) do the opposite: the group stays at local
+  // (0,0,0) so the explode animation can move it freely, and each part's
+  // real position lives in its mesh(es)' local offset instead. Reading the
+  // group's own position (the old code) collapses every model part to
+  // nearly the same point. Computing the actual bounding-box centre of the
+  // part's geometry works for both.
+  function partAnchor(group) {
+    const box = new THREE.Box3();
+    group.children.forEach((child) => {
+      if (!child.geometry) return;
+      if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
+      child.updateMatrix();
+      box.union(child.geometry.boundingBox.clone().applyMatrix4(child.matrix));
+    });
+    return box.isEmpty() ? new THREE.Vector3() : box.getCenter(new THREE.Vector3());
+  }
+
   const mounted = [];
 
   // The render loop must not keep running once the deck has moved on — the
@@ -315,7 +337,10 @@
     const parts = (window.modelLoader && window.modelLoader.available())
       ? window.modelLoader.build(window.arduinoModel, W)
       : buildBoard(mat);
-    Object.keys(parts).forEach((name) => board.add(parts[name]));
+    Object.keys(parts).forEach((name) => {
+      parts[name].userData.anchor = partAnchor(parts[name]);
+      board.add(parts[name]);
+    });
     board.rotation.y = -0.42;
     scene.add(board);
 
@@ -416,8 +441,8 @@
       project(name) {
         const target = parts[name];
         if (!target) return null;
-        const v = new THREE.Vector3();
-        target.getWorldPosition(v);
+        const v = target.userData.anchor.clone();
+        target.localToWorld(v);
         v.project(camera);
         const rect = canvas.getBoundingClientRect();
         return {
