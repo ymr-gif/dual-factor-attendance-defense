@@ -175,7 +175,7 @@
     const screenTexture = new THREE.CanvasTexture(screenCanvas);
     screenTexture.wrapS = THREE.ClampToEdgeWrapping;
     screenTexture.wrapT = THREE.RepeatWrapping;
-    screenTexture.repeat.set(1, 0.33); // show ~1/3 of the UI at a time
+    screenTexture.repeat.set(1, 2 / 3); // show ~1/3 of the UI at a time (UV v range is [0, 0.5])
     screenTexture.offset.y = 0;
     screenTexture.minFilter = THREE.LinearFilter;
     screenTexture.magFilter = THREE.LinearFilter;
@@ -318,7 +318,7 @@
 
       // Phase 2: screen scroll — overlaps the end of the entrance
       entranceTimeline.to(screenTexture.offset, {
-        y: 0.67,
+        y: 2 / 3,
         duration: 1.5,
         ease: 'power2.inOut',
       }, 0.6);
