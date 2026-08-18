@@ -25,7 +25,7 @@
 |-----------|-------------------|
 | `title` | School fades, shield scales, checkmark draws, S.A.F.E. scrambles, team staggers |
 | `problem` | **3 steps.** A week of the attendance sheet fills by hand (names drawn, ticks, blanks, lates); a tick is then drawn into a box that was blank and flagged red; UNVERIFIED stamps down |
-| `solution` | NFC and Face slide in, the vtuber portrait fades up, a reticle locks on, a glowing line sweeps top to bottom while a 16x19 projector dot grid lights row by row behind it, then IDENTITY VERIFIED |
+| `solution` | NFC and Face slide in, the vtuber portrait fades up, a green reticle locks on, a glowing green line sweeps top to bottom (2100ms) while a band of projector dots tracks it — each row rises and falls as the beam passes — then IDENTITY VERIFIED at 2x |
 | `liveness` | Photo appears, scan line sweeps, ✕ stamp slams |
 | `notify` | Verified badge pops, dot trail fires across, phone slides in, envelope pops, chips rise |
 | `framework` | IPO stages stagger left to right, arrows draw, list items cascade, feedback bar widens |
@@ -100,6 +100,7 @@ animate('.title', { innerHTML: scrambleText({ chars: 'A-Z0-9' }) });
 | 2026-08-19 | `problem` | Signature column → a week of tick boxes (`FULL NAME` + MON–FRI, ticks, blanks for absent, `L` for late). Beat 2 draws a tick into a box that was blank and rings it: PRESENT OR ABSENT? Subtitle softened to "Recorded by hand, without verification" | A tick box shows the gap better than a signature does — the sheet records a mark, never who made it. The softer subtitle describes the process instead of judging it, so the panel is not invited to argue |
 | 2026-08-19 | All | Slides are stripped back to their CSS resting state when left, and again before being shown | A revisited slide painted the state it was left in — finished handwriting appeared for a moment, then animated again |
 | 2026-08-19 | `solution` | Scan overlay added: reticle, sweeping glow line, and a 16x19 dot grid revealed row by row; IDENTITY VERIFIED moved to after the scan; `.solution-merge` given the resting state and entrance it never had | The dot grid is the pattern a real face scanner projects, so the beat shows the mechanism the study relies on. The verdict has to land after the scan, not before it |
+| 2026-08-19 | `solution` | Scan turned green and slowed to 2100ms; dots now rise and fall as a band tracking the beam instead of filling in and staying; edge fade moved off `.vtuber-3d` onto a `.vtuber-3d__fade` overlay beneath `.scan`; verdict text doubled | The container mask was dimming the scan along with the model. Dots that persist read as a static grid; dots that follow the beam read as tracking. The verdict has to carry to the back of a hall |
 | 2026-08-18 | `architecture` | Reordered flow, added notify node, emoji → SVG icons | Camera fired after the backend; notification was missing; emoji render inconsistently on projector laptops |
 | 2026-08-18 | `rq` | Added "RESEARCH QUESTION" eyebrow above the number | Panel could not tell at a glance that slides 9–11 are the research questions |
 | 2026-08-18 | `survey` | 12 → 20 items per version, per-characteristic count badges | Instrument revised to 5 items per characteristic |
