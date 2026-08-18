@@ -90,7 +90,7 @@ const slideAnimations = {
 
       // Rest container — slides down from way below, ends below center
       .add(rest, {
-        y: [400, 120],
+        y: [0, 120],
         opacity: [0, 1],
         duration: 1200,
       }, 0.3)
@@ -105,22 +105,20 @@ const slideAnimations = {
       .add(qa(el, '.title-team li'), {
         opacity: [0, 1],
         y: [20, 0],
-        delay: stagger(100),
         duration: 500,
       }, 0.9)
       .add(q(el, '.title-section'), {
         opacity: [0, 1],
         duration: 500,
-      }, 1.4);
+      }, 1.4)
 
-      // S.A.F.E. — separate animate() so scrambleText can't break the timeline chain
-      animate(main, {
+      // S.A.F.E. — last entry so if scrambleText breaks the chain nothing else is affected
+      .add(main, {
         innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
         opacity: [0, 1],
         y: [0, -300],
         duration: 1400,
-        ease: 'outExpo',
-      });
+      }, 0.1);
 
       return tl;
     };
@@ -128,39 +126,160 @@ const slideAnimations = {
     return { steps: [step1, step2] };
   },
 
-  // Problem — logbook lines scrawl in, UNVERIFIED stamps down
+  // Problem — three beats on the presenter's press: the page fills by hand,
+  // a fifth signature is forged in a hand already on the page, then the whole
+  // log is rejected. The slot is 1:15; one timeline cannot hold it.
   problem(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const page = q(el, '.logbook-page');
+    const margin = q(el, '.logbook-margin');
+    const heads = qa(el, '.logbook-head');
+    const headRule = q(el, '.logbook-rule--head');
+    const rules = qa(el, '.logbook-rule:not(.logbook-rule--head)');
+    const loggedTimes = qa(el, '.entry--logged .logbook-time');
+    const loggedInk = qa(el, '.entry--logged .stroke');
+    const forgedTime = q(el, '.entry--forged .logbook-time');
+    const forgedInk = qa(el, '.entry--forged .stroke');
+    const flags = qa(el, '.sig-flag');
+    const bracket = q(el, '.logbook-bracket');
+    const tell = q(el, '.logbook-tell');
+    const stamp = q(el, '.reject-stamp');
 
-    tl.add(q(el, '.logbook-icon rect'), {
-      opacity: [0, 1],
-      scale: [0.8, 1],
-      duration: 600,
-    })
-    .add(qa(el, '.logbook-line'), {
-      scaleX: [0, 1],
-      opacity: [0, 0.7],
-      delay: stagger(120),
-      duration: 400,
-    }, '-=200')
-    .add(q(el, '.reject-stamp'), {
-      opacity: [0, 1],
-      scale: [3, 1],
-      rotate: [-25, -12],
-      duration: 400,
-      ease: 'outBack',
-    }, '+=200')
-    .add(q(el, '.problem-title'), {
-      opacity: [0, 1],
-      y: [20, 0],
-      duration: 500,
-    }, '-=100')
-    .add(q(el, '.problem-subtitle'), {
-      opacity: [0, 1],
-      duration: 400,
-    }, '-=200');
+    let fillTl = null;
+    let forgeTl = null;
 
-    return tl;
+    // A half-drawn path keeps the dash values createDrawable wrote. Clearing
+    // them is how an interrupted beat gets handed over fully inked.
+    const inked = (paths) => utils.set(paths, { strokeDasharray: 'none', strokeDashoffset: 0 });
+
+    // Step 1 — the page and four entries arrive, written by hand
+    const fill = () => {
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(page, {
+        opacity: [0, 1],
+        scale: [0.94, 1],
+        duration: 700,
+      })
+      .add(margin, {
+        opacity: [0, 0.4],
+        duration: 400,
+      }, '-=350')
+      .add(headRule, {
+        opacity: [0, 0.55],
+        scaleX: [0, 1],
+        duration: 500,
+      }, '-=300')
+      .add(heads, {
+        opacity: [0, 0.55],
+        delay: stagger(70),
+        duration: 400,
+      }, '-=350')
+      .add(rules, {
+        opacity: [0, 0.45],
+        scaleX: [0, 1],
+        delay: stagger(70),
+        duration: 450,
+      }, '-=300')
+      .add(loggedTimes, {
+        opacity: [0, 0.75],
+        delay: stagger(150),
+        duration: 350,
+      }, '-=150')
+      .add(loggedInk, {
+        opacity: [0, 0.85],
+        delay: stagger(90),
+        duration: 200,
+      }, '-=350')
+      .add(svg.createDrawable(loggedInk), {
+        draw: ['0 0', '0 1'],
+        delay: stagger(90),
+        duration: 620,
+        ease: 'inOutQuad',
+      }, '<');
+
+      fillTl = tl;
+      return tl;
+    };
+
+    // Step 2 — the fifth row is written in a hand already on the page
+    const forge = () => {
+      if (fillTl) fillTl.pause();
+      utils.set(page, { opacity: 1, scale: 1 });
+      utils.set(margin, { opacity: 0.4 });
+      utils.set(headRule, { opacity: 0.55, scaleX: 1 });
+      utils.set(heads, { opacity: 0.55 });
+      utils.set(rules, { opacity: 0.45, scaleX: 1 });
+      utils.set(loggedTimes, { opacity: 0.75 });
+      utils.set(loggedInk, { opacity: 0.85 });
+      inked(loggedInk);
+
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(forgedTime, {
+        opacity: [0, 0.75],
+        duration: 320,
+      })
+      .add(forgedInk, {
+        opacity: [0, 0.85],
+        delay: stagger(140),
+        duration: 220,
+      }, '-=120')
+      .add(svg.createDrawable(forgedInk), {
+        draw: ['0 0', '0 1'],
+        delay: stagger(140),
+        duration: 760,
+        ease: 'inOutQuad',
+      }, '<')
+      .add(flags, {
+        opacity: [0, 1],
+        duration: 420,
+      }, '+=180')
+      .add(bracket, {
+        opacity: [0, 0.6],
+        duration: 400,
+      }, '-=250')
+      .add(tell, {
+        opacity: [0, 1],
+        duration: 400,
+      }, '-=250');
+
+      forgeTl = tl;
+      return tl;
+    };
+
+    // Step 3 — the log is worth nothing
+    const reject = () => {
+      if (forgeTl) forgeTl.pause();
+      utils.set(forgedTime, { opacity: 0.75 });
+      utils.set(forgedInk, { opacity: 0.85 });
+      inked(forgedInk);
+      utils.set(flags, { opacity: 1 });
+      utils.set(bracket, { opacity: 0.6 });
+      utils.set(tell, { opacity: 1 });
+
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(stamp, {
+        opacity: [0, 1],
+        scale: [3, 1],
+        rotate: [-26, -11],
+        duration: 440,
+        ease: 'outBack',
+      })
+      .add(q(el, '.problem-title'), {
+        opacity: [0, 1],
+        y: [20, 0],
+        duration: 520,
+      }, '-=120')
+      .add(q(el, '.problem-subtitle'), {
+        opacity: [0, 1],
+        duration: 420,
+      }, '-=220');
+
+      return tl;
+    };
+
+    return { steps: [fill, forge, reject] };
   },
 
   // Solution — NFC and Face converge into one verdict
