@@ -1040,7 +1040,7 @@
 .notify-scene {
   display: flex;
   align-items: center;
-  gap: 48px;
+  gap: 72px;
 }
 
 .notify-source,
@@ -1048,8 +1048,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-xs);
-  width: 110px;
+  gap: var(--spacing-sm);
+  width: 260px;
   opacity: 0;
 }
 
@@ -1058,12 +1058,12 @@
 
 .notify-source svg,
 .notify-device > svg {
-  width: 88px;
-  height: 88px;
+  width: 200px;
+  height: 200px;
 }
 
 .notify-caption {
-  font-size: 11px;
+  font-size: 16px;
   color: var(--text-secondary);
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -1073,19 +1073,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  min-width: 160px;
+  gap: 24px;
+  min-width: 360px;
 }
 
 .notify-trail {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .notify-dot {
-  width: 10px;
-  height: 10px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--accent);
   opacity: 0.15;
@@ -1093,16 +1093,16 @@
 
 .notify-status-group {
   position: relative;
-  height: 1.4em;
-  min-width: 120px;
+  height: 1.6em;
+  min-width: 280px;
   text-align: center;
 }
 
 .notify-status {
   position: absolute;
   inset: 0;
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 22px;
+  color: var(--text-primary);
   font-family: var(--font-mono);
   letter-spacing: 0.08em;
   opacity: 0;
@@ -1111,28 +1111,28 @@
 
 .notify-banner {
   position: absolute;
-  top: 18px;
+  top: 30px;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
   display: flex;
   align-items: center;
-  gap: 6px;
-  width: 80%;
-  padding: 6px 8px;
+  gap: 10px;
+  width: 85%;
+  padding: 10px 14px;
   background: var(--bg-secondary);
   border: 1px solid var(--accent);
-  border-radius: 6px;
+  border-radius: 10px;
   opacity: 0;
 }
 
 .notify-banner-icon {
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
 }
 
 .notify-banner-text {
-  font-size: 8px;
+  font-size: 12px;
   color: var(--text-primary);
   white-space: nowrap;
   font-family: var(--font-mono);
@@ -1148,13 +1148,13 @@
 
 .notify-meta {
   display: flex;
-  gap: var(--spacing-sm);
-  margin-top: 24px;
+  gap: var(--spacing-md);
+  margin-top: 32px;
 }
 
 .notify-chip {
-  padding: 6px 14px;
-  font-size: 12px;
+  padding: 10px 22px;
+  font-size: 16px;
   color: var(--text-secondary);
   border: 1px solid var(--text-dim);
   border-radius: 999px;
@@ -1467,11 +1467,22 @@
 
   .notify-scene {
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl);
   }
 
   .notify-trail-group {
     min-width: 0;
+  }
+
+  .notify-source svg,
+  .notify-device > svg {
+    width: 140px;
+    height: 140px;
+  }
+
+  .notify-source,
+  .notify-device {
+    width: 180px;
   }
 
   .arch-flow {
