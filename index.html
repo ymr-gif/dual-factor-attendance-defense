@@ -12,11 +12,16 @@
 
   <!-- anime.js v4.5.0 — local first, CDN only if the local copy is missing -->
   <script src="src/vendor/anime.umd.min.js"></script>
+  <!-- GSAP 3.12.5 — used for the phone entrance cinematic on slide 4 -->
+  <script src="src/vendor/gsap.min.js"></script>
   <!-- three.js r149 — the last build that runs as a plain script, so the deck
        still works opened straight from the filesystem -->
   <script src="src/vendor/three.min.js"></script>
   <script>
     window.anime || document.write('<script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js">\x3C/script>');
+  </script>
+  <script>
+    window.gsap || document.write('<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js">\x3C/script>');
   </script>
 </head>
 <body>
@@ -149,9 +154,9 @@
       </div>
     </section>
 
-    <!-- 4: Liveness -->
+    <!-- 4: Liveness — SVG scan scene + 3D phone entrance -->
     <section class="slide slide--liveness" data-slide="4" data-anim="liveness">
-      <div class="slide__content">
+      <div class="slide__content slide__content--liveness">
         <div class="liveness-scene">
           <div class="liveness-photo">
             <svg viewBox="0 0 100 100">
@@ -169,9 +174,12 @@
             </svg>
           </div>
         </div>
-        <h2 class="liveness-title">Liveness</h2>
-        <p class="liveness-subtitle">Passive. Real-time. Spoof-proof.</p>
+        <div class="phone-3d">
+          <canvas class="phone-3d__canvas"></canvas>
+        </div>
       </div>
+      <h2 class="liveness-title">Liveness</h2>
+      <p class="liveness-subtitle">Passive. Real-time. Spoof-proof.</p>
     </section>
 
     <!-- 5: Guardian Notification -->
@@ -187,11 +195,18 @@
             </svg>
             <span class="notify-caption">Verified</span>
           </div>
-          <div class="notify-trail">
-            <span class="notify-dot"></span>
-            <span class="notify-dot"></span>
-            <span class="notify-dot"></span>
-            <span class="notify-dot"></span>
+          <div class="notify-trail-group">
+            <div class="notify-trail">
+              <span class="notify-dot"></span>
+              <span class="notify-dot"></span>
+              <span class="notify-dot"></span>
+              <span class="notify-dot"></span>
+            </div>
+            <div class="notify-status-group">
+              <span class="notify-status notify-status--processing">processing...</span>
+              <span class="notify-status notify-status--sending">sending...</span>
+              <span class="notify-status notify-status--almost">almost there...</span>
+            </div>
           </div>
           <div class="notify-device">
             <svg viewBox="0 0 80 80">
@@ -200,6 +215,14 @@
               <rect x="29" y="28" width="22" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" class="notify-envelope"/>
               <path d="M29 30 L40 38 L51 30" fill="none" stroke="currentColor" stroke-width="1.5" class="notify-envelope"/>
             </svg>
+            <div class="notify-banner">
+              <svg class="notify-banner-icon" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="7" fill="none" stroke="var(--success)" stroke-width="1.5"/>
+                <path d="M5 8 L7 10 L11 6" fill="none" stroke="var(--success)" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="notify-banner-text">SAFE — Miguel arrived 7:14 AM</span>
+            </div>
             <span class="notify-caption">Guardian</span>
           </div>
         </div>
@@ -829,10 +852,12 @@
   <!-- present only once a model has been baked; the 3D board falls back to
        built-in geometry without it -->
   <script src="src/models/arduino-model.js"></script>
-  <script src="src/models/vtuber-model.js"></script>
+  <script src="src/models/vtuber-model.js?v=4"></script>
+  <script src="src/models/phone-model.js"></script>
   <script src="src/js/model-loader.js"></script>
   <script src="src/js/hardware-3d.js"></script>
-  <script src="src/js/vtuber-3d.js"></script>
+  <script src="src/js/vtuber-3d.js?v=6"></script>
+  <script src="src/js/phone-3d.js"></script>
   <script src="src/js/animations.js"></script>
   <script src="src/js/timeline.js"></script>
   <script src="src/js/main.js"></script>

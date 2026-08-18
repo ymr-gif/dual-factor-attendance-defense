@@ -328,15 +328,29 @@ const slideAnimations = {
     return tl;
   },
 
-  // Liveness — scan line sweeps, spoof is rejected
+  // Liveness — scan line sweeps, spoof is rejected; 3D phone spins in simultaneously
   liveness(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+    // Mount 3D phone and trigger entrance + scroll
+    const phoneCanvas = q(el, '.phone-3d__canvas');
+    if (phoneCanvas && window.phone3D && window.phone3D.supported()) {
+      const phoneView = window.phone3D.mount(phoneCanvas);
+      if (phoneView) {
+        phoneView.start();
+        phoneView.playEntrance();
+        tl.add(q(el, '.phone-3d'), {
+          opacity: [0, 1],
+          duration: 300,
+        }, 0);
+      }
+    }
 
     tl.add(q(el, '.liveness-photo'), {
       opacity: [0, 1],
       scale: [0.8, 1],
       duration: 600,
-    })
+    }, 0)
     .add(q(el, '.liveness-scan-line'), {
       opacity: [0, 1, 1, 0],
       y: [0, 0, 180, 200],
@@ -363,43 +377,129 @@ const slideAnimations = {
     return tl;
   },
 
-  // Notify — verified badge fires a trail to the guardian's phone
+  // Notify — verified badge, traveling-wave dots with loading text, then
+  // the guardian's phone inflates, vibrates, and receives a push notification.
   notify(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const dots = qa(el, '.notify-dot');
+    const statusProcessing = q(el, '.notify-status--processing');
+    const statusSending = q(el, '.notify-status--sending');
+    const statusAlmost = q(el, '.notify-status--almost');
+    const device = q(el, '.notify-device');
+    const banner = q(el, '.notify-banner');
+    const envelopes = qa(el, '.notify-envelope');
+    const chips = qa(el, '.notify-chip');
 
+    // --- Title + Badge (0 – 0.8 s) ---
     tl.add(q(el, '.notify-title'), {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 500,
-    })
+    }, 0)
     .add(q(el, '.notify-source'), {
       opacity: [0, 1],
       scale: [0.6, 1],
-      duration: 600,
-    }, '-=200')
-    .add(qa(el, '.notify-dot'), {
+      duration: 500,
+    }, 200);
+
+    // --- Traveling wave — 2 cycles (0.8 s – 4.2 s) ---
+    const WAVE_START = 800;
+    const CYCLE_GAP = 1700;
+    const DOT_STAGGER = 400;
+    const DOT_DURATION = 800;
+    const CYCLES = 2;
+
+    for (let c = 0; c < CYCLES; c++) {
+      const base = WAVE_START + c * CYCLE_GAP;
+      for (let d = 0; d < dots.length; d++) {
+        tl.add(dots[d], {
+          opacity: [0.15, 1, 0.15],
+          duration: DOT_DURATION,
+          ease: 'inOutQuad',
+        }, base + d * DOT_STAGGER);
+      }
+    }
+
+    // --- Status text crossfade — three separate elements ---
+    // "processing..." in at 0.8 s, out at 2.6 s
+    tl.add(statusProcessing, {
       opacity: [0, 1],
-      scale: [0, 1],
-      delay: stagger(90),
       duration: 300,
-    }, '-=200')
-    .add(q(el, '.notify-device'), {
+    }, WAVE_START)
+    .add(statusProcessing, {
+      opacity: [1, 0],
+      duration: 250,
+    }, 2600)
+
+    // "sending..." in at 2.8 s, out at 4 s
+    .add(statusSending, {
       opacity: [0, 1],
-      x: [40, 0],
-      duration: 600,
-    }, '-=100')
-    .add(qa(el, '.notify-envelope'), {
+      duration: 250,
+    }, 2800)
+    .add(statusSending, {
+      opacity: [1, 0],
+      duration: 250,
+    }, 4000)
+
+    // "almost there..." in at 4.2 s, out at 5.2 s
+    .add(statusAlmost, {
+      opacity: [0, 1],
+      duration: 250,
+    }, 4200)
+    .add(statusAlmost, {
+      opacity: [1, 0],
+      duration: 300,
+    }, 5200);
+
+    // --- Wave stop — all dots snap to full (4.2 s) ---
+    tl.add(dots, {
+      opacity: 1,
+      duration: 200,
+    }, 4200);
+
+    // --- Phone inflate (4.5 s) ---
+    tl.add(device, {
+      opacity: [0, 1],
+      scale: [1, 1.2],
+      duration: 300,
+      ease: 'outBack',
+    }, 4500);
+
+    // --- Phone vibrate (4.9 s) ---
+    tl.add(device, {
+      x: [0, -3, 3, -3, 3, -2, 2, -1, 1, 0],
+      rotate: [0, -1.5, 1.5, -1.5, 1.5, -1, 1, 0],
+      duration: 500,
+      ease: 'linear',
+    }, 4900);
+
+    // --- Phone settle (5.3 s) ---
+    tl.add(device, {
+      scale: [1.2, 1],
+      duration: 250,
+    }, 5300);
+
+    // --- Banner drops in (5.1 s) ---
+    tl.add(banner, {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 350,
+      ease: 'outBack',
+    }, 5100);
+
+    // --- Envelope + chips (5.6 s) ---
+    tl.add(envelopes, {
       opacity: [0, 1],
       scale: [0.5, 1],
-      duration: 400,
+      duration: 350,
       ease: 'outBack',
-    }, '-=200')
-    .add(qa(el, '.notify-chip'), {
+    }, 5600)
+    .add(chips, {
       opacity: [0, 1],
       y: [12, 0],
-      delay: stagger(100),
-      duration: 400,
-    }, '-=100');
+      delay: stagger(80),
+      duration: 350,
+    }, 5800);
 
     return tl;
   },
