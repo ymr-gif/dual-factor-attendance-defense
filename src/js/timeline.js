@@ -47,6 +47,7 @@ const masterTimeline = {
   // Stop whatever is still running and hand the slide back to its CSS.
   reset(slideNum, slideEl) {
     if (window.hardware3D) window.hardware3D.stopAll();
+    if (window.vtuber3D) window.vtuber3D.stopAll();
 
     const running = this.timelines[slideNum];
     if (running && typeof running.pause === 'function') running.pause();

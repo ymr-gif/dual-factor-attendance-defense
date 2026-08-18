@@ -25,13 +25,14 @@ ppt-js/
 │   │   ├── timeline.js       # Dispatch by data-anim
 │   │   ├── animations.js     # One function per data-anim name
 │   │   ├── hardware-3d.js    # WebGL Arduino for slide 8, step 2
-│   │   └── model-loader.js   # Builds meshes from a baked Blender model
+│   │   ├── vtuber-3d.js      # WebGL vtuber portrait for slide 3
+│   │   └── model-loader.js   # Builds meshes from baked Blender models
 │   └── vendor/
 │       ├── anime.umd.min.js  # anime.js v4.5.0, local copy
 │       └── three.min.js      # three.js r149, local copy
-├── src/models/               # Baked Blender model, or a placeholder
+├── src/models/               # Baked Blender models (arduino, vtuber)
 ├── tools/
-│   ├── model/                # .glb → baked JS geometry
+│   ├── model/                # .glb → baked JS geometry (bake.js, bake-vtuber.js)
 │   └── scene/                # Isometric SVG generator for slide 8
 └── index.html                # Main entry — 18 slides
 ```
@@ -75,7 +76,7 @@ fires if the vendored file is missing.
 |---|-----------|-------|
 | 1 | `title` | Title — school, S.A.F.E., team, section |
 | 2 | `problem` | Manual logbook page, forged signature, UNVERIFIED stamp (3 steps) |
-| 3 | `solution` | NFC + Face converge |
+| 3 | `solution` | NFC + Face converge — 3D vtuber portrait on right |
 | 4 | `liveness` | Spoof rejected |
 | 5 | `notify` | Guardian notified — email, Messenger, < 60s |
 | 6 | `framework` | Conceptual framework (IPO) |
@@ -195,6 +196,19 @@ render loop on every slide change — see `docs/3D_DECONSTRUCTION.md`.
 A modelled board can replace the built-in geometry: `tools/model/bake.js` turns
 a `.glb` into base64 geometry that loads without a fetch or a loader, which is
 what `file://` forces. The handover spec is in `docs/3D_MODEL_PIPELINE.md`.
+
+## Slide 3 Scene
+
+The left side shows the NFC + Face icons with "Identity Verified" text. The
+right side displays a 3D vtuber portrait (face + hair from a Blender model)
+with idle turntable rotation and studio lighting.
+
+`vtuber-3d.js` mounts a three.js scene on a `<canvas>` element. The model
+arrives as baked base64 geometry via `tools/model/bake-vtuber.js`, which
+filters the GLB to keep only face/hair/eye meshes and discards the body.
+`model-loader.js` builds the geometry — same pipeline as the Arduino on
+slide 8. The scene is simpler: no explode, no labels, just a showcase
+turntable. `stopAll()` halts the render loop on slide change.
 
 ## 3D Exploded View
 

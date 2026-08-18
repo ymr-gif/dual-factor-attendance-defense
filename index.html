@@ -115,31 +115,36 @@
 
     <!-- 3: NFC + Face -->
     <section class="slide slide--solution" data-slide="3" data-anim="solution">
-      <div class="slide__content">
-        <div class="solution-icons">
-          <div class="solution-icon solution-icon--nfc">
-            <svg viewBox="0 0 100 100">
-              <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="50" cy="50" r="5" fill="currentColor"/>
-            </svg>
-            <span>NFC</span>
+      <div class="slide__content slide__content--solution">
+        <div class="solution-left">
+          <div class="solution-icons">
+            <div class="solution-icon solution-icon--nfc">
+              <svg viewBox="0 0 100 100">
+                <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="50" cy="50" r="5" fill="currentColor"/>
+              </svg>
+              <span>NFC</span>
+            </div>
+            <div class="solution-plus">+</div>
+            <div class="solution-icon solution-icon--face">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="40" r="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="42" cy="35" r="3" fill="currentColor"/>
+                <circle cx="58" cy="35" r="3" fill="currentColor"/>
+                <path d="M42 50 Q50 58 58 50" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M30 75 Q50 85 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Face</span>
+            </div>
           </div>
-          <div class="solution-plus">+</div>
-          <div class="solution-icon solution-icon--face">
-            <svg viewBox="0 0 100 100">
-              <circle cx="50" cy="40" r="25" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="42" cy="35" r="3" fill="currentColor"/>
-              <circle cx="58" cy="35" r="3" fill="currentColor"/>
-              <path d="M42 50 Q50 58 58 50" fill="none" stroke="currentColor" stroke-width="2"/>
-              <path d="M30 75 Q50 85 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <span>Face</span>
+          <div class="solution-merge">=</div>
+          <div class="solution-result">
+            <span class="solution-result-text">Identity Verified</span>
           </div>
         </div>
-        <div class="solution-merge">=</div>
-        <div class="solution-result">
-          <span class="solution-result-text">Identity Verified</span>
+        <div class="vtuber-3d">
+          <canvas class="vtuber-3d__canvas"></canvas>
         </div>
       </div>
     </section>
@@ -824,8 +829,10 @@
   <!-- present only once a model has been baked; the 3D board falls back to
        built-in geometry without it -->
   <script src="src/models/arduino-model.js"></script>
+  <script src="src/models/vtuber-model.js"></script>
   <script src="src/js/model-loader.js"></script>
   <script src="src/js/hardware-3d.js"></script>
+  <script src="src/js/vtuber-3d.js"></script>
   <script src="src/js/animations.js"></script>
   <script src="src/js/timeline.js"></script>
   <script src="src/js/main.js"></script>

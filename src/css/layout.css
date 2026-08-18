@@ -305,6 +305,19 @@
 }
 
 /* Solution Slide */
+.slide__content--solution {
+  flex-direction: row;
+  max-width: 1100px;
+  gap: var(--spacing-xl);
+}
+
+.solution-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
 .solution-icons {
   display: flex;
   align-items: center;
@@ -353,6 +366,22 @@
   font-size: 20px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+}
+
+/* Vtuber 3D portrait — slide 3 */
+.vtuber-3d {
+  flex-shrink: 0;
+  width: 320px;
+  height: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.vtuber-3d__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Liveness Slide */
@@ -1336,6 +1365,15 @@
 
   .solution-icons {
     flex-direction: column;
+  }
+
+  .slide__content--solution {
+    flex-direction: column;
+  }
+
+  .vtuber-3d {
+    width: 240px;
+    height: 290px;
   }
 
   .arch-flow {

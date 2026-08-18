@@ -103,5 +103,13 @@
     return parts;
   }
 
-  window.modelLoader = { build, available: () => !!window.arduinoModel };
+  // Check whether a baked model exists. Pass a name ('arduino' or 'vtuber') to
+  // check a specific model, or call with no argument to check the Arduino model
+  // (backward compatible with hardware-3d.js).
+  function available(name) {
+    if (name === 'vtuber') return !!window.vtuberModel;
+    return !!window.arduinoModel;
+  }
+
+  window.modelLoader = { build, available };
 })();
