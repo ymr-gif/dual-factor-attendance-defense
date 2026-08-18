@@ -11,7 +11,7 @@ const slideAnimations = {
   title(el) {
     let view = null;
 
-    // Step 1 — "Proposal Defense", school name, S.A.F.E. + assembled 3D board
+    // Step 1 — "Proposal Defense", school name, assembled 3D board (no S.A.F.E.)
     const step1 = () => {
       const intro = q(el, '.title-intro');
       const school = q(el, '.title-school');
@@ -44,11 +44,6 @@ const slideAnimations = {
         y: [-10, 0],
         duration: 600,
       }, '-=800')
-      .add(main, {
-        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
-        opacity: [0, 1],
-        duration: 1200,
-      }, '-=400')
       .add(board3d, {
         opacity: can3D ? [0, 1] : 0,
         duration: 800,
@@ -57,25 +52,40 @@ const slideAnimations = {
       return tl;
     };
 
-    // Step 2 — intro shrinks up, board explodes, rest reveals
+    // Step 2 — intro+school move up, S.A.F.E. appears via scramble, board explodes, rest reveals
     const step2 = () => {
       const intro = q(el, '.title-intro');
+      const school = q(el, '.title-school');
+      const main = q(el, '.title-main');
       const rest = q(el, '.title-rest');
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-      // Shrink "Proposal Defense" up
+      // Move intro and school upward
       tl.add(intro, {
         y: -60,
         scale: 0.5,
         opacity: 0.6,
         duration: 800,
       })
+      .add(school, {
+        y: -40,
+        opacity: 0.5,
+        duration: 800,
+      }, '<')
+
+      // S.A.F.E. appears via scramble text
+      .add(main, {
+        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
+        opacity: [0, 1],
+        duration: 1200,
+      }, '-=600')
+
       // Fade in rest (divider, full description, team, section)
       .add(rest, {
         opacity: 1,
         duration: 600,
-      }, '-=400')
+      }, '-=800')
       .add(q(el, '.title-divider'), {
         scaleX: [0, 1],
         duration: 600,
