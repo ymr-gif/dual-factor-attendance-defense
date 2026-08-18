@@ -465,6 +465,92 @@
   letter-spacing: 0.05em;
 }
 
+/* Specs Slide — isometric prototype rig, then the 3D board */
+.rig-frame {
+  position: relative;
+  width: 100%;
+  max-width: 1600px;
+  align-self: center;
+}
+
+.board-3d {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.board-3d__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.board-3d__labels {
+  position: absolute;
+  inset: 0;
+}
+
+.label3d {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+/* the leader is drawn from the label out to the part and re-aimed every frame */
+.label3d__leader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.5;
+  transform-origin: 0 0;
+}
+
+.label3d__dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.label3d__body {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+.label3d[data-side="left"] .label3d__body {
+  right: 14px;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.label3d[data-side="right"] .label3d__body {
+  left: 14px;
+}
+
+.label3d__text {
+  font-size: 17px;
+  color: var(--text-primary);
+}
+
+.label3d__sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 /* Specs Slide — isometric prototype rig */
 .slide--specs .slide__content {
   width: 100%;
@@ -482,9 +568,7 @@
 
 .rig-svg {
   width: 100%;
-  max-width: 1600px;
   height: auto;
-  align-self: center;
   display: block;
   overflow: visible;
 }

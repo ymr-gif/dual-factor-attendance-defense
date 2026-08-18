@@ -46,6 +46,8 @@ const masterTimeline = {
   // show the finished state for a frame before the animation grabbed it again.
   // Stop whatever is still running and hand the slide back to its CSS.
   reset(slideNum, slideEl) {
+    if (window.hardware3D) window.hardware3D.stopAll();
+
     const running = this.timelines[slideNum];
     if (running && typeof running.pause === 'function') running.pause();
     delete this.timelines[slideNum];
