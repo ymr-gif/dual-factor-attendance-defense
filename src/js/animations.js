@@ -354,10 +354,10 @@ const slideAnimations = {
       if (phoneView) {
         phoneView.start();
         phoneView.playEntrance();
-        tl.add(q(el, '.phone-3d'), {
-          opacity: [0, 1],
-          duration: 300,
-        }, 0);
+        // No fade here — the container starts fully off-screen (see
+        // playEntrance) and slides in over 4s. Fading opacity in on its own
+        // much shorter timer made it pop fully visible mid-slide instead.
+        utils.set(q(el, '.phone-3d'), { opacity: 1 });
       }
     }
 
@@ -504,12 +504,18 @@ const slideAnimations = {
       ease: 'linear',
     }, 6700);
 
-    tl.add(corners, {
-      x: [0, -2, 2, -2, 2, -1, 1, 0],
-      y: [0, -2, 2, -2, 2, -1, 1, 0],
-      duration: 500,
-      ease: 'linear',
-    }, 6700);
+    // Smooth wave — each corner pulses outward and rotates, staggered
+    const CORNER_DELAY = 80;
+    corners.forEach((corner, i) => {
+      tl.add(corner, {
+        scale: [1, 1.3, 1],
+        rotate: [0, (i % 2 === 0 ? 8 : -8), 0],
+        x: [0, (i % 2 === 0 ? 3 : -3), 0],
+        y: [0, (i < 2 ? -3 : 3), 0],
+        duration: 500,
+        ease: 'inOutSine',
+      }, 6700 + i * CORNER_DELAY);
+    });
 
     // --- Corners fade out (7.1 s) ---
     tl.add(corners, {

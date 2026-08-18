@@ -1146,14 +1146,14 @@
 
 .notify-corners {
   position: absolute;
-  inset: -12px;
+  inset: -16px;
   pointer-events: none;
 }
 
 .notify-corner {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   opacity: 0;
 }
 
@@ -1161,28 +1161,28 @@
   top: 0; left: 0;
   border-top: 2px solid var(--accent);
   border-left: 2px solid var(--accent);
-  border-radius: 4px 0 0 0;
+  border-radius: 8px 0 0 0;
 }
 
 .notify-corner--tr {
   top: 0; right: 0;
   border-top: 2px solid var(--accent);
   border-right: 2px solid var(--accent);
-  border-radius: 0 4px 0 0;
+  border-radius: 0 8px 0 0;
 }
 
 .notify-corner--bl {
   bottom: 0; left: 0;
   border-bottom: 2px solid var(--accent);
   border-left: 2px solid var(--accent);
-  border-radius: 0 0 0 4px;
+  border-radius: 0 0 0 8px;
 }
 
 .notify-corner--br {
   bottom: 0; right: 0;
   border-bottom: 2px solid var(--accent);
   border-right: 2px solid var(--accent);
-  border-radius: 0 0 4px 0;
+  border-radius: 0 0 8px 0;
 }
 
 .notify-banner {
