@@ -88,9 +88,9 @@ const slideAnimations = {
         duration: 1000,
       }, 0)
 
-      // Rest container — slides down from below
+      // Rest container — slides down from way below, ends below center
       .add(rest, {
-        y: [200, 0],
+        y: [400, 120],
         opacity: [0, 1],
         duration: 1200,
       }, 0.3)
@@ -117,7 +117,7 @@ const slideAnimations = {
       animate(main, {
         innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
         opacity: [0, 1],
-        y: [120, 0],
+        y: [300, 0],
         duration: 1400,
         ease: 'outExpo',
       });
