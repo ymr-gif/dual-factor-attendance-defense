@@ -20,7 +20,7 @@
 | data-anim | Current animation |
 |-----------|-------------------|
 | `title` | School fades, shield scales, checkmark draws, S.A.F.E. scrambles, team staggers |
-| `problem` | Logbook draws, ruled lines scrawl in, UNVERIFIED stamps down with back-ease |
+| `problem` | **3 steps.** Logbook page fills by hand (rows, times, drawn signatures); a fifth signature is forged in a hand already on the page and both flag red; UNVERIFIED stamps down |
 | `solution` | NFC and Face slide in from opposite sides, `+` pops, verdict rises |
 | `liveness` | Photo appears, scan line sweeps, ✕ stamp slams |
 | `notify` | Verified badge pops, dot trail fires across, phone slides in, envelope pops, chips rise |
@@ -92,6 +92,7 @@ animate('.title', { innerHTML: scrambleText({ chars: 'A-Z0-9' }) });
 | 2026-08-18 | `notify`, `framework`, `scope`, `output` | New slides and animations | Guardian notification, IPO paradigm, scope, and expected output were missing from the deck |
 | 2026-08-18 | `survey`, `scale` | Replaced invented bar chart and percentage ring with instrument structure and interpretation ranges | Proposal stage — the study has no results yet |
 | 2026-08-18 | `problem` | Fingerprint icon → logbook; REJECTED → UNVERIFIED | The study uses no fingerprints; the problem is the manual logbook |
+| 2026-08-19 | `problem` | 200px icon → full ruled logbook page on three presenter-driven steps; signatures drawn as SVG paths via `createDrawable`; row 5 forged in row 2's hand, both flagged by red overlay paths | The slide holds a 1:15 slot and stopped moving after 3s. Proxy attendance is now shown — two identical signatures — instead of asserted. Paper and ink deliberately oppose slide 3's scan |
 | 2026-08-18 | `architecture` | Reordered flow, added notify node, emoji → SVG icons | Camera fired after the backend; notification was missing; emoji render inconsistently on projector laptops |
 | 2026-08-18 | `rq` | Added "RESEARCH QUESTION" eyebrow above the number | Panel could not tell at a glance that slides 9–11 are the research questions |
 | 2026-08-18 | `survey` | 12 → 20 items per version, per-characteristic count badges | Instrument revised to 5 items per characteristic |

@@ -74,7 +74,7 @@ fires if the vendored file is missing.
 | # | data-anim | Slide |
 |---|-----------|-------|
 | 1 | `title` | Title — school, S.A.F.E., team, section |
-| 2 | `problem` | Manual logbook, UNVERIFIED stamp |
+| 2 | `problem` | Manual logbook page, forged signature, UNVERIFIED stamp (3 steps) |
 | 3 | `solution` | NFC + Face converge |
 | 4 | `liveness` | Spoof rejected |
 | 5 | `notify` | Guardian notified — email, Messenger, < 60s |
@@ -152,11 +152,15 @@ the presenter advances through in beats. Step 1 plays on entry; each further
 arrow press calls `masterTimeline.nextStep()`, which returns `true` while it
 still has steps left — `nextSlide()` in `main.js` only moves on once it returns
 `false`. Leaving the slide clears its step state, so coming back replays from
-step 1. Slide 8 is the only stepped slide today.
+step 1. Slides 2 and 8 are the stepped slides today.
 
 A later step must not assume the previous one finished — the presenter can press
 early. `hardware()` pauses the step-1 timeline and sets its end state before
 step 2 animates, otherwise the older tweens land after the newer ones.
+
+`problem()` does the same across three steps, and additionally clears the
+`stroke-dasharray` / `stroke-dashoffset` that `svg.createDrawable` writes — a
+half-drawn signature keeps those values and would stay half-drawn forever.
 
 ## Animation Engine (animations.js)
 
