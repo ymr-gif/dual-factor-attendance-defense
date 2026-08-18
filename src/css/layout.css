@@ -93,6 +93,21 @@
   opacity: 0;
 }
 
+/* Title slide 3D board — sits below "Proposal Defense" */
+.title-board-3d {
+  width: clamp(280px, 40vw, 420px);
+  aspect-ratio: 16 / 9;
+  margin: var(--spacing-lg) auto;
+  opacity: 0;
+  position: relative;
+}
+
+.title-board-3d__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .title-school {
   font-size: clamp(11px, 1.6vw, 15px);
   color: var(--text-secondary);
