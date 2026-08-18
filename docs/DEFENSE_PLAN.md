@@ -13,7 +13,7 @@
 | # | Slide | Time |
 |---|-------|------|
 | 1 | Title | 0:30 |
-| 2 | The Problem | 1:15 |
+| 2 | The Problem — page fills, forgery, stamp (3 presses) | 1:15 |
 | 3 | NFC + Face | 1:00 |
 | 4 | Liveness | 1:00 |
 | 5 | Guardian Notification | 0:45 |
@@ -41,7 +41,11 @@ slide as places to slow down and breathe.
 
 **1 — Title.** Name the school, the team and the section, then one line: "We propose S.A.F.E., a dual-factor attendance system." Do not read the four names off the slide — they are already on it.
 
-**2 — Problem.** HSCI logs attendance by hand at the guardpost. No one verifies who signed. Proxy attendance is possible. Parents learn nothing. Card-only systems verify the card, not the person.
+**2 — Problem.** Three beats, three presses. Do not rush them — this slide has 1:15.
+First beat, the page fills: "HSCI logs attendance by hand at the guardpost. A student writes a name, a time, a signature."
+Second beat, the forgery: "No one checks who is holding the pen." Wait for the fifth signature to finish drawing, then point at the two red ones: "Same hand. Two names. That is proxy attendance, and the logbook cannot see it."
+Third beat, the stamp: "So every entry in this book is unverified. And parents learn nothing either way."
+The card-only line now belongs to slide 3 — do not spend it here.
 
 **3 — NFC + Face.** Card makes the claim. Face proves it. Two factors, one tap.
 

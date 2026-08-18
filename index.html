@@ -50,14 +50,61 @@
     <!-- 2: The Problem -->
     <section class="slide slide--problem" data-slide="2" data-anim="problem">
       <div class="slide__content">
-        <div class="problem-icon">
-          <svg viewBox="0 0 120 120" class="logbook-icon">
-            <rect x="22" y="14" width="76" height="92" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-            <line x1="38" y1="14" x2="38" y2="106" stroke="currentColor" stroke-width="1" opacity="0.5"/>
-            <line x1="50" y1="38" x2="86" y2="38" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
-            <line x1="50" y1="54" x2="86" y2="54" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
-            <line x1="50" y1="70" x2="72" y2="70" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
-            <line x1="50" y1="86" x2="80" y2="86" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
+        <div class="logbook-wrap">
+          <svg class="logbook" viewBox="0 0 900 500" role="img"
+               aria-label="A manual attendance logbook with a forged signature">
+            <rect class="logbook-page" x="0" y="0" width="900" height="500" rx="3"/>
+            <line class="logbook-margin" x1="44" y1="0" x2="44" y2="500"/>
+
+            <text class="logbook-head" x="70" y="56">NAME</text>
+            <text class="logbook-head" x="470" y="56">TIME</text>
+            <text class="logbook-head" x="620" y="56">SIGNATURE</text>
+            <line class="logbook-rule logbook-rule--head" x1="44" y1="76" x2="880" y2="76"/>
+
+            <line class="logbook-rule" x1="44" y1="148" x2="880" y2="148"/>
+            <line class="logbook-rule" x1="44" y1="220" x2="880" y2="220"/>
+            <line class="logbook-rule" x1="44" y1="292" x2="880" y2="292"/>
+            <line class="logbook-rule" x1="44" y1="364" x2="880" y2="364"/>
+            <line class="logbook-rule" x1="44" y1="436" x2="880" y2="436"/>
+
+            <!-- Rows 1-4 are already in the book when the slide opens.
+                 Row 5 is written in beat 2 — its signature is hand B again. -->
+            <g class="entry entry--logged">
+              <path class="stroke stroke--name" d="M 70,126 c 32,-16 60,8 92,-6 c 25,-11 54,12 82,-2 c 28,-13 54,7 86,-9"/>
+              <text class="logbook-time" x="470" y="126">07:12</text>
+              <path class="stroke stroke--sig" d="M 620,126 c 20,-26 40,12 58,-10 c 14,-16 30,18 48,-4 c 18,-20 32,12 56,-14"/>
+            </g>
+
+            <g class="entry entry--logged">
+              <path class="stroke stroke--name" d="M 70,198 c 40,-13 38,11 74,-5 c 36,-14 34,13 70,-1 c 32,-11 44,6 80,-11"/>
+              <text class="logbook-time" x="470" y="198">07:13</text>
+              <path class="stroke stroke--sig" d="M 620,198 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
+            </g>
+
+            <g class="entry entry--logged">
+              <path class="stroke stroke--name" d="M 70,270 c 28,-18 64,7 86,-9 c 18,-8 36,11 60,-4 c 25,-12 50,8 76,-7"/>
+              <text class="logbook-time" x="470" y="270">07:14</text>
+              <path class="stroke stroke--sig" d="M 620,270 c 16,-28 42,12 58,-14 c 10,-12 22,16 40,-6 c 18,-18 30,12 48,-12"/>
+            </g>
+
+            <g class="entry entry--logged">
+              <path class="stroke stroke--name" d="M 70,342 c 46,-10 28,13 68,-6 c 39,-14 32,11 72,-2 c 21,-9 42,7 78,-12"/>
+              <text class="logbook-time" x="470" y="342">07:15</text>
+              <path class="stroke stroke--sig" d="M 620,342 c 30,-16 18,18 44,-10 c 26,-22 22,16 48,-4 c 16,-14 28,12 50,-20"/>
+            </g>
+
+            <g class="entry entry--forged">
+              <path class="stroke stroke--name" d="M 70,414 c 36,-15 54,9 78,-7 c 25,-12 43,13 72,-3 c 28,-11 43,7 76,-8"/>
+              <text class="logbook-time" x="470" y="414">07:15</text>
+              <path class="stroke stroke--sig" d="M 620,414 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
+            </g>
+
+            <!-- Same d as the two hand-B signatures, laid over them in red.
+                 Fading these in is how the pair is flagged — no colour tween. -->
+            <path class="sig-flag" d="M 620,198 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
+            <path class="sig-flag" d="M 620,414 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
+            <path class="logbook-bracket" d="M 604,182 l -14,0 l 0,248 l 14,0"/>
+            <text class="logbook-tell" x="620" y="478">SAME HAND</text>
           </svg>
           <div class="reject-stamp">UNVERIFIED</div>
         </div>

@@ -12,6 +12,12 @@
   --accent-secondary: #7b2ff7;
   --accent-secondary-glow: rgba(123, 47, 247, 0.15);
 
+  /* Slide 2 — the logbook is the deck's only paper object. Warm off-white so
+     it never reads as the cool --text-primary grey used for type. */
+  --paper: #e6e4dc;
+  --paper-rule: #9fb0c2;
+  --ink: #1a1a22;
+
   --success: #00ff88;
   --danger: #ff3366;
   --warning: #ffaa00;
