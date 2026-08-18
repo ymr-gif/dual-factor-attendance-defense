@@ -127,21 +127,22 @@ const slideAnimations = {
     return { steps: [step1, step2] };
   },
 
-  // Problem — three beats on the presenter's press: the page fills by hand,
-  // a fifth signature is forged in a hand already on the page, then the whole
-  // log is rejected. The slot is 1:15; one timeline cannot hold it.
+  // Problem — three beats on the presenter's press: a week of the sheet fills
+  // in by hand, a tick appears in a box that was blank, and the whole record
+  // is stamped. The slot is 1:15; one timeline cannot hold it.
   problem(el) {
     const page = q(el, '.logbook-page');
     const margin = q(el, '.logbook-margin');
     const heads = qa(el, '.logbook-head');
     const headRule = q(el, '.logbook-rule--head');
     const rules = qa(el, '.logbook-rule:not(.logbook-rule--head)');
-    const loggedTimes = qa(el, '.entry--logged .logbook-time');
-    const loggedInk = qa(el, '.entry--logged .stroke');
-    const forgedTime = q(el, '.entry--forged .logbook-time');
-    const forgedInk = qa(el, '.entry--forged .stroke');
-    const flags = qa(el, '.sig-flag');
-    const bracket = q(el, '.logbook-bracket');
+    const names = qa(el, '.entry .stroke--name');
+    const boxes = qa(el, '.mark-box');
+    const checks = qa(el, '.entry .mark-check');
+    const lates = qa(el, '.mark-late');
+    const forged = q(el, '.mark-check--forged');
+    const cellFlag = q(el, '.cell-flag');
+    const markFlag = q(el, '.mark-flag');
     const tell = q(el, '.logbook-tell');
     const stamp = q(el, '.reject-stamp');
 
@@ -152,7 +153,7 @@ const slideAnimations = {
     // them is how an interrupted beat gets handed over fully inked.
     const inked = (paths) => utils.set(paths, { strokeDasharray: 'none', strokeDashoffset: 0 });
 
-    // Step 1 — the page and four entries arrive, written by hand
+    // Step 1 — the week fills in: names, boxes, ticks, two lates, two blanks
     const fill = () => {
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
@@ -172,7 +173,7 @@ const slideAnimations = {
       }, '-=300')
       .add(heads, {
         opacity: [0, 0.55],
-        delay: stagger(70),
+        delay: stagger(60),
         duration: 400,
       }, '-=350')
       .add(rules, {
@@ -181,28 +182,45 @@ const slideAnimations = {
         delay: stagger(70),
         duration: 450,
       }, '-=300')
-      .add(loggedTimes, {
-        opacity: [0, 0.75],
-        delay: stagger(150),
-        duration: 350,
-      }, '-=150')
-      .add(loggedInk, {
+      .add(names, {
         opacity: [0, 0.85],
         delay: stagger(90),
         duration: 200,
-      }, '-=350')
-      .add(svg.createDrawable(loggedInk), {
+      }, '-=200')
+      .add(svg.createDrawable(names), {
         draw: ['0 0', '0 1'],
         delay: stagger(90),
         duration: 620,
         ease: 'inOutQuad',
-      }, '<');
+      }, '<')
+      .add(boxes, {
+        opacity: [0, 0.65],
+        scale: [0.7, 1],
+        delay: stagger(24),
+        duration: 380,
+      }, '-=450')
+      .add(checks, {
+        opacity: [0, 0.9],
+        delay: stagger(45),
+        duration: 160,
+      }, '-=250')
+      .add(svg.createDrawable(checks), {
+        draw: ['0 0', '0 1'],
+        delay: stagger(45),
+        duration: 260,
+        ease: 'outQuad',
+      }, '<')
+      .add(lates, {
+        opacity: [0, 0.85],
+        delay: stagger(120),
+        duration: 300,
+      }, '-=300');
 
       fillTl = tl;
       return tl;
     };
 
-    // Step 2 — the fifth row is written in a hand already on the page
+    // Step 2 — a tick lands in a box nobody filled
     const forge = () => {
       if (fillTl) fillTl.pause();
       utils.set(page, { opacity: 1, scale: 1 });
@@ -210,52 +228,49 @@ const slideAnimations = {
       utils.set(headRule, { opacity: 0.55, scaleX: 1 });
       utils.set(heads, { opacity: 0.55 });
       utils.set(rules, { opacity: 0.45, scaleX: 1 });
-      utils.set(loggedTimes, { opacity: 0.75 });
-      utils.set(loggedInk, { opacity: 0.85 });
-      inked(loggedInk);
+      utils.set(names, { opacity: 0.85 });
+      utils.set(boxes, { opacity: 0.65, scale: 1 });
+      utils.set(checks, { opacity: 0.9 });
+      utils.set(lates, { opacity: 0.85 });
+      inked(names);
+      inked(checks);
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-      tl.add(forgedTime, {
-        opacity: [0, 0.75],
-        duration: 320,
+      tl.add(forged, {
+        opacity: [0, 0.9],
+        duration: 180,
       })
-      .add(forgedInk, {
-        opacity: [0, 0.85],
-        delay: stagger(140),
-        duration: 220,
-      }, '-=120')
-      .add(svg.createDrawable(forgedInk), {
+      .add(svg.createDrawable(forged), {
         draw: ['0 0', '0 1'],
-        delay: stagger(140),
-        duration: 760,
-        ease: 'inOutQuad',
+        duration: 620,
+        ease: 'outQuad',
       }, '<')
-      .add(flags, {
+      .add(cellFlag, {
+        opacity: [0, 0.9],
+        scale: [1.5, 1],
+        duration: 460,
+      }, '+=260')
+      .add(markFlag, {
         opacity: [0, 1],
-        duration: 420,
-      }, '+=180')
-      .add(bracket, {
-        opacity: [0, 0.6],
-        duration: 400,
-      }, '-=250')
+        duration: 380,
+      }, '-=300')
       .add(tell, {
         opacity: [0, 1],
-        duration: 400,
-      }, '-=250');
+        duration: 420,
+      }, '-=200');
 
       forgeTl = tl;
       return tl;
     };
 
-    // Step 3 — the log is worth nothing
+    // Step 3 — the record is worth nothing
     const reject = () => {
       if (forgeTl) forgeTl.pause();
-      utils.set(forgedTime, { opacity: 0.75 });
-      utils.set(forgedInk, { opacity: 0.85 });
-      inked(forgedInk);
-      utils.set(flags, { opacity: 1 });
-      utils.set(bracket, { opacity: 0.6 });
+      utils.set(forged, { opacity: 0.9 });
+      inked(forged);
+      utils.set(cellFlag, { opacity: 0.9, scale: 1 });
+      utils.set(markFlag, { opacity: 1 });
       utils.set(tell, { opacity: 1 });
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
@@ -377,18 +392,21 @@ const slideAnimations = {
     return tl;
   },
 
-  // Notify — verified badge, traveling-wave dots with loading text, then
-  // the guardian's phone inflates, vibrates, and receives a push notification.
+  // Notify — verified badge, traveling-wave dots with loading text,
+  // green completion, then the guardian's phone inflates, vibrates with
+  // radiating ripples, and receives a push notification.
   notify(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
     const dots = qa(el, '.notify-dot');
     const statusProcessing = q(el, '.notify-status--processing');
     const statusSending = q(el, '.notify-status--sending');
     const statusAlmost = q(el, '.notify-status--almost');
+    const statusComplete = q(el, '.notify-status--complete');
     const device = q(el, '.notify-device');
     const banner = q(el, '.notify-banner');
     const envelopes = qa(el, '.notify-envelope');
     const chips = qa(el, '.notify-chip');
+    const ripples = qa(el, '.notify-ripple');
 
     // --- Title + Badge (0 – 0.8 s) ---
     tl.add(q(el, '.notify-title'), {
@@ -402,12 +420,12 @@ const slideAnimations = {
       duration: 500,
     }, 200);
 
-    // --- Traveling wave — 2 cycles (0.8 s – 4.2 s) ---
+    // --- Traveling wave — 3 cycles (0.8 s – 5.6 s) ---
     const WAVE_START = 800;
-    const CYCLE_GAP = 1700;
+    const CYCLE_GAP = 1600;
     const DOT_STAGGER = 400;
     const DOT_DURATION = 800;
-    const CYCLES = 2;
+    const CYCLES = 3;
 
     for (let c = 0; c < CYCLES; c++) {
       const base = WAVE_START + c * CYCLE_GAP;
@@ -420,7 +438,7 @@ const slideAnimations = {
       }
     }
 
-    // --- Status text crossfade — three separate elements ---
+    // --- Status text crossfade ---
     // "processing..." in at 0.8 s, out at 2.6 s
     tl.add(statusProcessing, {
       opacity: [0, 1],
@@ -431,7 +449,7 @@ const slideAnimations = {
       duration: 250,
     }, 2600)
 
-    // "sending..." in at 2.8 s, out at 4 s
+    // "sending..." in at 2.8 s, out at 4.2 s
     .add(statusSending, {
       opacity: [0, 1],
       duration: 250,
@@ -439,67 +457,84 @@ const slideAnimations = {
     .add(statusSending, {
       opacity: [1, 0],
       duration: 250,
-    }, 4000)
+    }, 4200)
 
-    // "almost there..." in at 4.2 s, out at 5.2 s
+    // "almost there..." in at 4.4 s, out at 5.6 s
     .add(statusAlmost, {
       opacity: [0, 1],
       duration: 250,
-    }, 4200)
+    }, 4400)
     .add(statusAlmost, {
       opacity: [1, 0],
-      duration: 300,
-    }, 5200);
+      duration: 250,
+    }, 5600)
 
-    // --- Wave stop — all dots snap to full (4.2 s) ---
+    // "Complete!" in at 5.8 s
+    .add(statusComplete, {
+      opacity: [0, 1],
+      duration: 350,
+    }, 5800);
+
+    // --- Dots turn green + fill (5.8 s) ---
     tl.add(dots, {
+      background: '#00ff88',
       opacity: 1,
-      duration: 200,
-    }, 4200);
+      duration: 400,
+      ease: 'outExpo',
+    }, 5800);
 
-    // --- Phone inflate (4.5 s) ---
+    // --- Phone inflate (6.1 s) ---
     tl.add(device, {
       opacity: [0, 1],
       scale: [1, 1.2],
       duration: 300,
       ease: 'outBack',
-    }, 4500);
+    }, 6100);
 
-    // --- Phone vibrate (4.9 s) ---
+    // --- Phone vibrate + ripples (6.4 s) ---
     tl.add(device, {
       x: [0, -3, 3, -3, 3, -2, 2, -1, 1, 0],
       rotate: [0, -1.5, 1.5, -1.5, 1.5, -1, 1, 0],
       duration: 500,
       ease: 'linear',
-    }, 4900);
+    }, 6400);
 
-    // --- Phone settle (5.3 s) ---
+    ripples.forEach((ripple, i) => {
+      tl.add(ripple, {
+        opacity: [0, 0.6, 0],
+        scale: [0.8, 1.5],
+        duration: 600,
+        ease: 'outQuad',
+      }, 6400 + i * 150);
+    });
+
+    // --- Phone settle (6.8 s) ---
     tl.add(device, {
       scale: [1.2, 1],
       duration: 250,
-    }, 5300);
+    }, 6800);
 
-    // --- Banner drops in (5.1 s) ---
+    // --- Banner drops in (6.7 s) ---
     tl.add(banner, {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 350,
       ease: 'outBack',
-    }, 5100);
+    }, 6700);
 
-    // --- Envelope + chips (5.6 s) ---
+    // --- Envelope + chips (7.0 s) ---
     tl.add(envelopes, {
       opacity: [0, 1],
       scale: [0.5, 1],
       duration: 350,
       ease: 'outBack',
-    }, 5600)
+    }, 7000)
     .add(chips, {
       opacity: [0, 1],
       y: [12, 0],
       delay: stagger(80),
       duration: 350,
-    }, 5800);
+    }, 7200);
 
     return tl;
   },

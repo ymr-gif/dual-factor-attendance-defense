@@ -57,64 +57,101 @@
       <div class="slide__content">
         <div class="logbook-wrap">
           <svg class="logbook" viewBox="0 0 900 500" role="img"
-               aria-label="A manual attendance logbook with a forged signature">
+               aria-label="A week of manual attendance, with a tick added to an empty box">
             <rect class="logbook-page" x="0" y="0" width="900" height="500" rx="3"/>
             <line class="logbook-margin" x1="44" y1="0" x2="44" y2="500"/>
 
-            <text class="logbook-head" x="70" y="56">NAME</text>
-            <text class="logbook-head" x="470" y="56">TIME</text>
-            <text class="logbook-head" x="620" y="56">SIGNATURE</text>
+            <text class="logbook-head" x="70" y="56">FULL NAME</text>
+            <text class="logbook-head logbook-head--day" x="440" y="56">MON</text>
+            <text class="logbook-head logbook-head--day" x="530" y="56">TUE</text>
+            <text class="logbook-head logbook-head--day" x="620" y="56">WED</text>
+            <text class="logbook-head logbook-head--day" x="710" y="56">THU</text>
+            <text class="logbook-head logbook-head--day" x="800" y="56">FRI</text>
             <line class="logbook-rule logbook-rule--head" x1="44" y1="76" x2="880" y2="76"/>
 
-            <line class="logbook-rule" x1="44" y1="148" x2="880" y2="148"/>
-            <line class="logbook-rule" x1="44" y1="220" x2="880" y2="220"/>
-            <line class="logbook-rule" x1="44" y1="292" x2="880" y2="292"/>
-            <line class="logbook-rule" x1="44" y1="364" x2="880" y2="364"/>
-            <line class="logbook-rule" x1="44" y1="436" x2="880" y2="436"/>
+            <line class="logbook-rule" x1="44" y1="156" x2="880" y2="156"/>
+            <line class="logbook-rule" x1="44" y1="228" x2="880" y2="228"/>
+            <line class="logbook-rule" x1="44" y1="300" x2="880" y2="300"/>
+            <line class="logbook-rule" x1="44" y1="372" x2="880" y2="372"/>
+            <line class="logbook-rule" x1="44" y1="444" x2="880" y2="444"/>
 
-            <!-- Rows 1-4 are already in the book when the slide opens.
-                 Row 5 is written in beat 2 — its signature is hand B again. -->
-            <g class="entry entry--logged">
-              <path class="stroke stroke--name" d="M 70,126 c 32,-16 60,8 92,-6 c 25,-11 54,12 82,-2 c 28,-13 54,7 86,-9"/>
-              <text class="logbook-time" x="470" y="126">07:12</text>
-              <path class="stroke stroke--sig" d="M 620,126 c 20,-26 40,12 58,-10 c 14,-16 30,18 48,-4 c 18,-20 32,12 56,-14"/>
+            <!-- A tick, a blank and an "L" are the whole vocabulary of the sheet.
+                 None of them records who actually made the mark. -->
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,125 c 32,-16 60,8 92,-6 c 25,-11 54,12 82,-2 c 28,-13 54,7 86,-9"/>
+              <rect class="mark-box" x="420" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 609,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="690" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 699,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="780" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,117 l 8,9 l 16,-19"/>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,201 c 40,-13 38,11 74,-5 c 36,-14 34,13 70,-1 c 32,-11 44,6 80,-11"/>
+              <rect class="mark-box" x="420" y="172" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,193 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="172" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,193 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="172" width="40" height="40" rx="2"/>
+              <rect class="mark-box" x="690" y="172" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 699,193 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="780" y="172" width="40" height="40" rx="2"/>
+              <text class="mark-late" x="800" y="200">L</text>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,273 c 28,-18 64,7 86,-9 c 18,-8 36,11 60,-4 c 25,-12 50,8 76,-7"/>
+              <rect class="mark-box" x="420" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,265 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="244" width="40" height="40" rx="2"/>
+              <text class="mark-late" x="530" y="272">L</text>
+              <rect class="mark-box" x="600" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 609,265 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="690" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 699,265 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="780" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,265 l 8,9 l 16,-19"/>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,345 c 46,-10 28,13 68,-6 c 39,-14 32,11 72,-2 c 21,-9 42,7 78,-12"/>
+              <rect class="mark-box" x="420" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,337 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,337 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 609,337 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="690" y="316" width="40" height="40" rx="2"/>
+              <rect class="mark-box" x="780" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,337 l 8,9 l 16,-19"/>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,417 c 36,-15 54,9 78,-7 c 25,-12 43,13 72,-3 c 28,-11 43,7 76,-8"/>
+              <rect class="mark-box" x="420" y="388" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,409 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="388" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,409 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="388" width="40" height="40" rx="2"/>
+              <rect class="mark-box" x="690" y="388" width="40" height="40" rx="2"/>
+              <text class="mark-late" x="710" y="416">L</text>
+              <rect class="mark-box" x="780" y="388" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,409 l 8,9 l 16,-19"/>
             </g>
 
-            <g class="entry entry--logged">
-              <path class="stroke stroke--name" d="M 70,198 c 40,-13 38,11 74,-5 c 36,-14 34,13 70,-1 c 32,-11 44,6 80,-11"/>
-              <text class="logbook-time" x="470" y="198">07:13</text>
-              <path class="stroke stroke--sig" d="M 620,198 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
+            <!-- Beat 2 only: the blank box gets a tick, then the same path in red -->
+            <g class="forgery">
+              <path class="mark-check mark-check--forged" d="M 609,409 l 8,9 l 16,-19"/>
+              <rect class="cell-flag" x="596" y="384" width="48" height="48" rx="3"/>
+              <path class="mark-flag" d="M 609,409 l 8,9 l 16,-19"/>
             </g>
-
-            <g class="entry entry--logged">
-              <path class="stroke stroke--name" d="M 70,270 c 28,-18 64,7 86,-9 c 18,-8 36,11 60,-4 c 25,-12 50,8 76,-7"/>
-              <text class="logbook-time" x="470" y="270">07:14</text>
-              <path class="stroke stroke--sig" d="M 620,270 c 16,-28 42,12 58,-14 c 10,-12 22,16 40,-6 c 18,-18 30,12 48,-12"/>
-            </g>
-
-            <g class="entry entry--logged">
-              <path class="stroke stroke--name" d="M 70,342 c 46,-10 28,13 68,-6 c 39,-14 32,11 72,-2 c 21,-9 42,7 78,-12"/>
-              <text class="logbook-time" x="470" y="342">07:15</text>
-              <path class="stroke stroke--sig" d="M 620,342 c 30,-16 18,18 44,-10 c 26,-22 22,16 48,-4 c 16,-14 28,12 50,-20"/>
-            </g>
-
-            <g class="entry entry--forged">
-              <path class="stroke stroke--name" d="M 70,414 c 36,-15 54,9 78,-7 c 25,-12 43,13 72,-3 c 28,-11 43,7 76,-8"/>
-              <text class="logbook-time" x="470" y="414">07:15</text>
-              <path class="stroke stroke--sig" d="M 620,414 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
-            </g>
-
-            <!-- Same d as the two hand-B signatures, laid over them in red.
-                 Fading these in is how the pair is flagged — no colour tween. -->
-            <path class="sig-flag" d="M 620,198 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
-            <path class="sig-flag" d="M 620,414 c 26,-20 24,16 48,-8 c 22,-22 20,18 44,-4 c 20,-16 26,10 52,-18 l 28,8"/>
-            <path class="logbook-bracket" d="M 604,182 l -14,0 l 0,248 l 14,0"/>
-            <text class="logbook-tell" x="620" y="478">SAME HAND</text>
+            <text class="logbook-tell" x="620" y="478">PRESENT OR ABSENT?</text>
           </svg>
           <div class="reject-stamp">UNVERIFIED</div>
         </div>
         <h2 class="problem-title">The Problem</h2>
-        <p class="problem-subtitle">Manual. Unverified. Unsafe.</p>
+        <p class="problem-subtitle">Recorded by hand, without verification</p>
       </div>
     </section>
 
@@ -157,29 +194,31 @@
     <!-- 4: Liveness — SVG scan scene + 3D phone entrance -->
     <section class="slide slide--liveness" data-slide="4" data-anim="liveness">
       <div class="slide__content slide__content--liveness">
-        <div class="liveness-scene">
-          <div class="liveness-photo">
-            <svg viewBox="0 0 100 100">
-              <rect x="15" y="10" width="70" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="50" cy="40" r="15" fill="none" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M25 75 L40 55 L55 65 L70 45 L85 75" fill="none" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
+        <div class="liveness-row">
+          <div class="liveness-scene">
+            <div class="liveness-photo">
+              <svg viewBox="0 0 100 100">
+                <rect x="15" y="10" width="70" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="50" cy="40" r="15" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M25 75 L40 55 L55 65 L70 45 L85 75" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="liveness-scan-line"></div>
+            <div class="liveness-stamp">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/>
+                <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" stroke-width="4"/>
+                <line x1="75" y1="25" x2="25" y2="75" stroke="currentColor" stroke-width="4"/>
+              </svg>
+            </div>
           </div>
-          <div class="liveness-scan-line"></div>
-          <div class="liveness-stamp">
-            <svg viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/>
-              <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" stroke-width="4"/>
-              <line x1="75" y1="25" x2="25" y2="75" stroke="currentColor" stroke-width="4"/>
-            </svg>
+          <div class="phone-3d">
+            <canvas class="phone-3d__canvas"></canvas>
           </div>
         </div>
-        <div class="phone-3d">
-          <canvas class="phone-3d__canvas"></canvas>
-        </div>
+        <h2 class="liveness-title">Liveness</h2>
+        <p class="liveness-subtitle">Passive. Real-time. Spoof-proof.</p>
       </div>
-      <h2 class="liveness-title">Liveness</h2>
-      <p class="liveness-subtitle">Passive. Real-time. Spoof-proof.</p>
     </section>
 
     <!-- 5: Guardian Notification -->
@@ -206,9 +245,15 @@
               <span class="notify-status notify-status--processing">processing...</span>
               <span class="notify-status notify-status--sending">sending...</span>
               <span class="notify-status notify-status--almost">almost there...</span>
+              <span class="notify-status notify-status--complete">Complete!</span>
             </div>
           </div>
           <div class="notify-device">
+            <div class="notify-ripples">
+              <span class="notify-ripple"></span>
+              <span class="notify-ripple"></span>
+              <span class="notify-ripple"></span>
+            </div>
             <svg viewBox="0 0 80 80">
               <rect x="22" y="6" width="36" height="68" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>
               <line x1="34" y1="14" x2="46" y2="14" stroke="currentColor" stroke-width="1.5"/>
@@ -856,7 +901,7 @@
   <script src="src/models/phone-model.js"></script>
   <script src="src/js/model-loader.js"></script>
   <script src="src/js/hardware-3d.js"></script>
-  <script src="src/js/vtuber-3d.js?v=6"></script>
+  <script src="src/js/vtuber-3d.js"></script>
   <script src="src/js/phone-3d.js"></script>
   <script src="src/js/animations.js"></script>
   <script src="src/js/timeline.js"></script>
