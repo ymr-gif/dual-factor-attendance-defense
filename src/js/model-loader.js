@@ -62,6 +62,7 @@
       metalness: spec.metalness,
       emissive: spec.emissive || 0x000000,
       emissiveIntensity: spec.emissive ? 1 : 0,
+      side: THREE.DoubleSide,
       // present only for parts the Blender prep step textured (the PCB's
       // top/bottom faces) — everything else keeps the flat colour above
       map: spec.map ? textureFrom(spec.map, THREE.sRGBEncoding) : null,
@@ -108,6 +109,7 @@
   // (backward compatible with hardware-3d.js).
   function available(name) {
     if (name === 'vtuber') return !!window.vtuberModel;
+    if (name === 'phone') return !!window.phoneModel;
     return !!window.arduinoModel;
   }
 
