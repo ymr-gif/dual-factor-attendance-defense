@@ -7,35 +7,58 @@ const qa = (el, sel) => Array.from(el.querySelectorAll(sel));
 
 const slideAnimations = {
 
-  // Title — two steps: "Proposal Defense" first, then full title
+  // Title — two steps: "Proposal Defense" first, then full title + 3D board
   title(el) {
-    // Step 1 — "Proposal Defense" appears centered
+    let view = null;
+
+    // Step 1 — "Proposal Defense" appears centered, 3D board fades in assembled
     const step1 = () => {
       const intro = q(el, '.title-intro');
       const rest = q(el, '.title-rest');
+      const board3d = q(el, '.title-board-3d');
       utils.set(intro, { opacity: 0, y: 0, scale: 1 });
       utils.set(rest, { opacity: 0 });
-      return animate(intro, {
-        opacity: [0, 1],
-        scale: [0.8, 1],
-        duration: 1200,
-        ease: 'outExpo',
-      });
-    };
+      utils.set(board3d, { opacity: 0 });
 
-    // Step 2 — "Proposal Defense" shrinks up, full title reveals
-    const step2 = () => {
-      const intro = q(el, '.title-intro');
-      const rest = q(el, '.title-rest');
+      // Mount 3D view if available
+      const can3D = board3d && window.hardware3D && window.hardware3D.supported();
+      if (can3D) {
+        view = window.hardware3D.mount(q(el, '.title-board-3d__canvas'));
+        view.assemble();
+        view.start();
+      }
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
+      tl.add(intro, {
+        opacity: [0, 1],
+        scale: [0.8, 1],
+        duration: 1200,
+      })
+      .add(board3d, {
+        opacity: can3D ? [0, 1] : 0,
+        duration: 800,
+      }, '-=600');
+
+      return tl;
+    };
+
+    // Step 2 — "Proposal Defense" shrinks up, full title reveals, board explodes
+    const step2 = () => {
+      const intro = q(el, '.title-intro');
+      const rest = q(el, '.title-rest');
+      const board3d = q(el, '.title-board-3d');
+
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      // Shrink "Proposal Defense" up
       tl.add(intro, {
         y: -80,
         scale: 0.5,
         opacity: 0.6,
         duration: 800,
       })
+      // Fade in full title content
       .add(rest, {
         opacity: 1,
         duration: 600,
@@ -77,6 +100,18 @@ const slideAnimations = {
         opacity: [0, 1],
         duration: 400,
       }, '-=100');
+
+      // Explode the 3D board if available
+      if (view) {
+        const risers = Object.keys(view.parts).filter((name) => view.riseFor(name) > 0);
+        risers.forEach((name, i) => {
+          tl.add(view.parts[name].position, {
+            y: view.rest[name] + view.riseFor(name),
+            duration: 1400,
+            ease: 'outQuint',
+          }, i === 0 ? '-=300' : `-=${1400 - 90}`);
+        });
+      }
 
       return tl;
     };
