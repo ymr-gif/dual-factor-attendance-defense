@@ -22,7 +22,8 @@
 - Key animations by `data-anim` name, one function per name, in `animations.js`
 - Return `{ steps: [...] }` for slides the presenter walks through in beats
 - Give every element you animate in from `opacity: 0` / `scale: 0` the same
-  resting state in CSS, or it paints at full strength for a frame first
+  resting state in CSS, or it paints at full strength for a frame first —
+  `python3 tools/check-flash.py` catches the ones you miss
 - Assume a step can start before the previous one finished — pause it and set its
   end state first
 - Scope every query to the passed slide element with `q()` / `qa()`
