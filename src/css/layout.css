@@ -210,6 +210,10 @@
   opacity: 0;
 }
 
+.logbook-head--day {
+  text-anchor: middle;
+}
+
 .logbook-rule {
   stroke: var(--paper-rule);
   stroke-width: 1.5;
@@ -224,15 +228,8 @@
   stroke-width: 2;
 }
 
-.logbook-time {
-  font-family: var(--font-mono);
-  font-size: 22px;
-  fill: var(--ink);
-  opacity: 0;
-}
-
 /* Handwriting is drawn, never typed — no script font survives an offline deck,
-   and an illegible squiggle reads as "a signature" from the back of a hall. */
+   and an illegible squiggle reads as "a name" from the back of a hall. */
 .stroke {
   fill: none;
   stroke: var(--ink);
@@ -242,26 +239,54 @@
   opacity: 0;
 }
 
-.stroke--sig {
-  stroke-width: 3;
+.mark-box {
+  fill: none;
+  stroke: var(--paper-rule);
+  stroke-width: 2;
+  opacity: 0;
+  transform: scale(0.7);
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-/* Laid over the two identical hand-B signatures. Fading these in flags the
-   pair without tweening a colour. */
-.sig-flag {
+.mark-check {
   fill: none;
-  stroke: var(--danger);
-  stroke-width: 4;
+  stroke: var(--ink);
+  stroke-width: 3.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0;
 }
 
-.logbook-bracket {
+.mark-late {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 24px;
+  fill: var(--ink);
+  text-anchor: middle;
+  opacity: 0;
+}
+
+/* Beat 2 lays the identical tick over the drawn one in red, and rings the
+   cell. Flagging by fading an overlay in cannot half-apply the way a colour
+   tween can. */
+.mark-flag {
   fill: none;
   stroke: var(--danger);
-  stroke-width: 2.5;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   opacity: 0;
+}
+
+.cell-flag {
+  fill: none;
+  stroke: var(--danger);
+  stroke-width: 3;
+  opacity: 0;
+  transform: scale(1.5);
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .logbook-tell {
@@ -269,11 +294,10 @@
   font-size: 21px;
   letter-spacing: 0.22em;
   fill: var(--danger);
+  text-anchor: middle;
   opacity: 0;
 }
 
-/* Sits over the name column, not the signature column — the stamp must not
-   cover the two matching signatures it is passing judgement on. */
 .reject-stamp {
   position: absolute;
   top: 62%;
@@ -445,9 +469,9 @@
 }
 
 /* Liveness row layout — SVG scene + 3D phone side by side */
-.slide__content--liveness {
+.liveness-row {
+  display: flex;
   flex-direction: row;
-  max-width: 1100px;
   align-items: center;
   gap: var(--spacing-xl);
 }
@@ -460,6 +484,8 @@
   border-radius: 12px;
   overflow: hidden;
   opacity: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .phone-3d__canvas {
@@ -1107,6 +1133,30 @@
   letter-spacing: 0.08em;
   opacity: 0;
   white-space: nowrap;
+}
+
+.notify-status--complete {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.notify-ripples {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.notify-ripple {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  opacity: 0;
+  transform: scale(0.8);
 }
 
 .notify-banner {
