@@ -298,9 +298,15 @@ const slideAnimations = {
     return { steps: [fill, forge, reject] };
   },
 
-  // Solution — NFC and Face converge into one verdict
+  // Solution — NFC and Face converge, the subject is scanned, then the verdict.
+  // The scan is an overlay only: the model never moves, which keeps the beat
+  // about the mechanism rather than about the character.
   solution(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const dots = qa(el, '.scan__dot');
+    const corners = qa(el, '.scan__corner');
+    const line = q(el, '.scan__line');
+    const GRID = [16, 19];
     let vtuberView = null;
 
     tl.add(q(el, '.solution-icon--nfc'), {
@@ -318,11 +324,6 @@ const slideAnimations = {
       scale: [0, 1],
       duration: 400,
     }, '-=300')
-    .add(q(el, '.solution-result'), {
-      opacity: [0, 1],
-      y: [20, 0],
-      duration: 600,
-    }, '+=300')
     .add(q(el, '.vtuber-3d'), {
       opacity: [0, 1],
       duration: 800,
@@ -338,7 +339,59 @@ const slideAnimations = {
           }
         }
       },
-    }, '-=300');
+    }, '-=200')
+
+    // Reticle locks on
+    .add(corners, {
+      opacity: [0, 0.9],
+      scale: [1.25, 1],
+      delay: stagger(80),
+      duration: 420,
+    }, '-=350')
+
+    // The sweep, and the projector pattern lighting up row by row behind it
+    .add(line, {
+      opacity: [0, 1],
+      duration: 220,
+    }, '-=80')
+    .add(line, {
+      top: ['0%', '100%'],
+      duration: 1500,
+      ease: 'inOutSine',
+    }, '<')
+    .add(dots, {
+      opacity: [0, 1],
+      scale: [0, 1],
+      delay: stagger(74, { grid: GRID, axis: 'y', from: 'first' }),
+      duration: 260,
+      ease: 'outBack',
+    }, '<+=60')
+
+    // Pattern settles, sweep leaves
+    .add(dots, {
+      opacity: 0.26,
+      delay: stagger(74, { grid: GRID, axis: 'y', from: 'first' }),
+      duration: 520,
+    }, '-=1150')
+    .add(line, {
+      opacity: 0,
+      duration: 320,
+    }, '-=380')
+    .add(corners, {
+      opacity: 0.35,
+      duration: 420,
+    }, '-=200')
+
+    .add(q(el, '.solution-merge'), {
+      opacity: [0, 1],
+      scale: [0.6, 1],
+      duration: 380,
+    }, '-=120')
+    .add(q(el, '.solution-result'), {
+      opacity: [0, 1],
+      y: [20, 0],
+      duration: 600,
+    }, '-=120');
 
     return tl;
   },
@@ -432,8 +485,9 @@ const slideAnimations = {
       for (let d = 0; d < dots.length; d++) {
         tl.add(dots[d], {
           opacity: [0.15, 1, 0.15],
+          y: [0, -6, 0],
           duration: DOT_DURATION,
-          ease: 'inOutQuad',
+          ease: 'inOutSine',
         }, base + d * DOT_STAGGER);
       }
     }
