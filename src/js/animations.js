@@ -11,12 +11,16 @@ const slideAnimations = {
   title(el) {
     let view = null;
 
-    // Step 1 — "Proposal Defense" appears centered, 3D board fades in assembled
+    // Step 1 — "Proposal Defense", school name, S.A.F.E. + assembled 3D board
     const step1 = () => {
       const intro = q(el, '.title-intro');
+      const school = q(el, '.title-school');
+      const main = q(el, '.title-main');
       const rest = q(el, '.title-rest');
       const board3d = q(el, '.title-board-3d');
       utils.set(intro, { opacity: 0, y: 0, scale: 1 });
+      utils.set(school, { opacity: 0 });
+      utils.set(main, { opacity: 0 });
       utils.set(rest, { opacity: 0 });
       utils.set(board3d, { opacity: 0 });
 
@@ -35,6 +39,16 @@ const slideAnimations = {
         scale: [0.8, 1],
         duration: 1200,
       })
+      .add(school, {
+        opacity: [0, 1],
+        y: [-10, 0],
+        duration: 600,
+      }, '-=800')
+      .add(main, {
+        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
+        opacity: [0, 1],
+        duration: 1200,
+      }, '-=400')
       .add(board3d, {
         opacity: can3D ? [0, 1] : 0,
         duration: 800,
@@ -43,44 +57,24 @@ const slideAnimations = {
       return tl;
     };
 
-    // Step 2 — "Proposal Defense" shrinks up, full title reveals, board explodes
+    // Step 2 — intro shrinks up, board explodes, rest reveals
     const step2 = () => {
       const intro = q(el, '.title-intro');
       const rest = q(el, '.title-rest');
-      const board3d = q(el, '.title-board-3d');
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
       // Shrink "Proposal Defense" up
       tl.add(intro, {
-        y: -80,
+        y: -60,
         scale: 0.5,
         opacity: 0.6,
         duration: 800,
       })
-      // Fade in full title content
+      // Fade in rest (divider, full description, team, section)
       .add(rest, {
         opacity: 1,
         duration: 600,
-      }, '-=400')
-      .add(q(el, '.title-school'), {
-        opacity: [0, 1],
-        y: [-10, 0],
-        duration: 500,
-      }, '-=300')
-      .add(q(el, '.shield-icon'), {
-        opacity: [0, 1],
-        scale: [0.5, 1],
-        duration: 800,
-      }, '-=200')
-      .add(q(el, '.checkmark'), {
-        strokeDashoffset: [100, 0],
-        duration: 600,
-      }, '-=300')
-      .add(q(el, '.title-main'), {
-        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
-        opacity: [0, 1],
-        duration: 1200,
       }, '-=400')
       .add(q(el, '.title-divider'), {
         scaleX: [0, 1],
