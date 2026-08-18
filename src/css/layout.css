@@ -36,6 +36,11 @@
 }
 
 /* Title Slide */
+.slide--title .slide__content {
+  max-width: 100%;
+  padding: var(--spacing-md) var(--spacing-xl);
+}
+
 .title-icon {
   width: 120px;
   height: 120px;
@@ -75,13 +80,14 @@
 
 /* Step 1 — "Proposal Defense" appears centered, large */
 .title-intro {
-  font-size: clamp(32px, 6vw, 64px);
+  font-size: clamp(28px, 5vw, 56px);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0;
   transition: none;
+  margin-bottom: var(--spacing-sm);
 }
 
 /* Step 2 container — hidden until the second beat */
@@ -93,11 +99,11 @@
   opacity: 0;
 }
 
-/* Title slide 3D board — sits below "Proposal Defense" */
+/* Title slide 3D board — big, centered below "Proposal Defense" */
 .title-board-3d {
-  width: clamp(280px, 40vw, 420px);
+  width: clamp(400px, 65vw, 720px);
   aspect-ratio: 16 / 9;
-  margin: var(--spacing-lg) auto;
+  margin: 0 auto;
   opacity: 0;
   position: relative;
 }
