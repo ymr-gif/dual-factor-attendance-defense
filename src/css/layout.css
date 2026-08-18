@@ -440,6 +440,11 @@
 
 .scan__dot {
   fill: var(--accent);
+  /* Cyan alone disappears against the blouse and the lit side of the face.
+     A dark halo keeps every dot readable over both the subject and the
+     background without needing a filter on 304 nodes. */
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 1.1;
   opacity: 0;
   transform: scale(0);
   transform-box: fill-box;
@@ -1254,30 +1259,26 @@
 }
 
 .notify-banner {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-20px);
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 90%;
-  padding: 8px 10px;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
   background: var(--bg-secondary);
   border: 1px solid var(--accent);
-  border-radius: 8px;
+  border-radius: 10px;
   opacity: 0;
-  box-sizing: border-box;
+  order: -1;
 }
 
 .notify-banner-icon {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 }
 
 .notify-banner-text {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-primary);
   font-family: var(--font-mono);
   letter-spacing: 0.04em;
