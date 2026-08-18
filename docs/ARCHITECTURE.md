@@ -105,9 +105,22 @@ fires if the vendored file is missing.
 1. `totalSlides` is read from the DOM — adding a section is enough
 2. Counter total is written from that same count on init
 3. Keyboard/click/touch listener → `goToSlide()`
-4. `.active` moves to the new section; CSS transitions opacity + visibility
-5. After 100ms, `masterTimeline.playSlide()` runs that slide's animation
+4. `.active` moves to the new section. Only the incoming slide has a transition,
+   so the outgoing one leaves instantly and the two are never legible at once
+5. On the next animation frame — not a timer — `masterTimeline.playSlide()` runs
+   that slide's animation
 6. Progress bar updates on every move
+
+### No flash of finished content
+
+Two rules keep a slide from showing its end state before it animates:
+
+- Every element an animation starts from `opacity: 0` (or a scale) carries that
+  same resting state in CSS. Add a new entrance animation, add the matching
+  resting state, or the element paints once at full strength first.
+- `playSlide()` calls `reset()` first, which pauses whatever that slide was still
+  running and strips the inline styles the last visit left behind, handing the
+  slide back to its CSS resting state.
 
 ## Dispatch (timeline.js)
 

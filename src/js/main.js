@@ -44,11 +44,12 @@
 
     updateProgress();
 
-    // Play animation after transition
-    setTimeout(() => {
+    // Next frame, not a timer — the slide must not paint a single frame of
+    // finished-looking content before its animation starts
+    requestAnimationFrame(() => {
       masterTimeline.playSlide(currentSlide);
       isAnimating = false;
-    }, 100);
+    });
   }
 
   function nextSlide() {
@@ -131,9 +132,9 @@
   updateProgress();
   masterTimeline.init();
 
-  // Play first slide animation
-  setTimeout(() => {
+  // Play the first slide once the stylesheets have settled
+  requestAnimationFrame(() => {
     masterTimeline.playSlide(1);
-  }, 300);
+  });
 
 })();

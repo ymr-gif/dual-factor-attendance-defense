@@ -27,6 +27,7 @@ const slideAnimations = {
     }, '-=300')
     .add(q(el, '.title-main'), {
       innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
+      opacity: [0, 1],
       duration: 1200,
     }, '-=400')
     .add(q(el, '.title-divider'), {

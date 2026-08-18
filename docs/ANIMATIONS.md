@@ -12,6 +12,8 @@
 - Animations trigger on navigation, never autoplay
 - Every function is keyed by `data-anim` and receives its slide element
 - Queries are scoped with `q()` / `qa()` — never global selectors
+- Anything animated in from 0 must also rest at 0 in CSS — see the no-flash
+  rules in `ARCHITECTURE.md`
 
 ## Phase 1 — Skeleton (all shipped)
 
@@ -93,4 +95,5 @@ animate('.title', { innerHTML: scrambleText({ chars: 'A-Z0-9' }) });
 | 2026-08-18 | `architecture` | Reordered flow, added notify node, emoji → SVG icons | Camera fired after the backend; notification was missing; emoji render inconsistently on projector laptops |
 | 2026-08-18 | `rq` | Added "RESEARCH QUESTION" eyebrow above the number | Panel could not tell at a glance that slides 9–11 are the research questions |
 | 2026-08-18 | `survey` | 12 → 20 items per version, per-characteristic count badges | Instrument revised to 5 items per characteristic |
+| 2026-08-18 | All | Added CSS resting states for every entrance, reset inline styles on slide entry, play on the next frame instead of a 100ms timer, slide cross-fade 800ms → 260ms with an instant exit | Slides painted their finished content for a beat before animating, and the outgoing slide ghosted over the incoming one |
 | 2026-08-18 | `hardware` | Spec card grid replaced with the isometric rig and the exploded Arduino, on two presenter-driven steps | The hero moment of the deck; spec text now labels the objects it describes |
