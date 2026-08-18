@@ -45,10 +45,20 @@
     return texture;
   }
 
+  // Source models often ship connector shells and shields as mirror-smooth
+  // metal. Under a studio environment a mirror reflects the brightest band of
+  // the backdrop as a flat wash of colour, which reads as a glowing block
+  // rather than metal. Real shells are brushed, so treat them that way.
+  function roughnessFor(spec) {
+    const roughness = spec.roughness !== undefined ? spec.roughness : 1;
+    if (spec.metalness >= 0.9 && roughness < 0.5) return 0.55;
+    return roughness;
+  }
+
   function materialFor(spec) {
     return new THREE.MeshStandardMaterial({
       color: spec.color,
-      roughness: spec.roughness,
+      roughness: roughnessFor(spec),
       metalness: spec.metalness,
       emissive: spec.emissive || 0x000000,
       emissiveIntensity: spec.emissive ? 1 : 0,
