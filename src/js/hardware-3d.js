@@ -17,8 +17,13 @@
 
   // How far each part lifts in the exploded view, in scene units. Mirrors the
   // isometric scene's RISE table so both versions read the same.
+  //
+  // Two entries are deliberately 0. In the modelled board, `components` is a
+  // board-sized catch-all for everything not classified, and `leds` turned out
+  // to be flat decal planes, not parts — lifting either sends a slab the size of
+  // the PCB into the air. They stay put and travel with the board.
   const EXPLODE = {
-    pcb: 0, leds: 0.55, reg: 0.95, xtal: 1.15, reset: 1.25, icsp: 1.4,
+    pcb: 0, components: 0, leds: 0, reg: 0.95, xtal: 1.15, reset: 1.25, icsp: 1.4,
     mcu: 1.85, usb: 2.35, jack: 2.35,
     'hdr-d1': 3.0, 'hdr-d2': 3.0, 'hdr-a1': 3.0, 'hdr-a2': 3.0,
   };
@@ -228,7 +233,7 @@
     canvas.height = 128;
     const ctx = canvas.getContext('2d');
     const grad = ctx.createLinearGradient(0, 0, 0, 128);
-    grad.addColorStop(0, '#5d7284');
+    grad.addColorStop(0, '#6c7076');
     grad.addColorStop(0.45, '#252c36');
     grad.addColorStop(0.75, '#0e1015');
     grad.addColorStop(1, '#07080c');
@@ -322,11 +327,11 @@
     key.shadow.bias = -0.0012;
     scene.add(key);
 
-    const fill = new THREE.DirectionalLight(0x9fd8ff, 0.55);
+    const fill = new THREE.DirectionalLight(0xbcd2de, 0.42);
     fill.position.set(-6, 3, -4);
     scene.add(fill);
 
-    const rim = new THREE.DirectionalLight(0x00d4ff, 0.8);
+    const rim = new THREE.DirectionalLight(0x00d4ff, 0.32);
     rim.position.set(-2, 1.5, -7);
     scene.add(rim);
 
