@@ -571,7 +571,7 @@ const slideAnimations = {
     }, 6700);
 
     // Corner domino wave — clockwise: TL → TR → BR → BL
-    // Each corner pulses, then an echo pulse follows 200 ms later
+    // Main pulse at the corner, then echo travels outward from phone
     const CORNER_ORDER = [0, 1, 3, 2]; // tl, tr, br, bl
     const CORNER_STAGGER = 250;
     const ECHO_OFFSET = 200;
@@ -579,28 +579,27 @@ const slideAnimations = {
     CORNER_ORDER.forEach((idx, seq) => {
       const base = 6700 + seq * CORNER_STAGGER;
       const corner = corners[idx];
-      const dirX = (idx === 0 || idx === 2) ? 5 : -5;
-      const dirY = (idx < 2) ? -5 : 5;
+      // Outward direction from phone center
+      const outX = (idx === 0 || idx === 2) ? -20 : 20;
+      const outY = (idx < 2) ? -20 : 20;
       const dirRot = (idx % 2 === 0) ? 12 : -12;
 
-      // Main pulse
+      // Main pulse — corner appears and pulses in place
       tl.add(corner, {
         scale: [1, 1.4, 1],
         rotate: [0, dirRot, 0],
-        x: [0, dirX, 0],
-        y: [0, dirY, 0],
-        duration: 700,
+        duration: 500,
         ease: 'inOutSine',
       }, base);
 
-      // Echo pulse — smaller, faster
+      // Echo — travels outward from phone, fades out
       tl.add(corner, {
-        scale: [1, 1.2, 1],
-        rotate: [0, dirRot * 0.5, 0],
-        x: [0, dirX * 0.5, 0],
-        y: [0, dirY * 0.5, 0],
-        duration: 400,
-        ease: 'inOutSine',
+        x: [0, outX],
+        y: [0, outY],
+        scale: [1, 1.6],
+        opacity: [1, 0],
+        duration: 500,
+        ease: 'outQuad',
       }, base + ECHO_OFFSET);
     });
 
