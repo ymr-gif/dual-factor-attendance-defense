@@ -20,6 +20,7 @@ const slideAnimations = {
       const board3d = q(el, '.title-board-3d');
       utils.set(intro, { opacity: 0 });
       utils.set(school, { opacity: 0 });
+      main.innerHTML = 'S.A.F.E.';
       utils.set(main, { opacity: 0 });
       utils.set(rest, { opacity: 0 });
       utils.set(board3d, { opacity: 0 });
