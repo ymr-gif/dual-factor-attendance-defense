@@ -878,26 +878,21 @@
               </div>
             </div>
           </div>
+          <!-- Rig-label pointers, not chips: a leader out to a dot on the node
+               it names, with the name itself parked off the board. Callout 1
+               sits left of the board, 2 and 3 right of it, so the leader is the
+               only thing that ever crosses the border. -->
           <div class="flow-callouts">
             <div class="flow-callout flow-callout--1">
               <span class="flow-callout__text">Instrument 1</span>
-              <svg class="flow-callout__line" viewBox="0 0 60 20" preserveAspectRatio="none">
-                <line x1="0" y1="10" x2="52" y2="10" stroke="var(--copper)" stroke-width="1.5"/>
-                <circle cx="55" cy="10" r="3" fill="var(--copper)"/>
-              </svg>
+              <span class="flow-callout__lead"></span>
             </div>
             <div class="flow-callout flow-callout--2">
-              <svg class="flow-callout__line flow-callout__line--up" viewBox="0 0 20 40" preserveAspectRatio="none">
-                <line x1="10" y1="40" x2="10" y2="8" stroke="var(--copper)" stroke-width="1.5"/>
-                <circle cx="10" cy="4" r="3" fill="var(--copper)"/>
-              </svg>
+              <span class="flow-callout__lead flow-callout__lead--flip"></span>
               <span class="flow-callout__text">Instrument 2</span>
             </div>
             <div class="flow-callout flow-callout--3">
-              <svg class="flow-callout__line flow-callout__line--up" viewBox="0 0 20 40" preserveAspectRatio="none">
-                <line x1="10" y1="40" x2="10" y2="8" stroke="var(--copper)" stroke-width="1.5"/>
-                <circle cx="10" cy="4" r="3" fill="var(--copper)"/>
-              </svg>
+              <span class="flow-callout__lead flow-callout__lead--flip"></span>
               <span class="flow-callout__text">Instrument 3</span>
             </div>
           </div>

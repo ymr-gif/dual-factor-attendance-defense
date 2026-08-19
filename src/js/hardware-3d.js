@@ -28,6 +28,13 @@
     'hdr-d1': 3.0, 'hdr-d2': 3.0, 'hdr-a1': 3.0, 'hdr-a2': 3.0,
   };
 
+  // One knob over the whole table. frame() fits the board in its exploded
+  // spread, so raising this both throws the parts further AND pulls the camera
+  // back to keep them in shot — the board therefore reads a little smaller at
+  // 2x than it did at 1x. That is the trade; drop this toward 1 to take the
+  // board size back.
+  const SPREAD = 2;
+
   const COLORS = {
     pcb: 0x0a3542,
     pcbEdge: 0x0a3543,
@@ -369,6 +376,46 @@
     floor.receiveShadow = true;
     scene.add(floor);
 
+    // Shock rings — the blast the explode throws off. They hang on the scene
+    // rather than on the board group on purpose: frame() measures the board's
+    // bounding box, and a ring expanding past five units would drag the camera
+    // back until the board was a speck. Flat on the deck, additive, and fully
+    // transparent until step 2 of the title drives them.
+    //
+    // RingGeometry is built in local XY, so after the -90deg X rotation the
+    // ring's local x/y are the world x/z — those are the two scale channels the
+    // animation touches. Local z is thickness and stays at 1.
+    const SHOCK_RINGS = 3;
+    const SHOCK_REST = 0.12;
+    const shock = [];
+    for (let i = 0; i < SHOCK_RINGS; i++) {
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(0.98, 1, 128),
+        new THREE.MeshBasicMaterial({
+          color: 0x00d4ff,
+          transparent: true,
+          opacity: 0,
+          side: THREE.DoubleSide,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          toneMapped: false,   // ACES would wash the accent cyan out to pale
+        })
+      );
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.y = T + 0.02;      // just clear of the PCB, under the parts
+      ring.scale.set(SHOCK_REST, SHOCK_REST, 1);
+      ring.renderOrder = 3;
+      scene.add(ring);
+      shock.push(ring);
+    }
+
+    function calmShock() {
+      shock.forEach((ring) => {
+        ring.scale.set(SHOCK_REST, SHOCK_REST, 1);
+        ring.material.opacity = 0;
+      });
+    }
+
     const rest = {};
     Object.keys(parts).forEach((name) => { rest[name] = parts[name].position.y; });
 
@@ -444,12 +491,15 @@
 
     const api = {
       renderer, scene, camera, board, parts, rest, explode: EXPLODE, riseFor,
+      shock, shockRest: SHOCK_REST,
       onFrame: null,
       resize, render, start, stop, frame,
 
-      // drops every part back onto the board without animating
+      // drops every part back onto the board without animating, and pulls the
+      // shock rings back in — a revisit must not open on a spent blast
       assemble() {
         Object.keys(parts).forEach((name) => { parts[name].position.y = rest[name]; });
+        calmShock();
         render();
       },
       // where a part currently sits, in canvas pixels — for HTML labels
@@ -483,7 +533,7 @@
 
   // Parts the explode table does not name still travel, just less far
   function riseFor(name) {
-    return EXPLODE[name] !== undefined ? EXPLODE[name] : 1.5;
+    return (EXPLODE[name] !== undefined ? EXPLODE[name] : 1.5) * SPREAD;
   }
 
   window.hardware3D = { supported, mount, stopAll, riseFor, EXPLODE, MM, W, D, T };
