@@ -393,12 +393,18 @@ const slideAnimations = {
     return tl;
   },
 
-  // Liveness — scan line sweeps, spoof is rejected; 3D phone spins in simultaneously
+  // Liveness — scan line sweeps, spoof is rejected; 3D phone spins in
+  // simultaneously. The left scene's own scan-line + stamp are timed off
+  // window.phone3D.timing so both halves' "verdict" beat — scan sweep,
+  // then reject stamp — lands at the same moment as the phone's, instead
+  // of the left side finishing its much shorter sequence 3-4s before the
+  // phone even arrives.
   liveness(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
     // Mount 3D phone and trigger entrance + scroll
     const phoneCanvas = q(el, '.phone-3d__canvas');
+    let timing = null;
     if (phoneCanvas && window.phone3D && window.phone3D.supported()) {
       const phoneView = window.phone3D.mount(phoneCanvas);
       if (phoneView) {
@@ -408,36 +414,47 @@ const slideAnimations = {
         // playEntrance) and slides in over 4s. Fading opacity in on its own
         // much shorter timer made it pop fully visible mid-slide instead.
         utils.set(q(el, '.phone-3d'), { opacity: 1 });
+        timing = window.phone3D.timing;
       }
     }
 
+    // Photo icon and heading appear promptly so the left side doesn't sit
+    // blank while the phone is still gliding in — only the scan-line sweep
+    // and reject stamp (the shared "verdict" beat) wait for the sync point
+    // below. Falls back to the original early timing when the phone isn't
+    // rendered (no WebGL) so there's nothing to sync against.
     tl.add(q(el, '.liveness-photo'), {
       opacity: [0, 1],
       scale: [0.8, 1],
       duration: 600,
     }, 0)
-    .add(q(el, '.liveness-scan-line'), {
+    .add(q(el, '.liveness-title'), {
+      opacity: [0, 1],
+      y: [20, 0],
+      duration: 500,
+    }, 500)
+    .add(q(el, '.liveness-subtitle'), {
+      opacity: [0, 1],
+      duration: 400,
+    }, 800);
+
+    const scanAt = timing ? timing.scanStart : 400;
+    const scanDuration = timing ? (timing.scanEnd - timing.scanStart) : 1200;
+    const stampAt = timing ? timing.stampStart : 1400;
+
+    tl.add(q(el, '.liveness-scan-line'), {
       opacity: [0, 1, 1, 0],
       y: [0, 0, 180, 200],
-      duration: 1200,
+      duration: scanDuration,
       ease: 'linear',
-    }, '-=200')
+    }, scanAt)
     .add(q(el, '.liveness-stamp'), {
       opacity: [0, 1],
       scale: [2.5, 1],
       rotate: ['-30deg', -15],
       duration: 300,
       ease: 'outBack',
-    }, '-=200')
-    .add(q(el, '.liveness-title'), {
-      opacity: [0, 1],
-      y: [20, 0],
-      duration: 500,
-    }, '-=100')
-    .add(q(el, '.liveness-subtitle'), {
-      opacity: [0, 1],
-      duration: 400,
-    }, '-=200');
+    }, stampAt);
 
     return tl;
   },
@@ -849,34 +866,19 @@ const slideAnimations = {
     return tl;
   },
 
-  // Prototype — two steps: the rig assembles, then the Arduino explodes.
-  // Step 2 fires on the next arrow press (see timeline.js step handling).
+  // Prototype — the guardpost rig assembles in one beat. The Arduino explode
+  // that used to follow it was removed; slide 8 is the rig and nothing else.
   hardware(el) {
-    const stage = q(el, '.rig-stage');
     const units = qa(el, '.unit');
-    const parts = qa(el, '.part');
     const wires = qa(el, '.wire');
     const caption = q(el, '.specs-caption');
-    const risers = parts.filter((p) => Number(p.dataset.rise) > 0);
-    // everything that clears away when the camera pushes into the board
-    // The budget block clears with the rig — step 2 is about the board alone.
-    const context = qa(el, '.rig-context').concat(qa(el, '.specs-budget'));
-    const stage3d = q(el, '.board-3d');
-    const labels3d = qa(el, '.label3d');
-    let rigTl = null;
-    let view = null;   // the 3D board, built the first time it is needed
+    const context = qa(el, '.rig-context');
 
-    // Step 1 — the guardpost rig drops in and the jumpers draw themselves
     const rig = () => {
-      utils.set(stage, { scale: 1, x: 0, y: 0 });
-      utils.set(parts, { y: 0 });
+      utils.set(q(el, '.rig-stage'), { scale: 1, x: 0, y: 0 });
       utils.set(q(el, '.rig-svg'), { opacity: 1 });
-      utils.set(stage3d, { opacity: 0 });
-      utils.set(labels3d, { opacity: 0 });
-      if (view) { view.stop(); view.assemble(); }
       utils.set(units, { opacity: 0 });
       utils.set(context, { opacity: 1 });
-      utils.set(qa(el, '.part-label'), { opacity: 0 });
       utils.set(qa(el, '.rig-label'), { opacity: 0 });
       utils.set(q(el, '.specs-budget'), { opacity: 0 });
       caption.textContent = 'Guardpost rig';
@@ -922,23 +924,10 @@ const slideAnimations = {
         duration: 400,
       }, '-=250');
 
-      rigTl = tl;
       return tl;
     };
 
-    // ── Section 2 removed per user request ──────────────────────────
-    // The 3D board-explode beat (handoff, explode3D, explodeSVG, trackLabels)
-    // was deleted from the live presentation. Leftovers kept below as
-    // documentation only — none of this code runs.
-    //
-    // const handoff = () => { ... };
-    // const trackLabels = () => { ... };
-    // const explode3D = () => { ... };
-    // const explodeSVG = () => { ... };
-    // const explode = () => { ... };
-    // ─────────────────────────────────────────────────────────────────
-
-    return { steps: [rig] };
+    return rig();
   },
 
   // Research questions — shared by all three RQ slides
@@ -1039,97 +1028,63 @@ const slideAnimations = {
 
   // Protocols — two steps: cards enter, then details + outcomes reveal
   protocols(el) {
-    let boardTl = null;
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    // Step 1 — title, board, three cards stagger in, dividers rise
-    const enter = () => {
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    tl.add(q(el, '.protocols-title'), {
+      opacity: [0, 1],
+      y: [-20, 0],
+      duration: 500,
+    })
+    .add(q(el, '.protocols-board'), {
+      opacity: [0, 1],
+      scale: [0.95, 1],
+      duration: 600,
+    }, '-=200')
+    .add(q(el, '.protocol--1'), {
+      opacity: [0, 1],
+      x: [-50, 0],
+      duration: 700,
+    }, '-=300')
+    .add(q(el, '.protocol--2'), {
+      opacity: [0, 1],
+      x: [50, 0],
+      duration: 700,
+    }, '-=500')
+    .add(q(el, '.protocol--3'), {
+      opacity: [0, 1],
+      x: [50, 0],
+      duration: 700,
+    }, '-=500')
+    .add(qa(el, '.protocol-divider'), {
+      scaleY: [0, 1],
+      opacity: [0, 0.3],
+      delay: stagger(120),
+      duration: 400,
+    }, '-=400')
+    .add(qa(el, '.protocol-details'), {
+      opacity: [0, 1],
+      y: [10, 0],
+      duration: 500,
+    }, '-=200')
+    .add(q(el, '.protocols-outcome'), {
+      opacity: [0, 1],
+      duration: 400,
+    }, '-=200')
+    .add(qa(el, '.protocols-metric'), {
+      opacity: [0, 1],
+      y: [12, 0],
+      delay: stagger(100),
+      duration: 400,
+    }, '-=200');
 
-      tl.add(q(el, '.protocols-title'), {
-        opacity: [0, 1],
-        y: [-20, 0],
-        duration: 500,
-      })
-      .add(q(el, '.protocols-board'), {
-        opacity: [0, 1],
-        scale: [0.95, 1],
-        duration: 600,
-      }, '-=200')
-      .add(q(el, '.protocol--1'), {
-        opacity: [0, 1],
-        x: [-50, 0],
-        duration: 700,
-      }, '-=300')
-      .add(q(el, '.protocol--2'), {
-        opacity: [0, 1],
-        x: [50, 0],
-        duration: 700,
-      }, '-=500')
-      .add(q(el, '.protocol--3'), {
-        opacity: [0, 1],
-        x: [50, 0],
-        duration: 700,
-      }, '-=500')
-      .add(qa(el, '.protocol-divider'), {
-        scaleY: [0, 1],
-        opacity: [0, 0.3],
-        delay: stagger(120),
-        duration: 400,
-      }, '-=400');
+    // Trigger dot-highlight scan animation after content settles
+    const board = q(el, '.protocols-board');
+    tl.add(board, {
+      begin() { board.classList.add('is-scanning'); },
+      duration: 0,
+    }, '-=400');
 
-      boardTl = tl;
-      return tl;
-    };
-
-    // Step 2 — details, outcome row, scan line sweep
-    const reveal = () => {
-      if (boardTl) boardTl.pause();
-      const procs = qa(el, '.protocol');
-      procs.forEach((p) => {
-        p.style.opacity = '1';
-        p.style.transform = 'none';
-      });
-      utils.set(qa(el, '.protocol-divider'), { opacity: 0.3, scaleY: 1 });
-
-      const details = qa(el, '.protocol-details');
-      const metrics = qa(el, '.protocols-metric');
-      const scanLine = q(el, '.protocols-scan');
-
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-      tl.add(details, {
-        opacity: [0, 1],
-        y: [10, 0],
-        duration: 500,
-      })
-      .add(q(el, '.protocols-outcome'), {
-        opacity: [0, 1],
-        duration: 400,
-      }, '-=200')
-      .add(metrics, {
-        opacity: [0, 1],
-        y: [12, 0],
-        delay: stagger(100),
-        duration: 400,
-      }, '-=200')
-      .add(scanLine, {
-        opacity: [0, 1],
-        duration: 150,
-      }, '-=300')
-      .add(scanLine, {
-        left: ['0%', '100%'],
-        duration: 1200,
-        ease: 'linear',
-      }, '-=150')
-      .add(scanLine, {
-        opacity: 0,
-        duration: 150,
-      }, '-=150');
-
-      return tl;
-    };
-
-    return { steps: [enter, reveal] };
+    return tl;
   },
 
   // Survey — instrument structure, no result claims

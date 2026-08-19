@@ -38,6 +38,7 @@
       // Show new slide (hidden behind current via z-index or positioning)
       masterTimeline.reset(num, newEl);
       newEl.classList.add('active');
+      window.slideFit.schedule();
 
       updateProgress();
 
@@ -62,6 +63,8 @@
       if (newEl) {
         masterTimeline.reset(num, newEl);
         newEl.classList.add('active');
+        // The window may have been resized while this slide was hidden
+        window.slideFit.schedule();
       }
 
       updateProgress();

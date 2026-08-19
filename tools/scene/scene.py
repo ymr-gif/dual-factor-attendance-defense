@@ -224,5 +224,42 @@ def laptop(x0, y0):
             % (sh, lid, "".join(screen), base, hinge, "".join(keys), pad))
 
 
+BB_W, BB_D, BB_H = 70, 46, 8
+
+
+def breadboard(x0, y0):
+    """Solderless breadboard — in the specs table and the ₱4,245 budget, but
+    never drawn until now. Nothing is wired to it; it sits in the rig as the
+    prototyping surface, which is what the budget line pays for.
+
+    Offsets are fractions of the footprint, so resizing it for the composition
+    does not pull the rails and tie points out of alignment."""
+    s = S
+    top = BB_H + 0.02
+    row = BB_D / 19.0          # tie-point row pitch
+    inset = BB_W * 0.075
+    sh = shadow(x0 + BB_W / 2, y0 + BB_D / 2, BB_W * 0.58, BB_D * 0.58, s, OX, OY, 0.32)
+    body, _ = box(x0, y0, 0, BB_W, BB_D, BB_H, BBOARD, s, OX, OY)
+    # centre channel, recessed a hair below the deck
+    art = [plate(x0 + inset * 0.6, y0 + BB_D / 2 - row, top - 0.01,
+                 BB_W - inset * 1.2, row * 2, "#a7aeb9", s, OX, OY, 1, "#8f96a1", 0.4)]
+
+    def run(yy, col, sw, op, dash=None):
+        art.append(line3((x0 + inset, y0 + yy, top), (x0 + BB_W - inset, y0 + yy, top),
+                         s, OX, OY, col, sw, op, dash=dash))
+
+    # power rails — red outer, blue inner, on both banks
+    for f, col in ((0.055, "#d9534f"), (0.12, "#4a90d9"),
+                   (0.88, "#4a90d9"), (0.945, "#d9534f")):
+        run(BB_D * f, col, 1.1, 0.75)
+    for f in (0.088, 0.912):
+        run(BB_D * f, "#7f8792", 0.9, 0.4, dash=(row * 0.4, row * 0.62))
+    # ten tie-point rows, five each side of the channel, as dashed runs
+    for i in range(10):
+        run(BB_D * 0.21 + (i if i < 5 else i + 2.2) * row, "#7f8792", 1.0, 0.55,
+            dash=(row * 0.4, row * 0.62))
+    return '<g class="unit rig-context unit--breadboard">%s%s%s</g>' % (sh, body, "".join(art))
+
+
 def wire(points, color, sw=1.6, cls="wire"):
     return polyline3(points, S, OX, OY, color, sw, 0.9, cls)

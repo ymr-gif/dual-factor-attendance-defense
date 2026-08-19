@@ -33,7 +33,7 @@
 | `title` | School fades, shield scales, checkmark draws, S.A.F.E. scrambles, team staggers |
 | `problem` | **3 steps.** A week of the attendance sheet fills by hand (names drawn, ticks, blanks, lates); a tick is then drawn into a box that was blank and flagged red; UNVERIFIED stamps down |
 | `solution` | NFC and Face slide in, the vtuber portrait fades up, a green reticle locks on, a glowing green line sweeps top to bottom (2100ms) while a band of projector dots tracks it — each row rises and falls as the beam passes — then IDENTITY VERIFIED at 2x |
-| `liveness` | Photo appears, scan line sweeps, ✕ stamp slams (left scene). Phone slides in on a hero angle, screen off, then idly spins forever like a display case while a red ✕ stamp slams onto it once and stays (right scene, `phone-3d.js`) |
+| `liveness` | Photo appears, scan line sweeps, ✕ stamp slams (left scene). Phone slides in from the true screen edge on a hero angle, screen off, rocks in a bounded front-facing wobble forever, and — timed off the same `window.phone3D.timing` schedule the left scene now reads — sweeps its own scan-line and takes a red ✕ stamp in sync with the left scene's (right scene, `phone-3d.js`) |
 | `notify` | Verified badge pops, dot trail fires across, phone slides in, envelope pops, chips rise |
 | `framework` | IPO stages cascade left to right with overlapping entrances — each rises, overshoots and swells to 1.06 before settling, in one unbroken motion; arrows bridge between them, feedback bar widens. An ambient audio-spectrum bar visualizer runs under the row throughout, independent of the cards. (List items are not animated separately — they ride their card's fade) |
 | `architecture` | Seven nodes cascade with scale, copper PCB traces draw between them |
@@ -91,15 +91,30 @@ actually moved, just a color flicker on 56px icons.
   layout only needs `transform: rotate(90deg)` on `.arch-trace__svg` — no
   per-breakpoint path data
 
-### 3. Liveness spoof comparison — `liveness` — SHIPPED 2026-08-19
+### 3. Liveness spoof comparison — `liveness` — SHIPPED 2026-08-19, synced 2026-08-20
 Went through two builds before landing here. First: the phone's screen
 displayed a swiping 3-photo carousel with a sliding red spoof-detection
 box (superseding the split-scene/frequency-overlay idea below). That was
-scrapped — simpler reads better: the phone slides in on a hero angle,
-screen off, then idly spins in place forever like a store display case;
-a red ✕ stamp (matching the left scene's `.liveness-stamp`) slams onto it
-once, partway into the spin, and stays. No photos, no box, no per-photo
-tuning. Left-side scan/stamp scene is untouched.
+scrapped — simpler reads better: the phone slides in from the true edge
+of the screen (computed from the container's real on-screen position, not
+a static guess) on a hero angle, screen off, settles into a bounded
+front-facing wobble (±45°, never turns far enough to show the back — a
+full spin did, and the flat 2D `.phone-stamp` overlay doesn't rotate with
+the model, so it ended up floating over the wrong side). Near the tail of
+the entrance a scan-line sweeps the dark screen once — the same visual as
+the left scene's `.liveness-scan-line` — then a red ✕ stamp (matching
+`.liveness-stamp`) slams on and stays. No photos, no box, no per-photo
+tuning.
+
+The left scene's own scan-line + stamp no longer run on their own fixed
+schedule: `phone-3d.js` exposes the derived timing of its scan/stamp beat
+as `window.phone3D.timing`, and `animations.js`'s `liveness()` positions
+`.liveness-scan-line`/`.liveness-stamp` at those same absolute
+milliseconds, so both halves of the slide sweep and land their verdict at
+the same moment instead of the left side finishing ~4s before the phone
+even arrives. `.liveness-photo`/`.liveness-title`/`.liveness-subtitle`
+stay on their own early schedule (not gated behind the now-later stamp)
+so the slide doesn't sit blank while the phone is still gliding in.
 
 ~~Split scene: real face passes, printed photo fails. Texture/frequency
 overlay scanning both, scores counting up in opposite directions.~~
@@ -154,4 +169,8 @@ animate('.title', { innerHTML: scrambleText({ chars: 'A-Z0-9' }) });
 | 2026-08-18 | `hardware` | Step 2's built-in primitive board replaced with a Blender-processed scan of a real Arduino Uno (textured PCB, decimated/classified parts); bake.js and model-loader.js extended to carry UV + base colour/roughness maps as embedded textures; fixed a latent label-tracking bug where every model-loaded part projected to nearly the same screen point; added on-screen CC BY credit |
 | 2026-08-19 | `liveness` | Phone's off-screen slide-in distance fixed (own-width `x:'100%'` → viewport-relative `x:'100vw'`); the container's separate opacity fade removed since the container now genuinely starts off-screen | The container barely moved off-screen (only its own 280px width) while a much shorter opacity fade finished almost instantly, so the phone appeared to pop into view already mostly in place instead of sliding in |
 | 2026-08-19 | `liveness` | Phone screen now black/off during the slide-in, powers on to photo 1 after settling, then loops a 3-photo swipe carousel forever (`playEntrance` → `playReveal` → `playCarousel` in `phone-3d.js`, one GSAP `repeat:-1` timeline driving both the texture offset and a new `.liveness-spoof-box`/`.liveness-spoof-label` DOM overlay); `stop()` now kills all three chained timelines | Demonstrates the deck's actual spoof-detection pitch on the phone itself instead of a generic fake-app-UI scroll | Code-built primitives read as "video game Arduino," not evidence; the label bug only surfaced once a real multi-part model existed to expose it |
-| 2026-08-19 | `liveness` | Scrapped the photo carousel entirely — deleted `.liveness-photo-frame`/`.liveness-status-bar`/`.liveness-spoof-box`/`.liveness-spoof-label` markup+CSS, `FACE_RECTS`/`SPOOF_VALUES`, `src/models/phone-photos.js`, and `playReveal`/`playCarousel` in `phone-3d.js`. Phone now: slides in (screen off, `VIEW_DIR` restored to the tilted hero angle), then `playIdleSpin()` spins it forever (`rotation.y += 2π` every 10s, `repeat:-1`), and `playStamp()` slams a red ✕ (`.phone-stamp`, matching `.liveness-stamp`'s look) on once, ~0.6s into the spin, and leaves it. Key light 1.4 → 2.4 — the grey `BODY_COLOR` read almost black at the restored tilt with the old intensity | Per-photo box/label tuning was three rounds of back-and-forth and still fragile; a simpler "spins, then gets rejected" reads clearly with far less to maintain |
+| 2026-08-19 | `liveness` | Scrapped the photo carousel entirely — deleted `.liveness-photo-frame`/`.liveness-status-bar`/`.liveness-spoof-box`/`.liveness-spoof-label` markup+CSS, `FACE_RECTS`/`SPOOF_VALUES`, `src/models/phone-photos.js`, and `playReveal`/`playCarousel` in `phone-3d.js`. Phone now: slides in (screen off, `VIEW_DIR` restored to the tilted hero angle), then `playIdleSpin()` spins it forever (`rotation.y += 2π` every 10s, `repeat:-1`), and `playStamp()` slams a red ✕ (`.phone-stamp`, matching `.liveness-stamp`'s look) on once, ~0.6s into the spin, and leaves it. Key light 1.4 → 2.4 — the grey `BODY_COLOR` read almost black at the restored tilt with the old intensity |
+| 2026-08-19 | `liveness` | `playIdleSpin()`'s continuous 360° `repeat:-1` rotation replaced with a bounded `yoyo:true` wobble (`Math.PI ± swing`, `sine.inOut`, 3s per leg) | A full spin briefly showed the phone's back (camera bump, logo); `.phone-stamp` is a fixed 2D screen-space overlay that doesn't rotate with the 3D model, so it ended up floating over the wrong side once the back came around. A rejection is inherently a front-of-phone story anyway |
+| 2026-08-19 | `liveness` | Added `.phone-scan-line` to the phone screen, mirroring the left scene's `.liveness-scan-line` glow bar — sweeps once (`playScan()`) into `playStamp()` — instead of the stamp appearing on its own. Entrance now calls `playIdleSpin()`/`playScan()` at 80% through the arrival (overlapping its tail) instead of on `onComplete`. Wobble swing widened by +10° (~35° → 45°) | Ties the two halves of the slide together visually (both do "scan → verdict") instead of the phone just spinning and stamping with no scan beat; starting the lead-in before the phone fully settles reads as one continuous arrival instead of arrive-then-pause-then-scan |
+| 2026-08-19 | `liveness` | Entrance's off-screen start recomputed from the container's actual `getBoundingClientRect()` (`window.innerWidth - left + width`) instead of a static `x:'100vw'`; overall entrance slowed to 75% speed (`4 / 0.75`s) | A fixed viewport-relative offset assumed the container rests near the left edge; nested in this slide's centered layout it didn't clear the visible area, so the phone appeared to materialize partway in rather than truly enter from off-screen |
+| 2026-08-20 | `liveness` | `phone-3d.js` hoists its entrance/scan/stamp constants into one schedule and exposes the derived milestones as `window.phone3D.timing` (`scanStart`/`scanEnd`/`stampStart`, ms); `animations.js`'s `liveness()` reads it and positions `.liveness-scan-line`/`.liveness-stamp` at those same absolute ms instead of a `-=200`-style chain right after the photo fade-in. `.liveness-title`/`.liveness-subtitle` decoupled from the stamp chain onto their own early slots (500ms/800ms) so the heading still appears promptly. Falls back to the original ~400/1400ms timing when the phone isn't rendered (no WebGL) | The left scene's "verdict" (scan + stamp) previously finished ~1.7s in while the phone's own didn't land until ~6.3s in — two disconnected sequences rather than one. Verified with `performance.now()`-timestamped polling: both sides' scan-line opacity now rises/falls together and both stamps land within the same ~250ms sampling interval | Per-photo box/label tuning was three rounds of back-and-forth and still fragile; a simpler "spins, then gets rejected" reads clearly with far less to maintain |
