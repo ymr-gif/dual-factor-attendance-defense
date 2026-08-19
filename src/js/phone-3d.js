@@ -30,6 +30,39 @@
   // instead of trying to predict its winner.
   const SCREEN_CANDIDATES = ['Object_46', 'Object_4', 'Object_6', 'Object_44'];
 
+  // ── Entrance/scan/stamp schedule ───────────────────────────────────
+  // Single source of truth for when the "verdict" beat lands (seconds,
+  // from playEntrance() at t=0). playEntrance/playScan/playStamp below
+  // all read these instead of their own literals so the derived ms
+  // milestones exposed as window.phone3D.timing can never drift out of
+  // sync with what actually plays — animations.js reads them to land
+  // the left scene's own scan-line + stamp at the same moment instead
+  // of guessing at these numbers independently.
+  // Cut to ~2.45s total (was ~6.3s) — 6s read as too long once entrance,
+  // scan, and stamp were stacked back to back; supersedes the earlier
+  // "75% speed" entrance tweak, which was tuned before the scan+stamp
+  // tail existed on top of it.
+  const ENTRANCE_DURATION = 1.5;
+  const SCAN_CALL_FRACTION = 0.8; // overlaps the entrance's tail, not onComplete
+  const SCAN_DELAY = 0.15;
+  const SCAN_FADE_IN = 0.1;
+  const SCAN_SWEEP = 0.5;
+  const SCAN_FADE_OUT = 0.1;
+  const STAMP_DELAY = 0.05;
+
+  const SCAN_CALL_AT = ENTRANCE_DURATION * SCAN_CALL_FRACTION;
+  const SCAN_START = SCAN_CALL_AT + SCAN_DELAY;
+  const SCAN_SWEEP_END = SCAN_START + SCAN_FADE_IN + SCAN_SWEEP;
+  const SCAN_END = SCAN_SWEEP_END + SCAN_FADE_OUT;
+  const STAMP_START = SCAN_END + STAMP_DELAY;
+
+  const TIMING_MS = {
+    scanStart: Math.round(SCAN_START * 1000),
+    scanSweepEnd: Math.round(SCAN_SWEEP_END * 1000),
+    scanEnd: Math.round(SCAN_END * 1000),
+    stampStart: Math.round(STAMP_START * 1000),
+  };
+
   // ── Procedural environment ─────────────────────────────────────────
 
   function studioEnvironment(renderer) {
@@ -313,10 +346,6 @@
         onComplete: () => { entranceTimeline = null; },
       });
 
-      // 75% speed = duration / 0.75 (speed and duration are inverse for a
-      // fixed distance) — was 4s.
-      const ENTRANCE_DURATION = 4 / 0.75;
-
       // Phase 0: slide container in from right (matches 3D entrance timing)
       entranceTimeline.to(container, {
         x: 0,
@@ -347,7 +376,7 @@
       entranceTimeline.call(() => {
         playIdleSpin();
         playScan();
-      }, [], ENTRANCE_DURATION * 0.8);
+      }, [], SCAN_CALL_AT);
     }
 
     // Infinite: a bounded showcase wobble, not a full spin — a full
@@ -377,13 +406,13 @@
     function playScan() {
       if (scanTween || !scanEl) { playStamp(); return; }
       scanTween = gsap.timeline({
-        delay: 0.3,
+        delay: SCAN_DELAY,
         onComplete: () => { scanTween = null; playStamp(); },
       });
       scanTween
-        .to(scanEl, { opacity: 1, duration: 0.15 })
-        .to(scanEl, { top: '85%', duration: 1.0, ease: 'none' })
-        .to(scanEl, { opacity: 0, duration: 0.15 });
+        .to(scanEl, { opacity: 1, duration: SCAN_FADE_IN })
+        .to(scanEl, { top: '85%', duration: SCAN_SWEEP, ease: 'none' })
+        .to(scanEl, { opacity: 0, duration: SCAN_FADE_OUT });
     }
 
     // One-shot: the X stamp slams on (matching .liveness-stamp's left-scene
@@ -397,7 +426,7 @@
         rotation: -15,
         duration: 0.35,
         ease: 'back.out(1.7)',
-        delay: 0.1,
+        delay: STAMP_DELAY,
         onComplete: () => { stampTween = null; },
       });
     }
@@ -431,5 +460,5 @@
     return api;
   }
 
-  window.phone3D = { supported, mount, stopAll };
+  window.phone3D = { supported, mount, stopAll, timing: TIMING_MS };
 })();

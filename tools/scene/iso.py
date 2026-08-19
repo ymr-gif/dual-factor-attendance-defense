@@ -14,6 +14,9 @@ DARK     = ("#17171d", "#101015", "#0c0c10")
 # as one — white separates it instantly from the two teal boards it sits above.
 CARD     = ("#e8edf2", "#c7d0da", "#aab5c2")
 BODY     = ("#2b3240", "#1f2530", "#181d25")
+# Cooler and a step darker than CARD, so the two light objects in the rig stay
+# distinguishable — the card is bright white, the breadboard is grey plastic.
+BBOARD   = ("#d5dae1", "#b0b7c1", "#959dab")
 SCREEN   = ("#0d1b24", "#0a151c", "#081117")
 
 ACCENT = "#00d4ff"
@@ -49,12 +52,18 @@ def plate(x, y, z, w, d, fill, s, ox, oy, opacity=1.0, stroke="none", sw=0.6):
             % (pts(quad, s, ox, oy), fill, opacity, stroke, sw))
 
 
-def line3(a, b, s, ox, oy, stroke=ACCENT, sw=1.2, opacity=1.0, cls=""):
+def line3(a, b, s, ox, oy, stroke=ACCENT, sw=1.2, opacity=1.0, cls="", dash=None):
+    """dash: (on, off) in mm. An axis-aligned run projects to its own length
+    times s, so a millimetre pitch converts straight across — which is how the
+    breadboard draws 260 tie points as ten dashed strokes."""
     p1 = iso(*a, s=s, ox=ox, oy=oy)
     p2 = iso(*b, s=s, ox=ox, oy=oy)
     c = ' class="%s"' % cls if cls else ""
+    d = ' stroke-dasharray="%.2f %.2f"' % (dash[0] * s, dash[1] * s) if dash else ""
+    cap = "butt" if dash else "round"
     return ('<line%s x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" stroke-width="%.2f" '
-            'opacity="%.2f" stroke-linecap="round"/>' % (c, p1[0], p1[1], p2[0], p2[1], stroke, sw, opacity))
+            'opacity="%.2f" stroke-linecap="%s"%s/>'
+            % (c, p1[0], p1[1], p2[0], p2[1], stroke, sw, opacity, cap, d))
 
 
 def polyline3(points, s, ox, oy, stroke=ACCENT, sw=1.2, opacity=1.0, cls=""):

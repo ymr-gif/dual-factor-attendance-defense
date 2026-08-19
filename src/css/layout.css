@@ -24,6 +24,11 @@
   transition: opacity var(--slide-transition) var(--ease-out);
 }
 
+/* Every slide is scaled to fit the viewport. --slide-scale is measured and
+   written to the parent <section> by src/js/fit.js; it resolves to that slide's
+   data-fit-max on a screen large enough, and shrinks below it otherwise. A
+   pure-CSS min() cannot do this — scale() needs a <number> and no CSS length
+   converts to one. */
 .slide__content {
   display: flex;
   flex-direction: column;
@@ -33,6 +38,7 @@
   text-align: center;
   max-width: 900px;
   padding: var(--spacing-xl);
+  transform: scale(var(--slide-scale, 1));
 }
 
 /* Title Slide */
@@ -892,7 +898,7 @@
 /* RQ Scroll Track */
 .rq-track {
   position: absolute;
-  left: calc(50% - 660px);
+  left: max(20px, calc(50% - 660px));
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -1334,16 +1340,18 @@
   opacity: 0;
 }
 
+/* Callout heads read as the accent so they tie back to their leader lines; the
+   sub-line carries the detail and stays full-strength white for legibility. */
 .lbl {
   font-family: var(--font-display);
   font-size: 15px;
-  fill: var(--text-primary);
+  fill: var(--accent);
 }
 
 .lbl-sub {
   font-family: var(--font-mono);
   font-size: 11px;
-  fill: var(--text-secondary);
+  fill: var(--text-primary);
 }
 
 .rig-label,
@@ -1380,7 +1388,7 @@
 .protocols-title {
   font-size: clamp(20px, 4vw, 36px);
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   opacity: 0;
 }
 
@@ -1394,24 +1402,32 @@
   opacity: 0;
 }
 
-.protocols-scan {
+.protocols-board::before {
+  content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  left: 0;
-  opacity: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    transparent 0,
-    rgba(0, 180, 255, 0.5) 25%,
-    rgba(0, 212, 255, 0.8) 50%,
-    rgba(0, 180, 255, 0.5) 75%,
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle 60px at var(--scan-x, -80px) 50%,
+    var(--accent) 0%,
+    rgba(0, 212, 255, 0.25) 50%,
     transparent 100%
   );
-  box-shadow: 0 0 6px rgba(0, 180, 255, 0.3);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.protocols-board.is-scanning::before {
+  animation: protocols-scan 1.4s linear forwards;
+}
+
+@keyframes protocols-scan {
+  0%   { --scan-x: -80px; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { --scan-x: calc(100% + 80px); opacity: 0; }
 }
 
 .protocols-split {
@@ -1455,7 +1471,7 @@
 
 .protocol-label {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #c0c0d0;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -1463,7 +1479,7 @@
 .protocol-icon {
   width: 80px;
   height: 80px;
-  color: var(--text-secondary);
+  color: #c0c0d0;
 }
 
 .protocol-icon svg {
@@ -1474,13 +1490,13 @@
 .protocol-stat {
   font-size: 48px;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #ffffff;
   font-family: var(--font-mono);
 }
 
 .protocol-unit {
   font-size: 12px;
-  color: var(--text-dim);
+  color: #9090a8;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -1496,13 +1512,13 @@
 .protocol-detail {
   font-size: 12px;
   font-family: var(--font-mono);
-  color: var(--text-secondary);
+  color: #c0c0d0;
   letter-spacing: 0.08em;
 }
 
 .protocol-divider {
   width: 1px;
-  background: var(--text-dim);
+  background: #606078;
   opacity: 0;
   transform: scaleY(0);
 }
@@ -1513,7 +1529,7 @@
   gap: var(--spacing-xl);
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-md);
-  border-top: 1px solid rgba(217, 154, 91, 0.2);
+  border-top: 1px solid rgba(217, 154, 91, 0.4);
   opacity: 0;
 }
 
@@ -1534,7 +1550,7 @@
 
 .protocols-metric__label {
   font-size: 11px;
-  color: var(--text-dim);
+  color: #9090a8;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1958,7 +1974,7 @@
 
 /* Framework Slide */
 .slide--framework .slide__content {
-  transform: scale(1.6) translateY(-70px);
+  transform: scale(var(--slide-scale, 1)) translateY(-70px);
   transform-origin: top center;
 }
 
@@ -2255,16 +2271,4 @@
   .arch-trace__svg {
     transform: rotate(90deg);
   }
-}
-
-/* Scale slides 14 and 15 by 2x */
-.slide--survey .slide__content {
-  transform: scale(1.65);
-  transform-origin: center center;
-}
-
-/* Scale slide 15 by 2x */
-.slide--scale .slide__content {
-  transform: scale(2);
-  transform-origin: center center;
 }
