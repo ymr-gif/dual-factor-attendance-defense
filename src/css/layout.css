@@ -899,7 +899,7 @@
 /* RQ Scroll Track */
 .rq-track {
   position: absolute;
-  right: 40px;
+  left: calc(50% - 360px);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
