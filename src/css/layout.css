@@ -823,43 +823,39 @@
   opacity: 0;
 }
 
-/* RQ Table Card */
-.rq-table-card {
+/* RQ Fields */
+.rq-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
   width: 100%;
-  max-width: 750px;
-  padding: 20px 24px;
+  max-width: 800px;
+  opacity: 0;
+}
+
+.rq-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 16px;
   background: var(--bg-secondary);
   border: 1px solid var(--text-dim);
   border-radius: var(--radius-md);
-  opacity: 0;
+  text-align: left;
 }
 
-/* RQ Table */
-.rq-table {
-  width: 100%;
-  max-width: 750px;
-  border-collapse: collapse;
-  opacity: 0;
-}
-
-.rq-table th {
+.rq-field__label {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
-  text-align: left;
-  padding: 10px 14px;
-  border-bottom: 2px solid var(--accent);
-  background: var(--bg-secondary);
 }
 
-.rq-table td {
+.rq-field__value {
   font-size: 14px;
-  color: var(--text-primary);
-  padding: 18px 14px;
-  border-bottom: 1px solid var(--text-dim);
-  min-height: 48px;
+  color: #ffffff;
+  line-height: 1.5;
 }
 
 /* Instruments Slide */
@@ -902,9 +898,9 @@
 }
 
 .flow-node__box {
-  min-width: 170px;
-  max-width: 210px;
-  padding: 14px 18px;
+  min-width: 220px;
+  max-width: 260px;
+  padding: 14px 22px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -920,8 +916,8 @@
 .flow-node--start .flow-node__box,
 .flow-node--end .flow-node__box {
   border-radius: 999px;
-  min-width: 120px;
-  max-width: 140px;
+  min-width: 140px;
+  max-width: 160px;
   border-color: var(--accent);
   color: var(--accent);
 }
