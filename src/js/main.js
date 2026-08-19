@@ -25,31 +25,52 @@
 
     isAnimating = true;
 
-    // Leaving a slide clears its step state, so re-entering replays from step 1
-    masterTimeline.resetSlide(currentSlide);
-
-    // Hide current
     const currentEl = document.querySelector(`[data-slide="${currentSlide}"]`);
-    if (currentEl) {
-      currentEl.classList.remove('active');
-    }
+    const newEl = document.querySelector(`[data-slide="${num}"]`);
 
-    currentSlide = num;
+    // Check if both slides are RQ slides and moving forward — use scroll transition
+    const isRQForward = currentEl && newEl
+      && currentEl.classList.contains('slide--rq')
+      && newEl.classList.contains('slide--rq')
+      && num > currentSlide;
 
-    // Show new
-    const newEl = document.querySelector(`[data-slide="${currentSlide}"]`);
-    if (newEl) {
+    if (isRQForward) {
+      // Show new slide (hidden behind current via z-index or positioning)
+      masterTimeline.reset(num, newEl);
       newEl.classList.add('active');
+
+      updateProgress();
+
+      // Animate the scroll transition (outgoing slide keeps its styles)
+      slideAnimations.rqScrollTransition(currentEl, newEl, () => {
+        // Now reset the outgoing slide after it's hidden
+        masterTimeline.resetSlide(currentSlide);
+        currentEl.classList.remove('active');
+        currentSlide = num;
+        isAnimating = false;
+      });
+    } else {
+      // Normal transition — instant show/hide
+      masterTimeline.resetSlide(currentSlide);
+
+      if (currentEl) {
+        currentEl.classList.remove('active');
+      }
+
+      currentSlide = num;
+
+      if (newEl) {
+        masterTimeline.reset(num, newEl);
+        newEl.classList.add('active');
+      }
+
+      updateProgress();
+
+      requestAnimationFrame(() => {
+        masterTimeline.playSlide(currentSlide);
+        isAnimating = false;
+      });
     }
-
-    updateProgress();
-
-    // Next frame, not a timer — the slide must not paint a single frame of
-    // finished-looking content before its animation starts
-    requestAnimationFrame(() => {
-      masterTimeline.playSlide(currentSlide);
-      isAnimating = false;
-    });
   }
 
   function nextSlide() {

@@ -47,6 +47,15 @@ const masterTimeline = {
   // Stop whatever is still running and hand the slide back to its CSS.
   reset(slideNum, slideEl) {
     if (window.hardware3D) window.hardware3D.stopAll();
+    if (window.vtuber3D) window.vtuber3D.stopAll();
+    if (window.phone3D) window.phone3D.stopAll();
+
+    // Cancel any canvas wave animation on this slide
+    const waveCanvas = slideEl.querySelector('.ipo-wave');
+    if (waveCanvas && waveCanvas._waveRaf) {
+      cancelAnimationFrame(waveCanvas._waveRaf);
+      waveCanvas._waveRaf = null;
+    }
 
     const running = this.timelines[slideNum];
     if (running && typeof running.pause === 'function') running.pause();
@@ -65,8 +74,14 @@ const masterTimeline = {
     return true;
   },
 
+  // Called on the slide being left. Hand it back to its CSS resting state now
+  // rather than on re-entry — an inactive slide still holding its finished
+  // inline styles paints that finished state the moment it is shown again.
   resetSlide(slideNum) {
     delete this.stepped[slideNum];
+
+    const slideEl = document.querySelector(`[data-slide="${slideNum}"]`);
+    if (slideEl) this.reset(slideNum, slideEl);
     if (this.currentSlide === slideNum) {
       this.currentSlide = null;
     }

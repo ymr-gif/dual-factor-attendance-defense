@@ -10,12 +10,15 @@ HEADER   = ("#1e1e27", "#15151c", "#101015")
 CHIP     = ("#262630", "#1b1b23", "#151519")
 METAL    = ("#8b95a4", "#5e6875", "#48505b")
 DARK     = ("#17171d", "#101015", "#0c0c10")
-CARD     = ("#1d3a4d", "#142a38", "#0f202b")
+# The card is the only object in the rig that is not a PCB, so it must not read
+# as one — white separates it instantly from the two teal boards it sits above.
+CARD     = ("#e8edf2", "#c7d0da", "#aab5c2")
 BODY     = ("#2b3240", "#1f2530", "#181d25")
 SCREEN   = ("#0d1b24", "#0a151c", "#081117")
 
 ACCENT = "#00d4ff"
 EDGE   = "#05121a"
+INK    = "#1d3a4d"   # dark mark on a light surface — the card's print colour
 
 
 def iso(x, y, z, s, ox, oy):
@@ -70,6 +73,17 @@ def ring(cx, cy, z, r, s, ox, oy, stroke=ACCENT, sw=1.0, opacity=0.55, n=48):
     d = " ".join("%.2f,%.2f" % iso(*q, s=s, ox=ox, oy=oy) for q in p)
     return ('<polyline points="%s" fill="none" stroke="%s" stroke-width="%.2f" opacity="%.2f"/>'
             % (d, stroke, sw, opacity))
+
+
+def arc(cx, cy, z, r, a0, a1, s, ox, oy, stroke=ACCENT, sw=1.0, opacity=1.0, n=24):
+    """Partial circle on the z plane — the contactless mark is four of these."""
+    p = []
+    for i in range(n + 1):
+        a = math.radians(a0 + (a1 - a0) * i / n)
+        p.append((cx + r * math.cos(a), cy + r * math.sin(a), z))
+    d = " ".join("%.2f,%.2f" % iso(*q, s=s, ox=ox, oy=oy) for q in p)
+    return ('<polyline points="%s" fill="none" stroke="%s" stroke-width="%.2f" opacity="%.2f" '
+            'stroke-linecap="round"/>' % (d, stroke, sw, opacity))
 
 
 def sort_join(items):

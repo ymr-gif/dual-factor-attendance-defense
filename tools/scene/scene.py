@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from iso import *
 
-S = 3.05          # px per mm
+S = 3.5           # px per mm — bumped with the 2x design pass the deck's other slides got
 
 # How far each part rises during the exploded view, in user units before the
 # act-2 zoom. animations.js reads these off data-rise, so this table is the
@@ -79,6 +79,24 @@ def arduino(x0, y0, scale=1.0):
     return '<g id="arduino" class="unit unit--arduino">\n%s\n</g>' % sort_join(parts)
 
 
+def rc522_pin(x0, y0, i):
+    """Top of the RC522's pin header — jumper i lands here."""
+    return (x0 + 45 + i * 4, y0 + 34, 8.7)
+
+
+def arduino_pin(x0, y0, i):
+    """Top of the Arduino's D2 header — the other end of jumper i.
+
+    The near-edge digital strip, not the far-edge analog one: it is the header
+    the part label on step 2 points at, and it faces the reader."""
+    return (x0 + 44 + i * 4, y0 + 49, 10.2)
+
+
+def arduino_usb(x0, y0):
+    """Mouth of the USB-B jack, which overhangs the board's left edge."""
+    return (x0 - 3.5, y0 + 38, 7.0)
+
+
 def rc522(x0, y0):
     s = S
     W, D, T = 60, 40, 1.6
@@ -95,46 +113,115 @@ def rc522(x0, y0):
 
 
 def nfc_card(x0, y0, z0):
+    """MIFARE card — white stock with the contactless mark printed on it.
+
+    The art is INK, not ACCENT: cyan on white is invisible at projector gamma."""
     s = S
     W, D, T = 54, 34, 0.9
+    z = z0 + T + 0.02
     body, _ = box(x0, y0, z0, W, D, T, CARD, s, OX, OY)
-    art = [
-        plate(x0 + 5, y0 + 5, z0 + T + 0.01, W - 10, D - 10, "none", s, OX, OY, 0.6, ACCENT, 0.5),
-        ring(x0 + 40, y0 + 17, z0 + T + 0.02, 5, s, OX, OY, ACCENT, 1.0, 0.65),
-        ring(x0 + 40, y0 + 17, z0 + T + 0.02, 8, s, OX, OY, ACCENT, 1.0, 0.4),
-    ]
+    art = [plate(x0 + 4, y0 + 4, z - 0.01, W - 8, D - 8, "none", s, OX, OY, 0.35, INK, 0.5)]
+    # contactless mark — four arcs opening away from the card's leading edge
+    cx, cy = x0 + 39, y0 + 17
+    for i, r in enumerate((2.6, 5.2, 7.8, 10.4)):
+        art.append(arc(cx, cy, z, r, -52, 52, s, OX, OY, INK, 1.5, 0.9 - i * 0.12))
+    # chip contact pad, so it reads as a smart card and not a blank
+    art.append(plate(x0 + 9, y0 + 12, z, 9, 7, "#c9a227", s, OX, OY, 0.9, "#8a6f1a", 0.5))
     return '<g class="unit rig-context unit--card">%s%s</g>' % (body, "".join(art))
 
 
-def webcam(x0, y0, sc=1.0):
-    s = S * sc
-    sh = shadow(x0 + 15, y0 + 9, 22, 14, s, OX, OY, 0.35)
-    stand, _ = box(x0 - 1, y0 - 1, 0, 32, 20, 2.0, DARK, s, OX, OY)
-    neck, _ = box(x0 + 11, y0 + 7, 2.0, 8, 5, 8, DARK, s, OX, OY)
-    body, _ = box(x0, y0, 10, 30, 18, 17, BODY, s, OX, OY)
-    lens = ring(x0 + 30.01, y0 + 9, 18.5, 5.5, s, OX, OY, "#0b1116", 6.0, 1.0)
-    glint = ring(x0 + 30.05, y0 + 9, 18.5, 2.6, s, OX, OY, ACCENT, 1.6, 0.8)
-    return '<g class="unit rig-context unit--webcam">%s%s%s%s%s%s</g>' % (sh, stand, neck, body, lens, glint)
+# Geometry the wire routing in compose.py reads, so a cable endpoint is derived
+# from the object it plugs into instead of being a hand-tuned magic number.
+CAM_W, CAM_D, CAM_H, CAM_Z = 30, 18, 17, 11.5
 
 
-def laptop(x0, y0, sc=1.0):
-    s = S * sc
-    sh = shadow(x0 + 48, y0 + 34, 62, 46, s, OX, OY, 0.35)
-    base, _ = box(x0, y0, 0, 96, 68, 5, BODY, s, OX, OY)
-    pad = plate(x0 + 34, y0 + 8, 5.02, 28, 20, "#2b3341", s, OX, OY, 1, "#3d4655", 0.6)
-    keys = [plate(x0 + 10 + (i % 10) * 7.6, y0 + 34 + (i // 10) * 7, 5.02, 6, 5.4, "#232a36",
-                  s, OX, OY, 1, "#39414f", 0.4) for i in range(40)]
-    lid, _ = box(x0, y0 + 68, 0, 96, 5, 62, BODY, s, OX, OY)
-    quad = [(x0 + 4, y0 + 68 - 0.01, 4), (x0 + 92, y0 + 68 - 0.01, 4),
-            (x0 + 92, y0 + 68 - 0.01, 58), (x0 + 4, y0 + 68 - 0.01, 58)]
-    screen = ['<polygon points="%s" fill="%s" stroke="%s" stroke-width="0.8"/>'
-              % (pts(quad, s, OX, OY), SCREEN[0], "#39414f")]
-    for i in range(5):
-        z = 12 + i * 9
-        screen.append(line3((x0 + 12, y0 + 67.9, z), (x0 + 12 + [58, 40, 66, 30, 50][i], y0 + 67.9, z),
-                            s, OX, OY, ACCENT, 1.6, 0.45 - i * 0.05))
-    return ('<g class="unit rig-context unit--laptop">%s%s%s%s%s%s</g>'
-            % (sh, lid, "".join(screen), base, pad, "".join(keys)))
+def webcam_port(x0, y0):
+    """Where the USB tail reaches the ground — the foot, not the body.
+
+    Dropping the cable at the stand keeps it under the laptop lid instead of
+    crossing in front of it."""
+    return (x0 + 15, y0 + 11, 1.6)
+
+
+def webcam(x0, y0):
+    """Clip-style webcam: a foot narrower than the body, on a visible neck.
+
+    The old version had a 32x20 stand under a 30x18 body, so the foot read as a
+    detached plate, and the neck was swallowed whole by the body drawn over it."""
+    s = S
+    sh = shadow(x0 + CAM_W / 2, y0 + CAM_D / 2, 11, 7, s, OX, OY, 0.35)
+    stand, _ = box(x0 + 8, y0 + 4, 0, 14, 10, 1.6, DARK, s, OX, OY)
+    neck, _ = box(x0 + 12, y0 + 6, 1.6, 6.5, 6, CAM_Z - 1.6, DARK, s, OX, OY)
+    body, _ = box(x0, y0, CAM_Z, CAM_W, CAM_D, CAM_H, BODY, s, OX, OY)
+    # lens barrel on the near-right face, with the accent glint inside it
+    lens = ring(x0 + CAM_W + 0.01, y0 + CAM_D / 2, CAM_Z + CAM_H * 0.5, 5.5,
+                s, OX, OY, "#0b1116", 6.0, 1.0)
+    glint = ring(x0 + CAM_W + 0.05, y0 + CAM_D / 2, CAM_Z + CAM_H * 0.5, 2.6,
+                 s, OX, OY, ACCENT, 1.6, 0.8)
+    # status pip on the top face so the body is not a blank slab
+    pip = plate(x0 + 4, y0 + 4, CAM_Z + CAM_H + 0.01, 3, 2, ACCENT, s, OX, OY, 0.7)
+    return ('<g class="unit rig-context unit--webcam">%s%s%s%s%s%s%s</g>'
+            % (sh, stand, neck, body, lens, glint, pip))
+
+
+LAP_W, LAP_D, LAP_H = 88, 62, 5
+LID_T, LID_H = 4, 52
+
+
+def laptop_ports(x0, y0):
+    """Sockets the cables actually plug into, in world mm.
+
+    Both sit on faces box() draws (front = y+d, right = x+w), so a cable that
+    ends here is visibly connected rather than disappearing behind the shell."""
+    return {
+        "serial": (x0 + 12, y0 + LAP_D + 0.5, 2.6),   # Arduino USB-B lead
+        "usb": (x0 + 40, y0 + LAP_D + 0.5, 2.6),      # webcam tail
+    }
+
+
+def laptop(x0, y0):
+    """Laptop with the lid hinged at the FAR edge.
+
+    The old version stood the lid at y0+68 — the near edge in this projection —
+    so the screen sat in front of the keyboard facing away from the viewer, and
+    the screen quad was placed 5mm off its own bezel plane."""
+    s = S
+    yl = y0 + LID_T - 0.01          # the lid's near face; all screen art lives on it
+
+    def panel(x, z, w, h, fill, stroke="none", op=1.0, sw=0.5):
+        quad = [(x0 + x, yl, z), (x0 + x + w, yl, z),
+                (x0 + x + w, yl, z + h), (x0 + x, yl, z + h)]
+        return ('<polygon points="%s" fill="%s" stroke="%s" stroke-width="%.2f" opacity="%.2f"/>'
+                % (pts(quad, s, OX, OY), fill, stroke, sw, op))
+
+    def seg(xa, za, xb, zb, col, sw=1.2, op=1.0):
+        return line3((x0 + xa, yl, za), (x0 + xb, yl, zb), s, OX, OY, col, sw, op)
+
+    sh = shadow(x0 + LAP_W / 2, y0 + LAP_D / 2, LAP_W * 0.6, LAP_D * 0.6, s, OX, OY, 0.35)
+    lid, _ = box(x0, y0, 0, LAP_W, LID_T, LID_H, BODY, s, OX, OY)
+
+    # --- what the laptop is doing: a 1:1 match against a live capture ---
+    screen = [panel(4, 8, LAP_W - 8, LID_H - 13, SCREEN[0], "#39414f", 1.0, 0.8)]
+    screen.append(panel(4, LID_H - 10, LAP_W - 8, 5, "#132430", "none", 0.9))
+    screen.append(panel(9, 13, 30, 27, "#0b1f2b"))              # camera preview
+    # face-detect bracket over the preview — four corner ticks
+    for cx, cz, sx, sz in ((13, 36, 1, -1), (35, 36, -1, -1), (13, 17, 1, 1), (35, 17, -1, 1)):
+        screen.append(seg(cx, cz, cx + 5 * sx, cz, ACCENT, 1.3, 0.95))
+        screen.append(seg(cx, cz, cx, cz + 4 * sz, ACCENT, 1.3, 0.95))
+    # attendance log rows beside it — the top one is the entry just verified
+    for i in range(4):
+        z = 36 - i * 6
+        screen.append(seg(46, z, 46 + (30 if i == 0 else [22, 26, 18][i - 1]), z,
+                          ACCENT if i == 0 else "#4a6b7d", 1.6, 0.9 if i == 0 else 0.45))
+
+    base, _ = box(x0, y0, 0, LAP_W, LAP_D, LAP_H, BODY, s, OX, OY)
+    # hinge lip, so the lid reads as attached instead of stuck on
+    hinge = plate(x0, y0, LAP_H + 0.01, LAP_W, LID_T + 2, "#171c24", s, OX, OY, 1, "#39414f", 0.4)
+    keys = [plate(x0 + 8 + (i % 10) * 7.6, y0 + 12 + (i // 10) * 7, LAP_H + 0.02, 6, 5.4,
+                  "#232a36", s, OX, OY, 1, "#39414f", 0.4) for i in range(40)]
+    pad = plate(x0 + 31, y0 + 44, LAP_H + 0.02, 26, 14, "#2b3341", s, OX, OY, 1, "#3d4655", 0.6)
+    return ('<g class="unit rig-context unit--laptop">%s%s%s%s%s%s%s</g>'
+            % (sh, lid, "".join(screen), base, hinge, "".join(keys), pad))
 
 
 def wire(points, color, sw=1.6, cls="wire"):

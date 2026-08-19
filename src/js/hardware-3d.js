@@ -272,6 +272,10 @@
   }
 
   const mounted = [];
+  // One view per canvas. playSlide() re-runs a slide's animation on every
+  // entry, so mounting unconditionally leaked a WebGL context per visit and
+  // browsers cap them near 16 — the 3D died after enough Q&A backtracking.
+  const views = new Map();
 
   // The render loop must not keep running once the deck has moved on — the
   // slide engine calls this on every slide change.
@@ -289,6 +293,12 @@
   }
 
   function mount(canvas) {
+    const cached = views.get(canvas);
+    if (cached) {
+      cached.resize();   // the canvas may have resized since the last visit
+      return cached;
+    }
+
     // Treat material hex values as sRGB, or every colour renders washed out.
     // r149 spells this legacyMode; later versions use enabled.
     if (THREE.ColorManagement) {
@@ -466,6 +476,7 @@
       },
     };
 
+    views.set(canvas, api);
     mounted.push(api);
     return api;
   }
