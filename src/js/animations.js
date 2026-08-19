@@ -1237,63 +1237,6 @@ const slideAnimations = {
     return tl;
   },
 
-  // Scope — in-scope and out-of-scope columns split apart
-  scope(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-    tl.add(q(el, '.scope-title'), {
-      opacity: [0, 1],
-      y: [-20, 0],
-      duration: 500,
-    })
-    .add(q(el, '.scope-col--in'), {
-      opacity: [0, 1],
-      x: [-40, 0],
-      duration: 600,
-    }, '-=200')
-    .add(q(el, '.scope-col--out'), {
-      opacity: [0, 1],
-      x: [40, 0],
-      duration: 600,
-    }, '<')
-    .add(q(el, '.scope-divider'), {
-      scaleY: [0, 1],
-      opacity: [0, 0.3],
-      duration: 400,
-    }, '-=400')
-    .add(qa(el, '.scope-list li'), {
-      opacity: [0, 1],
-      y: [10, 0],
-      delay: stagger(60),
-      duration: 300,
-    }, '-=300');
-
-    return tl;
-  },
-
-  // Expected output — three deliverable cards
-  output(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-    tl.add(q(el, '.output-title'), {
-      opacity: [0, 1],
-      y: [-20, 0],
-      duration: 500,
-    })
-    .add(qa(el, '.output-card'), {
-      opacity: [0, 1],
-      y: [30, 0],
-      delay: stagger(180),
-      duration: 600,
-    }, '-=200')
-    .add(q(el, '.output-note'), {
-      opacity: [0, 1],
-      duration: 400,
-    }, '-=100');
-
-    return tl;
-  },
-
   // Thanks — words rise into place
   thanks(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
