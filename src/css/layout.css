@@ -137,11 +137,19 @@
   text-shadow: 0 2px 20px rgba(0,0,0,0.5);
 }
 
+/* The actual research title. S.A.F.E. above it is the catch — this is the line
+   the panel reads, so it gets the accent and enough size to read from the back
+   of the room rather than sitting in the grey the team list uses. */
 .title-full {
-  max-width: 640px;
-  font-size: clamp(11px, 1.5vw, 15px);
-  line-height: 1.6;
-  color: var(--text-secondary);
+  /* Wide enough that "Notification" stops falling to a line of its own, with
+     the size eased back a step to pay for the extra measure. text-wrap:balance
+     evens out whatever lines are left instead of leaving a short last one. */
+  max-width: min(1180px, 88vw);
+  font-size: clamp(15px, 2.05vw, 25px);
+  font-weight: 600;
+  line-height: 1.45;
+  text-wrap: balance;
+  color: var(--accent);
   opacity: 0;
 }
 
@@ -1016,58 +1024,91 @@
   pointer-events: none;
 }
 
+/* Same pointer language as the slide-8 rig labels: a hairline out to a dot on
+   the thing being named, and the name in plain type. The bordered, tilted chips
+   these replaced sat on top of the flow nodes and the board border; a callout
+   with no fill of its own cannot cover anything. */
 .flow-callout {
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--copper);
-  border-radius: var(--radius-sm);
-  background-image: radial-gradient(circle, var(--copper-glow) 1px, transparent 1px);
-  background-size: 12px 12px;
+  gap: 10px;
   opacity: 0;
 }
 
+/* Accent, not copper: the leader and the board are both copper, so the name
+   needs to be the one thing on the slide that is not, or it reads as another
+   trace. Sized up from 13px for the same reason. */
 .flow-callout__text {
-  font-size: 13px;
+  font-size: 16px;
   font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--accent);
   white-space: nowrap;
   letter-spacing: 0.06em;
 }
 
-.flow-callout__line {
-  width: 72px;
-  height: 16px;
+/* The leader is two pseudo-elements rather than one bordered box so the rule
+   can sit at half strength while the dot stays solid — opacity on the element
+   itself would take the dot down with it. */
+.flow-callout__lead {
+  position: relative;
+  display: block;
+  width: 104px;
+  height: 6px;
   flex-shrink: 0;
 }
 
-.flow-callout__line--up {
-  width: 16px;
-  height: 56px;
-}
-
-.flow-callout--1 {
-  left: -16%;
+.flow-callout__lead::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
   top: 50%;
-  transform: translateY(-50%) rotate(-1.5deg);
+  height: 1px;
+  margin-top: -0.5px;
+  background: var(--copper);
+  opacity: 0.5;
 }
 
-.flow-callout--2 {
-  right: -14%;
-  top: auto;
-  bottom: 28%;
-  transform: rotate(1deg);
+.flow-callout__lead::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 50%;
+  background: var(--copper);
 }
 
-.flow-callout--3 {
-  right: -10%;
-  top: auto;
-  bottom: 10%;
-  transform: rotate(-0.8deg);
+/* dot on the other end, for the callouts that point back left into the board */
+.flow-callout__lead--flip::after {
+  right: auto;
+  left: 0;
+}
+
+/* Vertical centres track the node each one names; the horizontal offsets reach
+   just far enough past the board border for the dot to land on that node's
+   outer edge. Both are approximate — the nodes size to their text — so re-check
+   them if the flow copy changes. */
+.flow-callout--1 {          /* Conduct Spoof Trials, left column */
+  right: calc(100% - 36px);
+  top: 54.6%;
+  transform: translateY(-50%);
+}
+
+.flow-callout--2 {          /* Deploy System & Record Logs, right column */
+  left: calc(100% - 34px);
+  top: 54.4%;
+  transform: translateY(-50%);
+}
+
+.flow-callout--3 {          /* Administer Surveys, right column */
+  left: calc(100% - 70px);
+  top: 73.3%;
+  transform: translateY(-50%);
 }
 
 .flow-trace {

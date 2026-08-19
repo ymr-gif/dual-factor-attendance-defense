@@ -72,6 +72,29 @@ const slideAnimations = {
             ease: 'outQuint',
           }, i * 0.09);
         });
+
+        // Blast radius — three fronts leave the board as the parts lift. The
+        // ring lies in its own local XY, so x and y here are the world x and z.
+        // Positions are milliseconds (a bare number is absolute time on an
+        // anime timeline), which is what spaces the fronts 150ms apart.
+        // outQuart on the radius with a 200ms alpha spike and a long decay give
+        // a front that leaves fast and dies as it goes, rather than a ring that
+        // grows at a constant rate and pops out at the end.
+        (view.shock || []).forEach((ring, i) => {
+          const at = i * 150;
+          tl.add(ring.scale, {
+            x: [view.shockRest, 10.4],
+            y: [view.shockRest, 10.4],
+            duration: 1600,
+            ease: 'outQuart',
+          }, at)
+          .add(ring.material, {
+            opacity: [
+              { to: 0.7, duration: 200, ease: 'outQuad' },
+              { to: 0, duration: 1400, ease: 'inQuad' },
+            ],
+          }, at);
+        });
       }
 
       // Proposal Defense — shrinks up
@@ -114,11 +137,21 @@ const slideAnimations = {
       }, 1.4)
 
       // S.A.F.E. — last entry so if scrambleText breaks the chain nothing else is affected
+      //
+      // Passing an explicit duration is what makes this land letter by letter:
+      // without one, scrambleText sizes itself off revealRate (60 chars/sec) and
+      // the whole word settles in ~420ms as a single event. With 2800ms and
+      // from:'left' the eight glyphs lock in one at a time, left to right, at
+      // half the speed the beat used to run.
       .add(main, {
-        innerHTML: scrambleText({ chars: 'A-Z0-9!@#$%' }),
+        innerHTML: scrambleText({
+          chars: 'A-Z0-9!@#$%',
+          from: 'left',
+          duration: 2800,
+        }),
         opacity: [0, 1],
         y: [0, -300],
-        duration: 1400,
+        duration: 2800,
       }, 0.1);
 
       return tl;
@@ -288,7 +321,9 @@ const slideAnimations = {
   // The scan is an overlay only: the model never moves, which keeps the beat
   // about the mechanism rather than about the character.
   solution(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    // The whole beat runs 1.25x; the two icons slide in at 2x on top of that,
+    // so the convergence is over quickly and the sweep is what holds the room.
+    const tl = createTimeline({ playbackRate: 1.25, defaults: { ease: 'outExpo' } });
     const dots = qa(el, '.scan__dot');
     const corners = qa(el, '.scan__corner');
     const line = q(el, '.scan__line');
@@ -303,18 +338,20 @@ const slideAnimations = {
     tl.add(q(el, '.solution-icon--nfc'), {
       x: [-100, 0],
       opacity: [0, 1],
-      duration: 800,
+      duration: 400,
     })
     .add(q(el, '.solution-icon--face'), {
       x: [100, 0],
       opacity: [0, 1],
-      duration: 800,
+      duration: 400,
     }, '<')
+    // Rolled back by half of what it was, so the plus still lands on the same
+    // fraction of the (now halved) slide-in rather than on top of its start.
     .add(q(el, '.solution-plus'), {
       opacity: [0, 1],
       scale: [0, 1],
       duration: 400,
-    }, '-=300')
+    }, '-=150')
     .add(q(el, '.vtuber-3d'), {
       opacity: [0, 1],
       duration: 800,
@@ -872,13 +909,18 @@ const slideAnimations = {
     const units = qa(el, '.unit');
     const wires = qa(el, '.wire');
     const caption = q(el, '.specs-caption');
-    const context = qa(el, '.rig-context');
 
     const rig = () => {
+      // Every unit group carries .rig-context too — the marker the deleted
+      // act-2 zoom used to dim the scene. Re-showing ".rig-context" here after
+      // hiding ".unit" therefore un-hid the whole rig, so the slide opened on a
+      // fully drawn board for the 250ms before the units tween started and then
+      // snapped back to zero. Nothing dims the context any more, so the set is
+      // gone; the units stay hidden until their own tween brings them in.
       utils.set(q(el, '.rig-stage'), { scale: 1, x: 0, y: 0 });
       utils.set(q(el, '.rig-svg'), { opacity: 1 });
       utils.set(units, { opacity: 0 });
-      utils.set(context, { opacity: 1 });
+      utils.set(wires, { opacity: 0 });
       utils.set(qa(el, '.rig-label'), { opacity: 0 });
       utils.set(q(el, '.specs-budget'), { opacity: 0 });
       caption.textContent = 'Guardpost rig';
