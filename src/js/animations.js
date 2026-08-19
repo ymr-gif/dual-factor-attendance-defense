@@ -623,33 +623,162 @@ const slideAnimations = {
     return tl;
   },
 
-  // Framework — IPO stages build left to right, feedback loop closes
+  // Framework — IPO cards appear sequentially, the waveform itself swells
+  // upward toward whichever card is current (the canvas never moves)
   framework(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
+    const waveCanvas = q(el, '.ipo-wave');
+    const stages = qa(el, '.ipo-stage');
+    let waveOffset = 0;
+    // Animated by the timeline below; drawWave() reads these live every
+    // frame. The "wave" is a localized rise in the drawn line, not the
+    // canvas being repositioned — a swell that glides under whichever card
+    // is current and gives a little extra nudge on arrival.
+    const waveState = { bumpX: 0, bumpAmount: 0 };
+
+    // Helper: x-position of a card's center, in the canvas's local coord space
+    function cardCenterX(i) {
+      if (!waveCanvas || !stages[i]) return 0;
+      const stageRect = stages[i].getBoundingClientRect();
+      const canvasRect = waveCanvas.getBoundingClientRect();
+      return stageRect.left + stageRect.width / 2 - canvasRect.left;
+    }
+
+    if (waveCanvas && waveCanvas.getContext) {
+      const ctx = waveCanvas.getContext('2d');
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      let w, h;
+
+      function sizeCanvas() {
+        const rect = waveCanvas.parentElement.getBoundingClientRect();
+        w = rect.width;
+        h = 20;
+        waveCanvas.width = w * dpr;
+        waveCanvas.height = h * dpr;
+        waveCanvas.style.width = w + 'px';
+        waveCanvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      // Roughly a card's half-width, so the swell reads as a broad rise
+      // under the whole card rather than a thin spike.
+      const BUMP_SIGMA = 90;
+
+      function waveY(x) {
+        const mid = h / 2;
+        const amp = 4;
+        const freq = 0.05;
+        const dx = x - waveState.bumpX;
+        const bump = waveState.bumpAmount
+          * Math.exp(-(dx * dx) / (2 * BUMP_SIGMA * BUMP_SIGMA));
+        return mid + Math.sin(x * freq + waveOffset) * amp - bump;
+      }
+
+      function drawWave() {
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#4a4a5e';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        for (let x = 0; x < w; x++) {
+          const y = waveY(x);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0,212,255,0.5)';
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = 'rgba(0,212,255,0.4)';
+        ctx.shadowBlur = 6;
+        ctx.setLineDash([]);
+        for (let x = 0; x < w; x++) {
+          const y = waveY(x);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        waveOffset += 0.03;
+        waveCanvas._waveRaf = requestAnimationFrame(drawWave);
+      }
+
+      sizeCanvas();
+      waveState.bumpX = cardCenterX(0);
+      drawWave();
+      window.addEventListener('resize', sizeCanvas);
+    }
+
+    // 1) Title
     tl.add(q(el, '.framework-title'), {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 500,
     })
-    .add(qa(el, '.ipo-stage'), {
+
+    // 2) Input card + wave nudges up beneath it
+    .add(stages[0], {
       opacity: [0, 1],
       y: [30, 0],
-      delay: stagger(220),
-      duration: 600,
-    }, '-=200')
-    .add(qa(el, '.ipo-arrow'), {
+      duration: 800,
+    }, '-=100')
+    .add(waveState, {
+      bumpAmount: [0, 9],
+      duration: 500,
+      ease: 'outElastic(1, 0.5)',
+    }, '-=600')
+
+    // 3) Arrow 1
+    .add(q(el, '.ipo-arrow:nth-child(2)'), {
       opacity: [0, 1],
       scaleX: [0, 1],
-      delay: stagger(220),
       duration: 400,
-    }, '-=800')
-    .add(qa(el, '.ipo-list li'), {
+    }, '-=200')
+
+    // 4) Process card + wave glides over and nudges
+    .add(stages[1], {
       opacity: [0, 1],
-      x: [-10, 0],
-      delay: stagger(50),
-      duration: 300,
-    }, '-=400')
+      y: [30, 0],
+      duration: 800,
+    }, '-=100')
+    .add(waveState, {
+      bumpX: cardCenterX(1),
+      duration: 500,
+      ease: 'outExpo',
+    }, '-=600')
+    .add(waveState, {
+      bumpAmount: [9, 13, 9],
+      duration: 500,
+      ease: 'outElastic(1, 0.5)',
+    }, '-=500')
+
+    // 5) Arrow 2
+    .add(q(el, '.ipo-arrow:nth-child(4)'), {
+      opacity: [0, 1],
+      scaleX: [0, 1],
+      duration: 400,
+    }, '-=200')
+
+    // 6) Output card + wave glides over and nudges
+    .add(stages[2], {
+      opacity: [0, 1],
+      y: [30, 0],
+      duration: 800,
+    }, '-=100')
+    .add(waveState, {
+      bumpX: cardCenterX(2),
+      duration: 500,
+      ease: 'outExpo',
+    }, '-=600')
+    .add(waveState, {
+      bumpAmount: [9, 13, 9],
+      duration: 500,
+      ease: 'outElastic(1, 0.5)',
+    }, '-=500')
+
+    // 7) Feedback bar
     .add(q(el, '.ipo-feedback'), {
       opacity: [0, 1],
       scaleX: [0.6, 1],
@@ -659,28 +788,100 @@ const slideAnimations = {
     return tl;
   },
 
-  // Architecture — nodes cascade, arrows draw between them
+  // Architecture — nodes cascade, copper traces draw in between them, then
+  // a packet pulse races along each trace once, left to right
   architecture(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const traceLines = [1, 2, 3, 4, 5, 6]
+      .map((n) => q(el, `.arch-trace--${n} .arch-trace__line`));
+    const traceVias = qa(el, '.arch-trace__via');
 
+    // --- Entrance cascade ---
     tl.add(q(el, '.arch-title'), {
       opacity: [0, 1],
       y: [-20, 0],
-      duration: 500,
+      duration: 1000,
     })
     .add(qa(el, '.arch-node'), {
       opacity: [0, 1],
       y: [20, 0],
       scale: [0.85, 1],
-      delay: stagger(160),
-      duration: 450,
-    }, '-=200')
-    .add(qa(el, '.arch-arrow'), {
+      delay: stagger(320),
+      duration: 900,
+    }, '-=400')
+    .add(traceVias, {
       opacity: [0, 1],
-      scaleX: [0, 1],
-      delay: stagger(160),
-      duration: 300,
-    }, '-=1100');
+      duration: 400,
+    }, 0)
+    .add(traceLines, {
+      opacity: [0, 1],
+      delay: stagger(320),
+      duration: 400,
+    }, '-=300')
+    .add(svg.createDrawable(traceLines), {
+      draw: ['0 0', '0 1'],
+      delay: stagger(320),
+      duration: 600,
+    }, '-=400');
+    // Entrance settles ~3420ms in.
+
+    // --- Packet flow pulse: one left-to-right pass, no loop ---
+    // Nodes glow in sequence (same mechanic as before); traces carry the
+    // light between them as a segment that travels the line's length via
+    // a `draw` keyframe sweep, instead of flashing in place.
+    const nodeIcons = [1, 2, 3, 4, 5, 6, 7]
+      .map((n) => q(el, `.arch-node--${n} .arch-node__icon`));
+    const tracePulses = [1, 2, 3, 4, 5, 6]
+      .map((n) => q(el, `.arch-trace--${n} .arch-trace__pulse`));
+
+    const PULSE_START = 4000;
+    const STAGGER = 640;
+    const NODE_DURATION = 840;
+    const TRACE_DURATION = STAGGER;
+    const TRACE_SEG = 0.14; // fraction of the line the traveling segment covers
+
+    // Node 5 (Match + Liveness) reads as a pass, not a generic hop.
+    // Node 7 (Notify Guardian) gets a bigger pop for "flies out."
+    const NODE_PEAK_COLOR = { 5: '#00ff88' }; // var(--success)
+    const NODE_PEAK_SCALE = { 7: 1.28 };
+
+    nodeIcons.forEach((icon, i) => {
+      const n = i + 1;
+      tl.add(icon, {
+        scale: [1, NODE_PEAK_SCALE[n] || 1.18, 1],
+        background: ['#12121a', NODE_PEAK_COLOR[n] || '#00d4ff', '#12121a'], // var(--bg-secondary) -> peak -> var(--bg-secondary)
+        color: ['#00d4ff', '#0a0a0f', '#00d4ff'], // var(--accent) -> var(--bg-primary) -> var(--accent)
+        duration: NODE_DURATION,
+        ease: 'inOutSine',
+      }, PULSE_START + i * STAGGER);
+    });
+
+    tracePulses.forEach((pulse, i) => {
+      tl.add(svg.createDrawable(pulse), {
+        draw: ['0 0', `0 ${TRACE_SEG}`, `${1 - TRACE_SEG} 1`, '1 1'],
+        opacity: [0, 1, 1, 0],
+        duration: TRACE_DURATION,
+        ease: 'inOutSine',
+      }, PULSE_START + i * STAGGER);
+    });
+
+    // --- Scan line sweep: vertical line travels left→right with the pulse ---
+    const scanLine = q(el, '.arch-scan');
+    const SWEEP_DURATION = 4200;
+
+    tl.add(scanLine, {
+      opacity: [0, 1],
+      duration: 150,
+    }, PULSE_START)
+    .add(scanLine, {
+      left: ['0%', '100%'],
+      duration: SWEEP_DURATION,
+      ease: 'linear',
+    }, PULSE_START)
+    .add(scanLine, {
+      opacity: 0,
+      duration: 150,
+    }, PULSE_START + SWEEP_DURATION);
 
     return tl;
   },
@@ -889,17 +1090,12 @@ const slideAnimations = {
       duration: 800,
       ease: 'outElastic(1, 0.5)',
     }, '-=250')
-    .add(q(el, '.rq-icon'), {
-      opacity: [0, 1],
-      scale: [0, 1],
-      duration: 500,
-    }, '-=400')
     .add(q(el, '.rq-label'), {
       opacity: [0, 1],
       y: [15, 0],
       duration: 500,
     }, '-=200')
-    .add(q(el, '.rq-data'), {
+    .add(q(el, '.rq-table'), {
       opacity: [0, 1],
       y: [15, 0],
       duration: 500,
@@ -911,18 +1107,36 @@ const slideAnimations = {
   // Instruments — three cards stagger in
   instruments(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const traceLines = [1, 2, 3, 4, 5, 6, 7, 8]
+      .map((n) => q(el, `.flow-trace--${n} .flow-trace__line`));
+    const traceVias = qa(el, '.flow-trace__via');
 
     tl.add(q(el, '.instruments-title'), {
       opacity: [0, 1],
       y: [-20, 0],
-      duration: 500,
+      duration: 1000,
     })
-    .add(qa(el, '.instrument-card'), {
+    .add(qa(el, '.flow-node'), {
       opacity: [0, 1],
-      y: [30, 0],
-      delay: stagger(150),
+      y: [20, 0],
+      scale: [0.85, 1],
+      delay: stagger(280),
+      duration: 900,
+    }, '-=400')
+    .add(traceVias, {
+      opacity: [0, 1],
+      duration: 400,
+    }, 0)
+    .add(traceLines, {
+      opacity: [0, 1],
+      delay: stagger(280),
+      duration: 400,
+    }, '-=300')
+    .add(svg.createDrawable(traceLines), {
+      draw: ['0 0', '0 1'],
+      delay: stagger(280),
       duration: 600,
-    }, '-=200');
+    }, '-=400');
 
     return tl;
   },
