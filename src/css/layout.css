@@ -782,18 +782,29 @@
 /* RQ Slides */
 .slide__content--rq {
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   max-width: 1200px;
   gap: 60px;
+  overflow: hidden;
+  height: 480px;
+}
+
+.rq-scroll {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 60px;
+  width: 100%;
 }
 
 .rq-left {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--spacing-lg);
   flex: 1;
   min-width: 0;
+  text-align: center;
 }
 
 .rq-eyebrow {
@@ -1024,6 +1035,39 @@
 }
 
 .flow-vtrace__via {
+  fill: var(--bg-secondary);
+  stroke: var(--copper);
+  stroke-width: 2;
+  opacity: 0;
+}
+
+/* Elbow — vertical down then horizontal right, connects last row to End */
+.flow-elbow {
+  display: flex;
+  height: 40px;
+  opacity: 0;
+}
+
+.flow-elbow--left {
+  align-self: flex-start;
+  margin-left: calc(50% - 120px);
+}
+
+.flow-elbow__svg {
+  width: 120px;
+  height: 40px;
+  overflow: visible;
+}
+
+.flow-elbow__line {
+  fill: none;
+  stroke: var(--copper);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.flow-elbow__via {
   fill: var(--bg-secondary);
   stroke: var(--copper);
   stroke-width: 2;

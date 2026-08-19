@@ -1073,70 +1073,109 @@ const slideAnimations = {
 
   // Research questions — shared by all three RQ slides
   rq(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const STEP = 140;
+    const scroll = q(el, '.rq-scroll');
 
-    tl.add(q(el, '.rq-eyebrow'), {
-      opacity: [0, 1],
-      y: [-12, 0],
-      duration: 450,
-    })
-    .add(qa(el, '.rq-eyebrow__rule'), {
-      scaleX: [0, 1],
-      duration: 500,
-    }, '-=250')
-    .add(q(el, '.rq-number'), {
-      opacity: [0, 1],
-      scale: [0.3, 1],
-      duration: 800,
-      ease: 'outElastic(1, 0.5)',
-    }, '-=250')
-    .add(q(el, '.rq-label'), {
-      opacity: [0, 1],
-      y: [15, 0],
-      duration: 500,
-    }, '-=200')
-    .add(q(el, '.rq-fields'), {
-      opacity: [0, 1],
-      y: [15, 0],
-      duration: 500,
-    }, '-=200');
+    // Step 0 — entry: fade in left side + fields
+    const step0 = () => {
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    return tl;
+      tl.add(q(el, '.rq-eyebrow'), {
+        opacity: [0, 1],
+        y: [-12, 0],
+        duration: 450,
+      })
+      .add(qa(el, '.rq-eyebrow__rule'), {
+        scaleX: [0, 1],
+        duration: 500,
+      }, '-=250')
+      .add(q(el, '.rq-number'), {
+        opacity: [0, 1],
+        scale: [0.3, 1],
+        duration: 800,
+        ease: 'outElastic(1, 0.5)',
+      }, '-=250')
+      .add(q(el, '.rq-label'), {
+        opacity: [0, 1],
+        y: [15, 0],
+        duration: 500,
+      }, '-=200')
+      .add(q(el, '.rq-fields'), {
+        opacity: [0, 1],
+        duration: 400,
+      }, '-=200');
+
+      return tl;
+    };
+
+    // Step 1 — scroll up to card 2
+    const step1 = () => {
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+      tl.add(scroll, {
+        y: -STEP,
+        duration: 600,
+      });
+      return tl;
+    };
+
+    // Step 2 — scroll up to card 3
+    const step2 = () => {
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+      tl.add(scroll, {
+        y: -STEP * 2,
+        duration: 600,
+      });
+      return tl;
+    };
+
+    return { steps: [step0, step1, step2] };
   },
 
   // Instruments — three cards stagger in
   instruments(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-    const traceLines = [1, 2, 3, 4, 5, 6, 7, 8]
-      .map((n) => q(el, `.flow-trace--${n} .flow-trace__line`));
-    const traceVias = qa(el, '.flow-trace__via');
+
+    // All trace lines in DOM order: h1, v1, h2, v2, h3, v3, h4, elbow
+    const allTraceLines = qa(el,
+      '.flow-flow .flow-trace__line, .flow-flow .flow-vtrace__line, .flow-flow .flow-elbow__line');
+    const allVias = qa(el,
+      '.flow-flow .flow-trace__via, .flow-flow .flow-vtrace__via, .flow-flow .flow-elbow__via');
+    const traceContainers = [
+      ...qa(el, '.flow-trace'),
+      ...qa(el, '.flow-vtrace'),
+      q(el, '.flow-elbow'),
+    ];
 
     tl.add(q(el, '.instruments-title'), {
       opacity: [0, 1],
       y: [-20, 0],
-      duration: 1000,
+      duration: 800,
     })
     .add(qa(el, '.flow-node'), {
       opacity: [0, 1],
       y: [20, 0],
       scale: [0.85, 1],
-      delay: stagger(280),
-      duration: 900,
-    }, '-=400')
-    .add(traceVias, {
-      opacity: [0, 1],
-      duration: 400,
-    }, 0)
-    .add(traceLines, {
-      opacity: [0, 1],
-      delay: stagger(280),
-      duration: 400,
-    }, '-=300')
-    .add(svg.createDrawable(traceLines), {
-      draw: ['0 0', '0 1'],
-      delay: stagger(280),
+      delay: stagger(160),
       duration: 600,
-    }, '-=400');
+    }, '-=400')
+    .add(allVias, {
+      opacity: [0, 1],
+      duration: 300,
+    }, 300)
+    .add(traceContainers, {
+      opacity: [0, 1],
+      duration: 200,
+    }, 300)
+    .add(allTraceLines, {
+      opacity: [0, 1],
+      delay: stagger(350),
+      duration: 300,
+    }, '-=100')
+    .add(svg.createDrawable(allTraceLines), {
+      draw: ['0 0', '0 1'],
+      delay: stagger(350),
+      duration: 500,
+    }, '-=100');
 
     return tl;
   },
