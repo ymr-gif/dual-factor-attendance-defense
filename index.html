@@ -253,11 +253,13 @@
         </div>
         <div class="phone-3d">
           <canvas class="phone-3d__canvas"></canvas>
-          <div class="liveness-photo-frame">
-            <img class="liveness-photo-frame__img" alt="">
-          </div>
-          <div class="liveness-spoof-box">
-            <span class="liveness-spoof-label"></span>
+          <div class="phone-scan-line"></div>
+          <div class="phone-stamp">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/>
+              <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" stroke-width="4"/>
+              <line x1="75" y1="25" x2="25" y2="75" stroke="currentColor" stroke-width="4"/>
+            </svg>
           </div>
         </div>
       </div>
@@ -326,6 +328,7 @@
     <section class="slide slide--framework" data-slide="6" data-anim="framework">
       <div class="slide__content">
         <h2 class="framework-title">Conceptual Framework</h2>
+        <div class="ipo-block">
         <div class="ipo">
           <div class="ipo-stage" data-stage="input">
             <span class="ipo-stage__label">Input</span>
@@ -357,7 +360,8 @@
               <li>Real-time alerts</li>
             </ul>
           </div>
-          <canvas class="ipo-wave"></canvas>
+        </div>
+        <canvas class="ipo-wave"></canvas>
         </div>
         <div class="ipo-feedback">
           <span class="ipo-feedback__label">Evaluation feedback</span>
@@ -955,23 +959,83 @@
     <section class="slide slide--survey" data-slide="14" data-anim="survey">
       <div class="slide__content">
         <h2 class="survey-title">Survey Instrument</h2>
-        <div class="survey-versions">
-          <div class="survey-version">
-            <span class="survey-version__count">20</span>
-            <span class="survey-version__label">items · Student</span>
+        <div class="survey-board">
+          <div class="survey-scan"></div>
+
+          <div class="survey-col">
+            <span class="survey-col__label">Student</span>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Functional Suitability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Usability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Reliability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Security</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <span class="survey-col__total">20 items</span>
           </div>
-          <div class="survey-version">
-            <span class="survey-version__count">20</span>
-            <span class="survey-version__label">items · Guardian</span>
+
+          <svg class="survey-trace" viewBox="0 0 40 200" preserveAspectRatio="none">
+            <line x1="20" y1="0" x2="20" y2="200" stroke="var(--copper)" stroke-width="1.5"/>
+            <circle cx="20" cy="4" r="3" fill="var(--copper)"/>
+            <circle cx="20" cy="196" r="3" fill="var(--copper)"/>
+          </svg>
+
+          <div class="survey-col">
+            <span class="survey-col__label">Guardian</span>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Functional Suitability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Usability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Reliability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row">
+              <span class="survey-trait-name">Security</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <span class="survey-col__total">20 items</span>
           </div>
+
         </div>
-        <div class="survey-traits">
-          <span class="survey-trait">Functional Suitability <b>5</b></span>
-          <span class="survey-trait">Usability <b>5</b></span>
-          <span class="survey-trait">Reliability <b>5</b></span>
-          <span class="survey-trait">Security <b>5</b></span>
-        </div>
-        <p class="survey-participants">5 items per characteristic · 5-point Likert · ISO/IEC 25010:2023</p>
+        <p class="survey-footnote">5 items per characteristic · 5-point Likert · ISO/IEC 25010:2023</p>
       </div>
     </section>
 
@@ -981,22 +1045,27 @@
         <h2 class="scale-title">Interpretation</h2>
         <div class="scale-ladder">
           <div class="scale-row" data-band="high">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">4.21 – 5.00</span>
             <span class="scale-row__desc">Highly Acceptable</span>
           </div>
           <div class="scale-row" data-band="good">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">3.41 – 4.20</span>
             <span class="scale-row__desc">Acceptable</span>
           </div>
           <div class="scale-row" data-band="mid">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">2.61 – 3.40</span>
             <span class="scale-row__desc">Moderately Acceptable</span>
           </div>
           <div class="scale-row" data-band="low">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">1.81 – 2.60</span>
             <span class="scale-row__desc">Slightly Acceptable</span>
           </div>
           <div class="scale-row" data-band="none">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">1.00 – 1.80</span>
             <span class="scale-row__desc">Not Acceptable</span>
           </div>
@@ -1043,7 +1112,6 @@
   <script src="src/models/arduino-model.js"></script>
   <script src="src/models/vtuber-model.js?v=4"></script>
   <script src="src/models/phone-model.js"></script>
-  <script src="src/models/phone-photos.js"></script>
   <script src="src/js/model-loader.js"></script>
   <script src="src/js/hardware-3d.js"></script>
   <script src="src/js/vtuber-3d.js"></script>

@@ -593,53 +593,42 @@
   display: block;
 }
 
-/* Carousel photo — a flat 2D overlay standing in for the phone's screen.
-   The screen mesh itself mirrors any texture across its centerline (a
-   baked-in UV bug — see the header comment in phone-3d.js), so the actual
-   photo lives here instead, positioned over the mesh's on-screen rect. */
-.liveness-photo-frame {
+/* Scan-line sweep — mirrors .liveness-scan-line's look (left scene) on
+   the phone's (still black/off) screen: one glowing pass, top to bottom,
+   before the rejection stamp lands. `top` is GSAP-animated in JS. */
+.phone-scan-line {
   position: absolute;
-  left: 22%;
-  top: 9%;
-  width: 56%;
-  height: 80%;
-  border-radius: 14px;
-  overflow: hidden;
+  left: 20%;
+  top: 12%;
+  width: 60%;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent);
   opacity: 0;
   z-index: 1;
 }
 
-.liveness-photo-frame__img {
+/* Rejection stamp — mirrors .liveness-stamp's look (left scene) on the
+   phone itself: a red circle+X slammed on once, staying put while the
+   phone keeps idly spinning behind/around it. Fixed pixel centering (not
+   inset/translate) since GSAP owns this element's transform for the
+   scale/rotate entrance — a CSS transform here would just get overwritten. */
+.phone-stamp {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200px;
+  height: 200px;
+  margin-left: -100px;
+  margin-top: -100px;
+  color: var(--danger);
+  opacity: 0;
+  z-index: 1;
+}
+
+.phone-stamp svg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Spoof-detection box — slides between face positions as the carousel
-   swipes through photos. Position/size are set from JS per photo, not here. */
-.liveness-spoof-box {
-  position: absolute;
-  border: 1.5px solid var(--danger);
-  border-radius: 2px;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 2;
-  box-shadow: 0 0 8px rgba(255, 51, 102, 0.4);
-}
-
-.liveness-spoof-label {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, 6px);
-  white-space: nowrap;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--danger);
-  text-shadow: 0 0 6px rgba(255, 51, 102, 0.5);
 }
 
 /* Architecture Slide */
@@ -1456,6 +1445,8 @@
 }
 
 .scale-row {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1465,6 +1456,39 @@
   border-left: 3px solid var(--text-dim);
   border-radius: var(--radius-sm);
   opacity: 0;
+}
+
+.scale-row__fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  border-radius: inherit;
+  opacity: 0.12;
+}
+
+.scale-row[data-band="high"] .scale-row__fill { background: var(--success); }
+.scale-row[data-band="good"] .scale-row__fill { background: var(--accent); }
+.scale-row[data-band="mid"]  .scale-row__fill { background: var(--warning); }
+.scale-row[data-band="low"]  .scale-row__fill { background: #ff6644; }
+.scale-row[data-band="none"] .scale-row__fill { background: var(--danger); }
+
+.scale-row--highlight {
+  border-left-width: 5px;
+  box-shadow: 0 0 14px var(--success-glow), 0 0 28px rgba(0, 255, 136, 0.08);
+}
+
+.scale-row--highlight .scale-row__fill {
+  opacity: 0.22;
+}
+
+.scale-row--glow-loop {
+  border-left-width: 5px;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.15), 0 0 20px rgba(0, 255, 136, 0.06);
+}
+
+.scale-row--glow-loop .scale-row__fill {
+  opacity: 0.22;
 }
 
 .scale-row__range {
@@ -1479,7 +1503,10 @@
   letter-spacing: 0.05em;
 }
 
-.scale-row[data-band="high"] { border-left-color: var(--success); }
+.scale-row[data-band="high"] {
+  border-left-color: var(--success);
+  margin-bottom: var(--spacing-sm);
+}
 .scale-row[data-band="good"] { border-left-color: var(--accent); }
 .scale-row[data-band="mid"]  { border-left-color: var(--warning); }
 .scale-row[data-band="low"]  { border-left-color: #ff6644; }
@@ -1487,7 +1514,7 @@
 
 .scale-footnote {
   font-size: 12px;
-  color: var(--text-dim);
+  color: #fff;
   font-family: var(--font-mono);
   letter-spacing: 0.08em;
   opacity: 0;
@@ -1688,8 +1715,15 @@
   opacity: 0;
 }
 
+/* Hugs .ipo's own content width so .ipo-wave (a normal-flow child sized to
+   100%) can never be wider than the visible card row — no JS measurement
+   of card positions needed to keep the two in sync. */
+.ipo-block {
+  width: fit-content;
+  margin: 0 auto;
+}
+
 .ipo {
-  position: relative;
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -1709,31 +1743,28 @@
   opacity: 0;
 }
 
-@keyframes ipo-shake {
-  0%   { transform: translateY(-8px) translateX(0); }
-  15%  { transform: translateY(-8px) translateX(-4px); }
-  30%  { transform: translateY(-8px) translateX(4px); }
-  45%  { transform: translateY(-8px) translateX(-3px); }
-  60%  { transform: translateY(-8px) translateX(2px); }
-  75%  { transform: translateY(-8px) translateX(-1px); }
-  85%  { transform: translateY(-4px) translateX(0); }
-  100% { transform: translateY(0) translateX(0); }
-}
-
-.ipo-stage--shake {
-  animation: ipo-shake 0.5s ease-out forwards;
-}
+/* The hop-and-rattle each card lands with lives in framework() in
+   animations.js — a CSS class could not replay it on a slide revisit, since
+   reset() strips inline styles but leaves classes in place. */
 
 .ipo-stage[data-stage="input"]   { border-top: 3px solid var(--accent); }
 .ipo-stage[data-stage="process"] { border-top: 3px solid var(--accent-secondary); }
 .ipo-stage[data-stage="output"]  { border-top: 3px solid var(--success); }
 
+/* Each label takes its card's own border-top colour, so the stage is
+   identifiable from its heading alone. The old --text-secondary was
+   4.44:1 on the card — under the 4.5:1 AA floor for text this small. */
 .ipo-stage__label {
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--text-secondary);
 }
+
+.ipo-stage[data-stage="input"]   .ipo-stage__label { color: var(--accent); }
+.ipo-stage[data-stage="process"] .ipo-stage__label { color: var(--accent-secondary-bright); }
+.ipo-stage[data-stage="output"]  .ipo-stage__label { color: var(--success); }
 
 .ipo-list {
   display: flex;
@@ -1767,11 +1798,10 @@
 }
 
 .ipo-wave {
-  position: absolute;
-  bottom: -20px;
-  left: 0;
+  display: block;
   width: 100%;
-  height: 20px;
+  height: 18px;
+  margin-top: var(--spacing-sm);
   pointer-events: none;
 }
 
