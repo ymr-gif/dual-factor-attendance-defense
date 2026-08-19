@@ -1120,7 +1120,12 @@ const slideAnimations = {
       draw: ['0 0', '0 1'],
       delay: stagger(125),
       duration: 150,
-    }, '-=50');
+    }, '-=50')
+    .add(qa(el, '.flow-callout'), {
+      opacity: [0, 1],
+      delay: stagger(200),
+      duration: 400,
+    }, '-=300');
 
     return tl;
   },
@@ -1151,28 +1156,55 @@ const slideAnimations = {
   // Survey — instrument structure, no result claims
   survey(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const rows = qa(el, '.survey-trait-row');
+    const segs = qa(el, '.survey-seg');
 
     tl.add(q(el, '.survey-title'), {
       opacity: [0, 1],
       y: [-20, 0],
-      duration: 500,
+      duration: 625,
     })
-    .add(qa(el, '.survey-version'), {
+    .add(q(el, '.survey-board'), {
       opacity: [0, 1],
-      scale: [0.8, 1],
-      delay: stagger(160),
+      scale: [0.95, 1],
+      duration: 750,
+    }, '-=250')
+    .add(qa(el, '.survey-col__label'), {
+      opacity: [0, 1],
       duration: 500,
-    }, '-=200')
-    .add(qa(el, '.survey-trait'), {
+    }, '-=375')
+    .add(rows, {
       opacity: [0, 1],
-      y: [16, 0],
-      delay: stagger(110),
-      duration: 400,
-    }, '-=200')
-    .add(q(el, '.survey-participants'), {
+      y: [12, 0],
+      delay: stagger(75),
+      duration: 500,
+    }, '-=250')
+    .add(segs, {
       opacity: [0, 1],
-      duration: 400,
-    }, '-=100');
+      scaleX: [0, 1],
+      delay: stagger(38),
+      duration: 375,
+      ease: 'outBack',
+    }, '-=375')
+    .add(qa(el, '.survey-trait-count'), {
+      opacity: [0, 1],
+      delay: stagger(75),
+      duration: 375,
+    }, '-=250')
+    .add(qa(el, '.survey-col__total'), {
+      opacity: [0, 1],
+      duration: 375,
+    }, '-=125')
+    .add(q(el, '.survey-trace'), {
+      opacity: [0, 1],
+      duration: 500,
+    }, '-=500');
+
+    // Footnote
+    tl.add(q(el, '.survey-footnote'), {
+      opacity: [0, 1],
+      duration: 500,
+    }, '-=500');
 
     return tl;
   },

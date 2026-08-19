@@ -364,7 +364,11 @@
         <canvas class="ipo-wave"></canvas>
         </div>
         <div class="ipo-feedback">
-          <span class="ipo-feedback__label">Evaluation feedback</span>
+          <div class="ipo-feedback__line ipo-feedback__line--left"></div>
+          <div class="ipo-feedback__line ipo-feedback__line--right"></div>
+          <div class="ipo-feedback__box">
+            <span class="ipo-feedback__label">Evaluation feedback</span>
+          </div>
         </div>
       </div>
     </section>
@@ -859,7 +863,6 @@
             <div class="flow-row">
               <div class="flow-node">
                 <div class="flow-node__box">Conduct Spoof Trials</div>
-                <div class="flow-node__label flow-node__label--phase">P1</div>
               </div>
               <div class="flow-trace flow-trace--3">
                 <svg class="flow-trace__svg" viewBox="0 0 26 6" xmlns="http://www.w3.org/2000/svg">
@@ -870,7 +873,6 @@
               </div>
               <div class="flow-node">
                 <div class="flow-node__box">Deploy System &amp; Record Logs</div>
-                <div class="flow-node__label flow-node__label--phase">P2</div>
               </div>
             </div>
             <!-- Down trace: right side -->
@@ -885,7 +887,6 @@
             <div class="flow-row flow-row--reverse">
               <div class="flow-node">
                 <div class="flow-node__box">Administer Surveys</div>
-                <div class="flow-node__label flow-node__label--phase">P3</div>
               </div>
               <div class="flow-trace flow-trace--4">
                 <svg class="flow-trace__svg" viewBox="0 0 26 6" xmlns="http://www.w3.org/2000/svg">
@@ -911,6 +912,29 @@
               <div class="flow-node flow-node--end">
                 <div class="flow-node__box">End</div>
               </div>
+            </div>
+          </div>
+          <div class="flow-callouts">
+            <div class="flow-callout flow-callout--1">
+              <span class="flow-callout__text">Instrument 1</span>
+              <svg class="flow-callout__line" viewBox="0 0 60 20" preserveAspectRatio="none">
+                <line x1="0" y1="10" x2="52" y2="10" stroke="var(--copper)" stroke-width="1.5"/>
+                <circle cx="55" cy="10" r="3" fill="var(--copper)"/>
+              </svg>
+            </div>
+            <div class="flow-callout flow-callout--2">
+              <svg class="flow-callout__line flow-callout__line--up" viewBox="0 0 20 40" preserveAspectRatio="none">
+                <line x1="10" y1="40" x2="10" y2="8" stroke="var(--copper)" stroke-width="1.5"/>
+                <circle cx="10" cy="4" r="3" fill="var(--copper)"/>
+              </svg>
+              <span class="flow-callout__text">Instrument 2</span>
+            </div>
+            <div class="flow-callout flow-callout--3">
+              <svg class="flow-callout__line flow-callout__line--up" viewBox="0 0 20 40" preserveAspectRatio="none">
+                <line x1="10" y1="40" x2="10" y2="8" stroke="var(--copper)" stroke-width="1.5"/>
+                <circle cx="10" cy="4" r="3" fill="var(--copper)"/>
+              </svg>
+              <span class="flow-callout__text">Instrument 3</span>
             </div>
           </div>
         </div>
@@ -960,32 +984,31 @@
       <div class="slide__content">
         <h2 class="survey-title">Survey Instrument</h2>
         <div class="survey-board">
-          <div class="survey-scan"></div>
 
           <div class="survey-col">
             <span class="survey-col__label">Student</span>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="fs">
               <span class="survey-trait-name">Functional Suitability</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
               </span>
               <span class="survey-trait-count">5</span>
             </div>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="us">
               <span class="survey-trait-name">Usability</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
               </span>
               <span class="survey-trait-count">5</span>
             </div>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="re">
               <span class="survey-trait-name">Reliability</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
               </span>
               <span class="survey-trait-count">5</span>
             </div>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="se">
               <span class="survey-trait-name">Security</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
@@ -1003,28 +1026,28 @@
 
           <div class="survey-col">
             <span class="survey-col__label">Guardian</span>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="fs">
               <span class="survey-trait-name">Functional Suitability</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
               </span>
               <span class="survey-trait-count">5</span>
             </div>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="us">
               <span class="survey-trait-name">Usability</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
               </span>
               <span class="survey-trait-count">5</span>
             </div>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="re">
               <span class="survey-trait-name">Reliability</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
               </span>
               <span class="survey-trait-count">5</span>
             </div>
-            <div class="survey-trait-row">
+            <div class="survey-trait-row" data-trait="se">
               <span class="survey-trait-name">Security</span>
               <span class="survey-trait-bar">
                 <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
@@ -1035,7 +1058,7 @@
           </div>
 
         </div>
-        <p class="survey-footnote">5 items per characteristic · 5-point Likert · ISO/IEC 25010:2023</p>
+        <p class="survey-footnote">5 items per characteristic · <span class="survey-footnote--iso">ISO/IEC 25010:2023</span> · 5-point Likert</p>
       </div>
     </section>
 
