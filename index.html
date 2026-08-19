@@ -12,107 +12,249 @@
 
   <!-- anime.js v4.5.0 — local first, CDN only if the local copy is missing -->
   <script src="src/vendor/anime.umd.min.js"></script>
+  <!-- GSAP 3.12.5 — used for the phone entrance cinematic on slide 4 -->
+  <script src="src/vendor/gsap.min.js"></script>
   <!-- three.js r149 — the last build that runs as a plain script, so the deck
        still works opened straight from the filesystem -->
   <script src="src/vendor/three.min.js"></script>
   <script>
     window.anime || document.write('<script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js">\x3C/script>');
   </script>
+  <script>
+    window.gsap || document.write('<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js">\x3C/script>');
+  </script>
 </head>
 <body>
 
   <div class="presentation">
 
-    <!-- 1: Title -->
+    <!-- 1: Title — two steps: "Proposal Defense" first, then full title -->
     <section class="slide slide--title active" data-slide="1" data-anim="title">
       <div class="slide__content">
+        <p class="title-sub title-intro">Proposal Defense</p>
         <p class="title-school">Hua Siong College of Iloilo</p>
-        <div class="title-icon">
-          <svg viewBox="0 0 120 120" class="shield-icon">
-            <path d="M60 10 L110 35 L110 75 C110 100 60 115 60 115 C60 115 10 100 10 75 L10 35 Z"
-                  fill="none" stroke="currentColor" stroke-width="2"/>
-            <path d="M45 60 L55 70 L78 47" fill="none" stroke="currentColor" stroke-width="3"
-                  stroke-linecap="round" stroke-linejoin="round" class="checkmark"/>
-          </svg>
-        </div>
         <h1 class="scramble-target title-main">S.A.F.E.</h1>
-        <div class="title-divider"></div>
-        <p class="title-full">A Dual-Factor NFC and Facial Recognition Attendance System with
-          Passive Liveness Detection and Real-Time Guardian Notification</p>
-        <p class="title-sub">Proposal Defense</p>
-        <ul class="title-team">
-          <li>Aragon, Miguel Gabriel</li>
-          <li>Cabucos, Yamier Zane</li>
-          <li>De Guzman, Ezckar</li>
-          <li>Loreno, Ronald James Zairon</li>
-        </ul>
-        <p class="title-section">STEM · Grade 12 — Euclid</p>
+        <div class="title-board-3d">
+          <canvas class="title-board-3d__canvas"></canvas>
+        </div>
+        <div class="title-rest">
+          <div class="title-divider"></div>
+          <p class="title-full">A Dual-Factor NFC and Facial Recognition Attendance System with
+            Passive Liveness Detection and Real-Time Guardian Notification</p>
+          <ul class="title-team">
+            <li>Aragon, Miguel Gabriel</li>
+            <li>Cabucos, Yamier Zane</li>
+            <li>De Guzman, Ezckar</li>
+            <li>Loreno, Ronald James Zairon</li>
+          </ul>
+          <p class="title-section">STEM · Grade 12 — Euclid</p>
+        </div>
       </div>
     </section>
 
     <!-- 2: The Problem -->
     <section class="slide slide--problem" data-slide="2" data-anim="problem">
       <div class="slide__content">
-        <div class="problem-icon">
-          <svg viewBox="0 0 120 120" class="logbook-icon">
-            <rect x="22" y="14" width="76" height="92" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-            <line x1="38" y1="14" x2="38" y2="106" stroke="currentColor" stroke-width="1" opacity="0.5"/>
-            <line x1="50" y1="38" x2="86" y2="38" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
-            <line x1="50" y1="54" x2="86" y2="54" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
-            <line x1="50" y1="70" x2="72" y2="70" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
-            <line x1="50" y1="86" x2="80" y2="86" stroke="currentColor" stroke-width="1.5" opacity="0.7" class="logbook-line"/>
+        <div class="logbook-wrap">
+          <svg class="logbook" viewBox="0 0 900 500" role="img"
+               aria-label="A week of manual attendance, with a tick added to an empty box">
+            <rect class="logbook-page" x="0" y="0" width="900" height="500" rx="3"/>
+            <line class="logbook-margin" x1="44" y1="0" x2="44" y2="500"/>
+
+            <text class="logbook-head" x="70" y="56">FULL NAME</text>
+            <text class="logbook-head logbook-head--day" x="440" y="56">MON</text>
+            <text class="logbook-head logbook-head--day" x="530" y="56">TUE</text>
+            <text class="logbook-head logbook-head--day" x="620" y="56">WED</text>
+            <text class="logbook-head logbook-head--day" x="710" y="56">THU</text>
+            <text class="logbook-head logbook-head--day" x="800" y="56">FRI</text>
+            <line class="logbook-rule logbook-rule--head" x1="44" y1="76" x2="880" y2="76"/>
+
+            <line class="logbook-rule" x1="44" y1="156" x2="880" y2="156"/>
+            <line class="logbook-rule" x1="44" y1="228" x2="880" y2="228"/>
+            <line class="logbook-rule" x1="44" y1="300" x2="880" y2="300"/>
+            <line class="logbook-rule" x1="44" y1="372" x2="880" y2="372"/>
+            <line class="logbook-rule" x1="44" y1="444" x2="880" y2="444"/>
+
+            <!-- A tick, a blank and an "L" are the whole vocabulary of the sheet.
+                 None of them records who actually made the mark. -->
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,125 c 32,-16 60,8 92,-6 c 25,-11 54,12 82,-2 c 28,-13 54,7 86,-9"/>
+              <rect class="mark-box" x="420" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 609,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="690" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 699,117 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="780" y="96" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,117 l 8,9 l 16,-19"/>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,201 c 40,-13 38,11 74,-5 c 36,-14 34,13 70,-1 c 32,-11 44,6 80,-11"/>
+              <rect class="mark-box" x="420" y="172" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,193 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="172" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,193 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="172" width="40" height="40" rx="2"/>
+              <rect class="mark-box" x="690" y="172" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 699,193 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="780" y="172" width="40" height="40" rx="2"/>
+              <text class="mark-late" x="800" y="200">L</text>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,273 c 28,-18 64,7 86,-9 c 18,-8 36,11 60,-4 c 25,-12 50,8 76,-7"/>
+              <rect class="mark-box" x="420" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,265 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="244" width="40" height="40" rx="2"/>
+              <text class="mark-late" x="530" y="272">L</text>
+              <rect class="mark-box" x="600" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 609,265 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="690" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 699,265 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="780" y="244" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,265 l 8,9 l 16,-19"/>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,345 c 46,-10 28,13 68,-6 c 39,-14 32,11 72,-2 c 21,-9 42,7 78,-12"/>
+              <rect class="mark-box" x="420" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,337 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,337 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 609,337 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="690" y="316" width="40" height="40" rx="2"/>
+              <rect class="mark-box" x="780" y="316" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,337 l 8,9 l 16,-19"/>
+            </g>
+            <g class="entry">
+              <path class="stroke stroke--name" d="M 70,417 c 36,-15 54,9 78,-7 c 25,-12 43,13 72,-3 c 28,-11 43,7 76,-8"/>
+              <rect class="mark-box" x="420" y="388" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 429,409 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="510" y="388" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 519,409 l 8,9 l 16,-19"/>
+              <rect class="mark-box" x="600" y="388" width="40" height="40" rx="2"/>
+              <rect class="mark-box" x="690" y="388" width="40" height="40" rx="2"/>
+              <text class="mark-late" x="710" y="416">L</text>
+              <rect class="mark-box" x="780" y="388" width="40" height="40" rx="2"/>
+              <path class="mark-check" d="M 789,409 l 8,9 l 16,-19"/>
+            </g>
+
+            <!-- Beat 2 only: the blank box gets a tick, then the same path in red -->
+            <g class="forgery">
+              <path class="mark-check mark-check--forged" d="M 609,409 l 8,9 l 16,-19"/>
+              <rect class="cell-flag" x="596" y="384" width="48" height="48" rx="3"/>
+              <path class="mark-flag" d="M 609,409 l 8,9 l 16,-19"/>
+            </g>
+            <text class="logbook-tell" x="620" y="478">PRESENT OR ABSENT?</text>
           </svg>
           <div class="reject-stamp">UNVERIFIED</div>
         </div>
         <h2 class="problem-title">The Problem</h2>
-        <p class="problem-subtitle">Manual. Unverified. Unsafe.</p>
+        <p class="problem-subtitle">Recorded by hand, without verification</p>
       </div>
     </section>
 
     <!-- 3: NFC + Face -->
     <section class="slide slide--solution" data-slide="3" data-anim="solution">
-      <div class="slide__content">
-        <div class="solution-icons">
-          <div class="solution-icon solution-icon--nfc">
-            <svg viewBox="0 0 100 100">
-              <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="50" cy="50" r="5" fill="currentColor"/>
-            </svg>
-            <span>NFC</span>
+      <div class="slide__content slide__content--solution">
+        <div class="solution-left">
+          <div class="solution-icons">
+            <div class="solution-icon solution-icon--nfc">
+              <svg viewBox="0 0 100 100">
+                <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="50" cy="50" r="5" fill="currentColor"/>
+              </svg>
+              <span>NFC</span>
+            </div>
+            <div class="solution-plus">+</div>
+            <div class="solution-icon solution-icon--face">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="40" r="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="42" cy="35" r="3" fill="currentColor"/>
+                <circle cx="58" cy="35" r="3" fill="currentColor"/>
+                <path d="M42 50 Q50 58 58 50" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M30 75 Q50 85 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Face</span>
+            </div>
           </div>
-          <div class="solution-plus">+</div>
-          <div class="solution-icon solution-icon--face">
-            <svg viewBox="0 0 100 100">
-              <circle cx="50" cy="40" r="25" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="42" cy="35" r="3" fill="currentColor"/>
-              <circle cx="58" cy="35" r="3" fill="currentColor"/>
-              <path d="M42 50 Q50 58 58 50" fill="none" stroke="currentColor" stroke-width="2"/>
-              <path d="M30 75 Q50 85 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <span>Face</span>
+          <div class="solution-merge">=</div>
+          <div class="solution-result">
+            <span class="solution-result-text">Identity Verified</span>
           </div>
         </div>
-        <div class="solution-merge">=</div>
-        <div class="solution-result">
-          <span class="solution-result-text">Identity Verified</span>
+        <div class="vtuber-3d">
+          <canvas class="vtuber-3d__canvas"></canvas>
+          <!-- Edge fade sits between the model and the scan, so it softens the
+               shoulders leaving frame without dimming the scan on top of it. -->
+          <div class="vtuber-3d__fade"></div>
+          <!-- Scan overlay. Nothing here touches the model — the dot grid is
+               the projector pattern a real face scanner throws, so it reads as
+               the mechanism rather than as decoration. -->
+          <div class="scan">
+            <svg class="scan__dots" viewBox="0 0 480 560" preserveAspectRatio="none" aria-hidden="true">
+              <circle class="scan__dot" cx="15.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="45.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="75.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="105.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="135.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="165.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="195.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="225.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="255.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="285.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="315.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="345.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="375.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="405.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="435.0" cy="14.7" r="1.7"/><circle class="scan__dot" cx="465.0" cy="14.7" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="45.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="75.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="105.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="135.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="165.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="195.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="225.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="255.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="285.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="315.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="345.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="375.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="405.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="435.0" cy="44.2" r="1.7"/><circle class="scan__dot" cx="465.0" cy="44.2" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="45.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="75.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="105.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="135.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="165.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="195.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="225.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="255.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="285.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="315.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="345.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="375.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="405.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="435.0" cy="73.7" r="1.7"/><circle class="scan__dot" cx="465.0" cy="73.7" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="45.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="75.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="105.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="135.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="165.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="195.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="225.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="255.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="285.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="315.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="345.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="375.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="405.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="435.0" cy="103.2" r="1.7"/><circle class="scan__dot" cx="465.0" cy="103.2" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="45.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="75.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="105.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="135.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="165.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="195.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="225.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="255.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="285.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="315.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="345.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="375.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="405.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="435.0" cy="132.6" r="1.7"/><circle class="scan__dot" cx="465.0" cy="132.6" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="45.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="75.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="105.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="135.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="165.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="195.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="225.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="255.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="285.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="315.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="345.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="375.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="405.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="435.0" cy="162.1" r="1.7"/><circle class="scan__dot" cx="465.0" cy="162.1" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="45.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="75.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="105.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="135.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="165.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="195.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="225.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="255.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="285.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="315.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="345.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="375.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="405.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="435.0" cy="191.6" r="1.7"/><circle class="scan__dot" cx="465.0" cy="191.6" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="45.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="75.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="105.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="135.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="165.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="195.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="225.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="255.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="285.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="315.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="345.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="375.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="405.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="435.0" cy="221.1" r="1.7"/><circle class="scan__dot" cx="465.0" cy="221.1" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="45.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="75.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="105.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="135.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="165.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="195.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="225.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="255.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="285.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="315.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="345.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="375.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="405.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="435.0" cy="250.5" r="1.7"/><circle class="scan__dot" cx="465.0" cy="250.5" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="45.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="75.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="105.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="135.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="165.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="195.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="225.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="255.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="285.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="315.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="345.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="375.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="405.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="435.0" cy="280.0" r="1.7"/><circle class="scan__dot" cx="465.0" cy="280.0" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="45.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="75.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="105.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="135.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="165.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="195.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="225.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="255.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="285.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="315.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="345.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="375.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="405.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="435.0" cy="309.5" r="1.7"/><circle class="scan__dot" cx="465.0" cy="309.5" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="45.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="75.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="105.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="135.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="165.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="195.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="225.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="255.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="285.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="315.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="345.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="375.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="405.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="435.0" cy="338.9" r="1.7"/><circle class="scan__dot" cx="465.0" cy="338.9" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="45.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="75.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="105.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="135.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="165.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="195.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="225.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="255.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="285.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="315.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="345.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="375.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="405.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="435.0" cy="368.4" r="1.7"/><circle class="scan__dot" cx="465.0" cy="368.4" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="45.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="75.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="105.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="135.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="165.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="195.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="225.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="255.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="285.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="315.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="345.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="375.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="405.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="435.0" cy="397.9" r="1.7"/><circle class="scan__dot" cx="465.0" cy="397.9" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="45.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="75.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="105.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="135.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="165.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="195.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="225.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="255.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="285.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="315.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="345.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="375.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="405.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="435.0" cy="427.4" r="1.7"/><circle class="scan__dot" cx="465.0" cy="427.4" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="45.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="75.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="105.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="135.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="165.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="195.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="225.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="255.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="285.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="315.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="345.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="375.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="405.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="435.0" cy="456.8" r="1.7"/><circle class="scan__dot" cx="465.0" cy="456.8" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="45.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="75.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="105.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="135.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="165.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="195.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="225.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="255.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="285.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="315.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="345.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="375.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="405.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="435.0" cy="486.3" r="1.7"/><circle class="scan__dot" cx="465.0" cy="486.3" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="45.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="75.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="105.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="135.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="165.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="195.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="225.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="255.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="285.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="315.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="345.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="375.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="405.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="435.0" cy="515.8" r="1.7"/><circle class="scan__dot" cx="465.0" cy="515.8" r="1.7"/>
+              <circle class="scan__dot" cx="15.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="45.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="75.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="105.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="135.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="165.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="195.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="225.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="255.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="285.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="315.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="345.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="375.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="405.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="435.0" cy="545.3" r="1.7"/><circle class="scan__dot" cx="465.0" cy="545.3" r="1.7"/>
+            </svg>
+            <svg class="scan__reticle" viewBox="0 0 480 560" preserveAspectRatio="none" aria-hidden="true">
+              <path class="scan__corner" d="M 22,68 L 22,22 L 68,22"/>
+              <path class="scan__corner" d="M 412,22 L 458,22 L 458,68"/>
+              <path class="scan__corner" d="M 458,492 L 458,538 L 412,538"/>
+              <path class="scan__corner" d="M 68,538 L 22,538 L 22,492"/>
+            </svg>
+            <div class="scan__line"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 4: Liveness -->
+    <!-- 4: Liveness — SVG scan scene + 3D phone entrance -->
     <section class="slide slide--liveness" data-slide="4" data-anim="liveness">
-      <div class="slide__content">
-        <div class="liveness-scene">
-          <div class="liveness-photo">
-            <svg viewBox="0 0 100 100">
-              <rect x="15" y="10" width="70" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="50" cy="40" r="15" fill="none" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M25 75 L40 55 L55 65 L70 45 L85 75" fill="none" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
+      <div class="slide__content slide__content--liveness">
+        <div class="liveness-left">
+          <div class="liveness-scene">
+            <div class="liveness-photo">
+              <svg viewBox="0 0 100 100">
+                <rect x="15" y="10" width="70" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="50" cy="40" r="15" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M25 75 L40 55 L55 65 L70 45 L85 75" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="liveness-scan-line"></div>
+            <div class="liveness-stamp">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/>
+                <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" stroke-width="4"/>
+                <line x1="75" y1="25" x2="25" y2="75" stroke="currentColor" stroke-width="4"/>
+              </svg>
+            </div>
           </div>
-          <div class="liveness-scan-line"></div>
-          <div class="liveness-stamp">
+          <h2 class="liveness-title">Liveness</h2>
+          <p class="liveness-subtitle">Passive. Real-time. Spoof-proof.</p>
+        </div>
+        <div class="phone-3d">
+          <canvas class="phone-3d__canvas"></canvas>
+          <div class="phone-scan-line"></div>
+          <div class="phone-stamp">
             <svg viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="4"/>
               <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" stroke-width="4"/>
@@ -120,8 +262,6 @@
             </svg>
           </div>
         </div>
-        <h2 class="liveness-title">Liveness</h2>
-        <p class="liveness-subtitle">Passive. Real-time. Spoof-proof.</p>
       </div>
     </section>
 
@@ -138,19 +278,41 @@
             </svg>
             <span class="notify-caption">Verified</span>
           </div>
-          <div class="notify-trail">
-            <span class="notify-dot"></span>
-            <span class="notify-dot"></span>
-            <span class="notify-dot"></span>
-            <span class="notify-dot"></span>
+          <div class="notify-trail-group">
+            <div class="notify-trail">
+              <span class="notify-dot"></span>
+              <span class="notify-dot"></span>
+              <span class="notify-dot"></span>
+              <span class="notify-dot"></span>
+            </div>
+            <div class="notify-status-group">
+              <span class="notify-status notify-status--processing">processing...</span>
+              <span class="notify-status notify-status--sending">sending...</span>
+              <span class="notify-status notify-status--almost">almost there...</span>
+              <span class="notify-status notify-status--complete">Complete!</span>
+            </div>
           </div>
           <div class="notify-device">
+            <div class="notify-corners">
+              <span class="notify-corner notify-corner--tl"></span>
+              <span class="notify-corner notify-corner--tr"></span>
+              <span class="notify-corner notify-corner--bl"></span>
+              <span class="notify-corner notify-corner--br"></span>
+            </div>
             <svg viewBox="0 0 80 80">
               <rect x="22" y="6" width="36" height="68" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>
               <line x1="34" y1="14" x2="46" y2="14" stroke="currentColor" stroke-width="1.5"/>
               <rect x="29" y="28" width="22" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" class="notify-envelope"/>
               <path d="M29 30 L40 38 L51 30" fill="none" stroke="currentColor" stroke-width="1.5" class="notify-envelope"/>
             </svg>
+            <div class="notify-banner">
+              <svg class="notify-banner-icon" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="7" fill="none" stroke="var(--success)" stroke-width="1.5"/>
+                <path d="M5 8 L7 10 L11 6" fill="none" stroke="var(--success)" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="notify-banner-text">SAFE — Student A arrived 7:14 AM</span>
+            </div>
             <span class="notify-caption">Guardian</span>
           </div>
         </div>
@@ -166,6 +328,7 @@
     <section class="slide slide--framework" data-slide="6" data-anim="framework">
       <div class="slide__content">
         <h2 class="framework-title">Conceptual Framework</h2>
+        <div class="ipo-block">
         <div class="ipo">
           <div class="ipo-stage" data-stage="input">
             <span class="ipo-stage__label">Input</span>
@@ -198,6 +361,8 @@
             </ul>
           </div>
         </div>
+        <canvas class="ipo-wave"></canvas>
+        </div>
         <div class="ipo-feedback">
           <span class="ipo-feedback__label">Evaluation feedback</span>
         </div>
@@ -209,6 +374,8 @@
       <div class="slide__content">
         <h2 class="arch-title">Architecture</h2>
         <!-- ANIM HOOK: nodes are the anchor points for the future exploded-view scene -->
+        <div class="arch-board">
+        <div class="arch-scan"></div>
         <div class="arch-flow">
           <div class="arch-node arch-node--1">
             <div class="arch-node__icon">
@@ -220,7 +387,14 @@
             </div>
             <div class="arch-node__label">Tap Card</div>
           </div>
-          <div class="arch-arrow arch-arrow--1"></div>
+          <div class="arch-trace arch-trace--1">
+<svg class="arch-trace__svg" viewBox="0 0 40 10" xmlns="http://www.w3.org/2000/svg">
+                <circle class="arch-trace__via" cx="5" cy="5" r="2.5"/>
+                <path class="arch-trace__line" d="M6,5 L34,5"/>
+                <path class="arch-trace__pulse" d="M6,5 L34,5"/>
+                <circle class="arch-trace__via" cx="35" cy="5" r="2.5"/>
+            </svg>
+          </div>
           <div class="arch-node arch-node--2">
             <div class="arch-node__icon">
               <svg viewBox="0 0 40 40">
@@ -231,7 +405,14 @@
             </div>
             <div class="arch-node__label">RC522 + Arduino</div>
           </div>
-          <div class="arch-arrow arch-arrow--2"></div>
+          <div class="arch-trace arch-trace--2">
+<svg class="arch-trace__svg" viewBox="0 0 40 10" xmlns="http://www.w3.org/2000/svg">
+                <circle class="arch-trace__via" cx="5" cy="5" r="2.5"/>
+                <path class="arch-trace__line" d="M6,5 L34,5"/>
+                <path class="arch-trace__pulse" d="M6,5 L34,5"/>
+                <circle class="arch-trace__via" cx="35" cy="5" r="2.5"/>
+            </svg>
+          </div>
           <div class="arch-node arch-node--3">
             <div class="arch-node__icon">
               <svg viewBox="0 0 40 40">
@@ -244,7 +425,14 @@
             </div>
             <div class="arch-node__label">FastAPI</div>
           </div>
-          <div class="arch-arrow arch-arrow--3"></div>
+          <div class="arch-trace arch-trace--3">
+<svg class="arch-trace__svg" viewBox="0 0 40 10" xmlns="http://www.w3.org/2000/svg">
+                <circle class="arch-trace__via" cx="5" cy="5" r="2.5"/>
+                <path class="arch-trace__line" d="M6,5 L34,5"/>
+                <path class="arch-trace__pulse" d="M6,5 L34,5"/>
+                <circle class="arch-trace__via" cx="35" cy="5" r="2.5"/>
+            </svg>
+          </div>
           <div class="arch-node arch-node--4">
             <div class="arch-node__icon">
               <svg viewBox="0 0 40 40">
@@ -255,7 +443,14 @@
             </div>
             <div class="arch-node__label">Capture</div>
           </div>
-          <div class="arch-arrow arch-arrow--4"></div>
+          <div class="arch-trace arch-trace--4">
+<svg class="arch-trace__svg" viewBox="0 0 40 10" xmlns="http://www.w3.org/2000/svg">
+                <circle class="arch-trace__via" cx="5" cy="5" r="2.5"/>
+                <path class="arch-trace__line" d="M6,5 L34,5"/>
+                <path class="arch-trace__pulse" d="M6,5 L34,5"/>
+                <circle class="arch-trace__via" cx="35" cy="5" r="2.5"/>
+            </svg>
+          </div>
           <div class="arch-node arch-node--5">
             <div class="arch-node__icon">
               <svg viewBox="0 0 40 40">
@@ -267,7 +462,14 @@
             </div>
             <div class="arch-node__label">Match + Liveness</div>
           </div>
-          <div class="arch-arrow arch-arrow--5"></div>
+          <div class="arch-trace arch-trace--5">
+<svg class="arch-trace__svg" viewBox="0 0 40 10" xmlns="http://www.w3.org/2000/svg">
+                <circle class="arch-trace__via" cx="5" cy="5" r="2.5"/>
+                <path class="arch-trace__line" d="M6,5 L34,5"/>
+                <path class="arch-trace__pulse" d="M6,5 L34,5"/>
+                <circle class="arch-trace__via" cx="35" cy="5" r="2.5"/>
+            </svg>
+          </div>
           <div class="arch-node arch-node--6">
             <div class="arch-node__icon">
               <svg viewBox="0 0 40 40">
@@ -279,7 +481,14 @@
             </div>
             <div class="arch-node__label">Log Entry</div>
           </div>
-          <div class="arch-arrow arch-arrow--6"></div>
+          <div class="arch-trace arch-trace--6">
+<svg class="arch-trace__svg" viewBox="0 0 40 10" xmlns="http://www.w3.org/2000/svg">
+                <circle class="arch-trace__via" cx="5" cy="5" r="2.5"/>
+                <path class="arch-trace__line" d="M6,5 L34,5"/>
+                <path class="arch-trace__pulse" d="M6,5 L34,5"/>
+                <circle class="arch-trace__via" cx="35" cy="5" r="2.5"/>
+            </svg>
+          </div>
           <div class="arch-node arch-node--7">
             <div class="arch-node__icon">
               <svg viewBox="0 0 40 40">
@@ -290,145 +499,162 @@
             <div class="arch-node__label">Notify Guardian</div>
           </div>
         </div>
+        </div>
       </div>
     </section>
 
     <!-- 8: Hardware — prototype rig, then the Arduino exploded (2 steps) -->
+    <!-- User ordered deletion of slide 8 section 2 (3D board explode).
+         Only section 1 (rig overview) retained. -->
     <section class="slide slide--specs" data-slide="8" data-anim="hardware">
       <div class="slide__content">
         <h2 class="specs-title">Prototype</h2>
         <div class="rig-frame">
+        <div class="specs-budget">
+          <p class="specs-budget__label">Prototype cost</p>
+          <p class="specs-budget__figure">₱4,245</p>
+          <ul class="specs-budget__items">
+            <li><span>Arduino</span><span>₱2,000</span></li>
+            <li><span>Webcam</span><span>₱1,600</span></li>
+            <li><span>NFC cards ×40</span><span>₱320</span></li>
+            <li><span>RC522</span><span>₱150</span></li>
+            <li><span>Jumper wires</span><span>₱115</span></li>
+            <li><span>Breadboard</span><span>₱60</span></li>
+          </ul>
+        </div>
         <svg class="rig-svg" viewBox="0 0 1280 570" xmlns="http://www.w3.org/2000/svg">
           <g class="rig-stage">
             <g class="wires rig-context">
-        <polyline class="wire" points="209.08,426.57 267.19,463.18 420.39,424.44 615.85,293.29 652.83,338.12 629.06,327.45" fill="none" stroke="#ff6b6b" stroke-width="1.60" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
-        <polyline class="wire" points="219.64,432.68 277.75,469.28 433.59,422.91 610.57,290.24 666.03,345.75 642.26,335.07" fill="none" stroke="#ffd166" stroke-width="1.60" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
-        <polyline class="wire" points="230.21,438.77 288.32,475.38 446.80,421.39 605.28,287.19 679.24,353.38 655.47,342.70" fill="none" stroke="#06d6a0" stroke-width="1.60" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
-        <polyline class="wire" points="491.70,365.57 510.19,335.99 642.26,259.74 824.52,264.31 885.27,277.12" fill="none" stroke="#79838f" stroke-width="2.00" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
-        <polyline class="wire" points="621.13,235.95 758.48,235.95 1012.05,248.15 1001.49,264.93" fill="none" stroke="#79838f" stroke-width="2.00" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline class="wire" points="496.17,351.12 499.20,351.12 578.01,298.62 692.34,312.12 765.09,319.12 807.53,318.77" fill="none" stroke="#79838f" stroke-width="2.20" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline class="wire" points="785.94,217.90 743.50,257.80 736.65,303.76 834.81,363.93 892.40,367.77" fill="none" stroke="#79838f" stroke-width="2.20" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
-        <g class="unit rig-context unit--webcam"><polygon points="652.30,245.10 646.45,247.73 639.46,249.56 631.49,250.53 622.75,250.63 613.45,249.84 603.82,248.20 594.09,245.73 584.51,242.51 575.31,238.61 566.72,234.12 558.95,229.16 552.19,223.85 546.60,218.32 542.33,212.70 539.49,207.14 538.13,201.77 538.29,196.72 539.98,192.13 543.14,188.09 547.70,184.71 553.55,182.08 560.54,180.25 568.51,179.28 577.25,179.18 586.55,179.97 596.18,181.61 605.91,184.08 615.49,187.30 624.69,191.20 633.28,195.69 641.05,200.65 647.81,205.96 653.40,211.49 657.67,217.11 660.51,222.67 661.87,228.04 661.71,233.09 660.02,237.68 656.86,241.72 652.30,245.10" fill="#05070a" opacity="0.35"/><g>
-        <polygon points="538.19,206.67 614.26,250.59 614.26,245.10 538.19,201.18" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="661.81,223.14 614.26,250.59 614.26,245.10 661.81,217.65" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="585.74,173.73 661.81,217.65 614.26,245.10 538.19,201.18" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <g class="unit rig-context unit--webcam"><polygon points="825.34,239.25 821.61,240.93 817.15,242.09 812.08,242.71 806.50,242.77 800.57,242.27 794.43,241.23 788.23,239.65 782.12,237.60 776.26,235.11 770.78,232.25 765.83,229.09 761.52,225.70 757.96,222.18 755.24,218.60 753.42,215.05 752.55,211.63 752.66,208.41 753.73,205.48 755.75,202.90 758.66,200.75 762.39,199.07 766.85,197.91 771.92,197.29 777.50,197.23 783.43,197.73 789.57,198.77 795.77,200.35 801.88,202.40 807.74,204.89 813.22,207.75 818.17,210.91 822.48,214.30 826.04,217.82 828.76,221.40 830.58,224.95 831.45,228.37 831.34,231.59 830.27,234.52 828.25,237.10 825.34,239.25" fill="#05070a" opacity="0.35"/><g>
+        <polygon points="755.63,216.50 798.06,241.00 798.06,235.40 755.63,210.90" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="828.37,223.50 798.06,241.00 798.06,235.40 828.37,217.90" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="785.94,193.40 828.37,217.90 798.06,235.40 755.63,210.90" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g><g>
-        <polygon points="583.36,208.04 602.38,219.02 602.38,197.06 583.36,186.08" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="614.26,212.16 602.38,219.02 602.38,197.06 614.26,190.20" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="595.25,179.22 614.26,190.20 602.38,197.06 583.36,186.08" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="773.81,214.40 793.52,225.78 793.52,191.12 773.81,179.75" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="811.70,215.28 793.52,225.78 793.52,191.12 811.70,180.62" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="792.00,169.25 811.70,180.62 793.52,191.12 773.81,179.75" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g><g>
-        <polygon points="542.95,179.22 614.26,220.39 614.26,173.73 542.95,132.56" fill="#181d25" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="657.05,195.69 614.26,220.39 614.26,173.73 657.05,149.02" fill="#1f2530" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="585.74,107.85 657.05,149.02 614.26,173.73 542.95,132.56" fill="#2b3240" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><polyline points="648.76,192.27 646.94,193.19 644.93,193.97 642.76,194.59 640.47,195.04 638.10,195.31 635.68,195.40 633.27,195.31 630.90,195.04 628.61,194.59 626.44,193.97 624.43,193.19 622.61,192.27 621.01,191.22 619.67,190.06 618.60,188.81 617.82,187.49 617.35,186.12 617.19,184.72 617.35,183.33 617.82,181.96 618.60,180.64 619.67,179.39 621.01,178.22 622.61,177.17 624.43,176.25 626.44,175.48 628.61,174.86 630.90,174.41 633.27,174.14 635.68,174.05 638.10,174.14 640.47,174.41 642.76,174.86 644.93,175.48 646.94,176.25 648.76,177.17 650.35,178.22 651.70,179.39 652.77,180.64 653.54,181.96 654.01,183.33 654.17,184.72 654.01,186.12 653.54,187.49 652.77,188.81 651.70,190.06 650.35,191.22 648.76,192.27" fill="none" stroke="#0b1116" stroke-width="6.00" opacity="1.00"/><polyline points="641.96,188.35 641.10,188.78 640.15,189.15 639.12,189.44 638.04,189.65 636.92,189.78 635.78,189.83 634.64,189.78 633.52,189.65 632.43,189.44 631.41,189.15 630.46,188.78 629.60,188.35 628.84,187.85 628.21,187.30 627.70,186.71 627.33,186.08 627.11,185.44 627.04,184.78 627.11,184.12 627.33,183.47 627.70,182.85 628.21,182.26 628.84,181.71 629.60,181.21 630.46,180.77 631.41,180.41 632.43,180.12 633.52,179.90 634.64,179.78 635.78,179.73 636.92,179.78 638.04,179.90 639.12,180.12 640.15,180.41 641.10,180.77 641.96,181.21 642.71,181.71 643.35,182.26 643.85,182.85 644.22,183.47 644.44,184.12 644.52,184.78 644.44,185.44 644.22,186.08 643.85,186.71 643.35,187.30 642.71,187.85 641.96,188.35" fill="none" stroke="#00d4ff" stroke-width="1.60" opacity="0.80"/></g>
-        <g class="unit rig-context unit--rc522"><polygon points="302.05,463.48 290.60,468.70 277.00,472.39 261.60,474.47 244.78,474.88 226.95,473.61 208.55,470.69 190.04,466.20 171.86,460.25 154.46,452.98 138.29,444.57 123.72,435.23 111.13,425.19 100.82,414.69 93.04,404.00 87.99,393.38 85.80,383.08 86.50,373.37 90.10,364.48 96.50,356.63 105.53,350.02 116.99,344.80 130.59,341.11 145.98,339.03 162.80,338.62 180.63,339.89 199.03,342.81 217.55,347.30 235.73,353.25 253.12,360.52 269.30,368.93 283.86,378.27 296.46,388.31 306.77,398.81 314.54,409.50 319.59,420.12 321.79,430.42 321.08,440.13 317.49,449.02 311.09,456.87 302.05,463.48" fill="#05070a" opacity="0.32"/><g>
-        <polygon points="71.72,391.50 230.21,483.00 230.21,478.12 71.72,386.62" fill="#0a2937" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="335.86,422.00 230.21,483.00 230.21,478.12 335.86,417.12" fill="#0d3547" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="177.38,325.62 335.86,417.12 230.21,478.12 71.72,386.62" fill="#134a63" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><polyline points="187.95,392.66 186.48,393.40 184.85,394.03 183.10,394.53 181.25,394.89 179.33,395.11 177.38,395.19 175.43,395.11 173.51,394.89 171.66,394.53 169.91,394.03 168.28,393.40 166.81,392.66 165.53,391.81 164.44,390.87 163.58,389.86 162.95,388.79 162.57,387.69 162.44,386.56 162.57,385.43 162.95,384.33 163.58,383.26 164.44,382.25 165.53,381.31 166.81,380.46 168.28,379.71 169.91,379.09 171.66,378.59 173.51,378.23 175.43,378.01 177.38,377.93 179.33,378.01 181.25,378.23 183.10,378.59 184.85,379.09 186.48,379.71 187.95,380.46 189.23,381.31 190.32,382.25 191.18,383.26 191.81,384.33 192.19,385.43 192.32,386.56 192.19,387.69 191.81,388.79 191.18,389.86 190.32,390.87 189.23,391.81 187.95,392.66" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="195.87,397.23 193.30,398.54 190.45,399.63 187.39,400.51 184.15,401.14 180.79,401.53 177.38,401.66 173.97,401.53 170.61,401.14 167.37,400.51 164.31,399.63 161.46,398.54 158.89,397.23 156.63,395.75 154.73,394.11 153.22,392.34 152.12,390.47 151.46,388.53 151.23,386.56 151.46,384.59 152.12,382.65 153.22,380.78 154.73,379.01 156.63,377.37 158.89,375.88 161.46,374.58 164.31,373.48 167.37,372.61 170.61,371.98 173.97,371.59 177.38,371.46 180.79,371.59 184.15,371.98 187.39,372.61 190.45,373.48 193.30,374.58 195.87,375.88 198.12,377.37 200.02,379.01 201.54,380.78 202.64,382.65 203.30,384.59 203.53,386.56 203.30,388.53 202.64,390.47 201.54,392.34 200.02,394.11 198.12,395.75 195.87,397.23" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="203.79,401.81 200.12,403.67 196.06,405.24 191.67,406.48 187.05,407.39 182.26,407.94 177.38,408.13 172.50,407.94 167.71,407.39 163.08,406.48 158.70,405.24 154.64,403.67 150.97,401.81 147.74,399.69 145.03,397.34 142.87,394.81 141.30,392.14 140.34,389.37 140.02,386.56 140.34,383.74 141.30,380.98 142.87,378.31 145.03,375.78 147.74,373.43 150.97,371.31 154.64,369.45 158.70,367.88 163.08,366.63 167.71,365.73 172.50,365.18 177.38,364.99 182.26,365.18 187.05,365.73 191.67,366.63 196.06,367.88 200.12,369.45 203.79,371.31 207.02,373.43 209.73,375.78 211.89,378.31 213.46,380.98 214.41,383.74 214.73,386.56 214.41,389.37 213.46,392.14 211.89,394.81 209.73,397.34 207.02,399.69 203.79,401.81" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="211.72,406.38 206.94,408.80 201.66,410.84 195.96,412.46 189.95,413.64 183.72,414.36 177.38,414.60 171.04,414.36 164.81,413.64 158.80,412.46 153.10,410.84 147.82,408.80 143.04,406.38 138.85,403.63 135.32,400.58 132.51,397.29 130.47,393.82 129.23,390.22 128.82,386.56 129.23,382.90 130.47,379.30 132.51,375.83 135.32,372.54 138.85,369.49 143.04,366.73 147.82,364.32 153.10,362.28 158.80,360.66 164.81,359.48 171.04,358.76 177.38,358.52 183.72,358.76 189.95,359.48 195.96,360.66 201.66,362.28 206.94,364.32 211.72,366.73 215.91,369.49 219.43,372.54 222.24,375.83 224.29,379.30 225.53,382.90 225.94,386.56 225.53,390.22 224.29,393.82 222.24,397.29 219.43,400.58 215.91,403.63 211.72,406.38" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="219.64,410.96 213.76,413.94 207.26,416.44 200.25,418.44 192.85,419.89 185.18,420.77 177.38,421.07 169.58,420.77 161.91,419.89 154.51,418.44 147.50,416.44 141.00,413.94 135.12,410.96 129.96,407.57 125.62,403.81 122.16,399.76 119.65,395.49 118.12,391.06 117.61,386.56 118.12,382.05 119.65,377.63 122.16,373.35 125.62,369.31 129.96,365.55 135.12,362.16 141.00,359.18 147.50,356.68 154.51,354.68 161.91,353.23 169.58,352.35 177.38,352.05 185.18,352.35 192.85,353.23 200.25,354.68 207.26,356.68 213.76,359.18 219.64,362.16 224.80,365.55 229.14,369.31 232.60,373.35 235.11,377.63 236.64,382.05 237.15,386.56 236.64,391.06 235.11,395.49 232.60,399.76 229.14,403.81 224.80,407.57 219.64,410.96" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="180.55,388.39 180.11,388.61 179.62,388.80 179.10,388.95 178.54,389.06 177.96,389.12 177.38,389.15 176.79,389.12 176.22,389.06 175.66,388.95 175.14,388.80 174.65,388.61 174.21,388.39 173.82,388.13 173.50,387.85 173.24,387.55 173.05,387.23 172.94,386.90 172.90,386.56 172.94,386.22 173.05,385.89 173.24,385.57 173.50,385.26 173.82,384.98 174.21,384.73 174.65,384.51 175.14,384.32 175.66,384.17 176.22,384.06 176.79,383.99 177.38,383.97 177.96,383.99 178.54,384.06 179.10,384.17 179.62,384.32 180.11,384.51 180.55,384.73 180.94,384.98 181.26,385.26 181.52,385.57 181.71,385.89 181.82,386.22 181.86,386.56 181.82,386.90 181.71,387.23 181.52,387.55 181.26,387.85 180.94,388.13 180.55,388.39" fill="none" stroke="#cfe6f2" stroke-width="1.40" opacity="0.70"/><g>
-        <polygon points="217.00,424.75 240.77,438.47 240.77,433.59 217.00,419.87" fill="#151519" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="264.55,424.75 240.77,438.47 240.77,433.59 264.55,419.87" fill="#1b1b23" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="240.77,406.14 264.55,419.87 240.77,433.59 217.00,419.87" fill="#262630" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="719.25,169.25 810.19,221.75 810.19,162.25 719.25,109.75" fill="#181d25" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="864.75,190.25 810.19,221.75 810.19,162.25 864.75,130.75" fill="#1f2530" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="773.81,78.25 864.75,130.75 810.19,162.25 719.25,109.75" fill="#2b3240" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><polyline points="854.17,185.89 851.85,187.07 849.28,188.06 846.52,188.84 843.60,189.42 840.57,189.76 837.50,189.88 834.42,189.76 831.39,189.42 828.47,188.84 825.71,188.06 823.14,187.07 820.83,185.89 818.79,184.55 817.08,183.07 815.71,181.48 814.72,179.79 814.12,178.04 813.92,176.27 814.12,174.49 814.72,172.74 815.71,171.06 817.08,169.46 818.79,167.98 820.83,166.64 823.14,165.47 825.71,164.48 828.47,163.69 831.39,163.12 834.42,162.77 837.50,162.66 840.57,162.77 843.60,163.12 846.52,163.69 849.28,164.48 851.85,165.47 854.17,166.64 856.20,167.98 857.91,169.46 859.28,171.06 860.27,172.74 860.87,174.49 861.07,176.27 860.87,178.04 860.27,179.79 859.28,181.48 857.91,183.07 856.20,184.55 854.17,185.89" fill="none" stroke="#0b1116" stroke-width="6.00" opacity="1.00"/><polyline points="845.50,180.89 844.40,181.44 843.19,181.91 841.88,182.28 840.50,182.55 839.07,182.72 837.62,182.77 836.16,182.72 834.73,182.55 833.35,182.28 832.05,181.91 830.83,181.44 829.74,180.89 828.78,180.25 827.97,179.55 827.32,178.80 826.85,178.00 826.57,177.18 826.47,176.34 826.57,175.50 826.85,174.67 827.32,173.88 827.97,173.12 828.78,172.42 829.74,171.79 830.83,171.23 832.05,170.76 833.35,170.39 834.73,170.12 836.16,169.96 837.62,169.90 839.07,169.96 840.50,170.12 841.88,170.39 843.19,170.76 844.40,171.23 845.50,171.79 846.46,172.42 847.27,173.12 847.91,173.88 848.38,174.67 848.67,175.50 848.76,176.34 848.67,177.18 848.38,178.00 847.91,178.80 847.27,179.55 846.46,180.25 845.50,180.89" fill="none" stroke="#00d4ff" stroke-width="1.60" opacity="0.80"/><polygon points="773.81,92.21 782.91,97.46 776.84,100.96 767.75,95.71" fill="#00d4ff" opacity="0.70" stroke="none" stroke-width="0.60"/></g>
+        <g class="unit rig-context unit--rc522"><polygon points="412.76,472.10 399.61,478.09 384.01,482.33 366.34,484.71 347.04,485.18 326.58,483.72 305.46,480.38 284.21,475.22 263.35,468.39 243.39,460.05 224.83,450.40 208.12,439.68 193.66,428.16 181.83,416.11 172.91,403.85 167.12,391.66 164.59,379.84 165.41,368.70 169.53,358.50 176.87,349.49 187.24,341.90 200.39,335.91 215.99,331.67 233.66,329.29 252.96,328.82 273.42,330.28 294.54,333.62 315.79,338.78 336.65,345.61 356.61,353.95 375.17,363.60 391.88,374.32 406.34,385.84 418.17,397.89 427.09,410.15 432.88,422.34 435.41,434.16 434.59,445.30 430.47,455.50 423.13,464.51 412.76,472.10" fill="#05070a" opacity="0.32"/><g>
+        <polygon points="148.45,389.50 330.31,494.50 330.31,488.90 148.45,383.90" fill="#0a2937" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="451.55,424.50 330.31,494.50 330.31,488.90 451.55,418.90" fill="#0d3547" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="269.69,313.90 451.55,418.90 330.31,488.90 148.45,383.90" fill="#134a63" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><polyline points="281.81,390.83 280.13,391.68 278.26,392.40 276.25,392.98 274.13,393.39 271.93,393.64 269.69,393.73 267.45,393.64 265.25,393.39 263.13,392.98 261.12,392.40 259.25,391.68 257.56,390.83 256.09,389.86 254.84,388.78 253.85,387.62 253.13,386.39 252.69,385.12 252.54,383.83 252.69,382.54 253.13,381.27 253.85,380.04 254.84,378.88 256.09,377.80 257.56,376.83 259.25,375.98 261.12,375.26 263.13,374.68 265.25,374.27 267.45,374.02 269.69,373.93 271.93,374.02 274.13,374.27 276.25,374.68 278.26,375.26 280.13,375.98 281.81,376.83 283.29,377.80 284.54,378.88 285.53,380.04 286.25,381.27 286.69,382.54 286.84,383.83 286.69,385.12 286.25,386.39 285.53,387.62 284.54,388.78 283.29,389.86 281.81,390.83" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="290.91,396.08 287.96,397.57 284.69,398.83 281.17,399.84 277.46,400.56 273.61,401.01 269.69,401.15 265.77,401.01 261.92,400.56 258.21,399.84 254.69,398.83 251.42,397.57 248.47,396.08 245.88,394.38 243.70,392.49 241.97,390.46 240.71,388.31 239.94,386.09 239.68,383.83 239.94,381.57 240.71,379.35 241.97,377.20 243.70,375.17 245.88,373.28 248.47,371.58 251.42,370.09 254.69,368.83 258.21,367.82 261.92,367.10 265.77,366.65 269.69,366.51 273.61,366.65 277.46,367.10 281.17,367.82 284.69,368.83 287.96,370.09 290.91,371.58 293.49,373.28 295.68,375.17 297.41,377.20 298.67,379.35 299.44,381.57 299.70,383.83 299.44,386.09 298.67,388.31 297.41,390.46 295.68,392.49 293.49,394.38 290.91,396.08" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="300.00,401.33 295.78,403.46 291.12,405.26 286.09,406.69 280.78,407.74 275.28,408.37 269.69,408.58 264.09,408.37 258.59,407.74 253.28,406.69 248.26,405.26 243.59,403.46 239.38,401.33 235.68,398.90 232.57,396.20 230.09,393.30 228.28,390.24 227.19,387.06 226.82,383.83 227.19,380.60 228.28,377.42 230.09,374.36 232.57,371.46 235.68,368.76 239.38,366.33 243.59,364.20 248.26,362.40 253.28,360.97 258.59,359.92 264.09,359.29 269.69,359.08 275.28,359.29 280.78,359.92 286.09,360.97 291.12,362.40 295.78,364.20 300.00,366.33 303.70,368.76 306.81,371.46 309.29,374.36 311.09,377.42 312.19,380.60 312.56,383.83 312.19,387.06 311.09,390.24 309.29,393.30 306.81,396.20 303.70,398.90 300.00,401.33" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="309.09,406.58 303.61,409.35 297.55,411.69 291.01,413.55 284.11,414.91 276.96,415.73 269.69,416.00 262.42,415.73 255.27,414.91 248.36,413.55 241.83,411.69 235.77,409.35 230.28,406.58 225.48,403.42 221.43,399.92 218.21,396.14 215.86,392.16 214.44,388.03 213.96,383.83 214.44,379.63 215.86,375.50 218.21,371.52 221.43,367.74 225.48,364.24 230.28,361.08 235.77,358.31 241.83,355.97 248.36,354.11 255.27,352.75 262.42,351.93 269.69,351.66 276.96,351.93 284.11,352.75 291.01,354.11 297.55,355.97 303.61,358.31 309.09,361.08 313.90,364.24 317.95,367.74 321.17,371.52 323.52,375.50 324.94,379.63 325.42,383.83 324.94,388.03 323.52,392.16 321.17,396.14 317.95,399.92 313.90,403.42 309.09,406.58" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="318.19,411.83 311.44,415.25 303.98,418.12 295.94,420.41 287.44,422.08 278.64,423.09 269.69,423.43 260.74,423.09 251.94,422.08 243.44,420.41 235.40,418.12 227.94,415.25 221.19,411.83 215.28,407.94 210.29,403.63 206.32,398.98 203.44,394.08 201.69,389.00 201.10,383.83 201.69,378.66 203.44,373.58 206.32,368.68 210.29,364.03 215.28,359.72 221.19,355.83 227.94,352.41 235.40,349.54 243.44,347.25 251.94,345.58 260.74,344.57 269.69,344.23 278.64,344.57 287.44,345.58 295.94,347.25 303.98,349.54 311.44,352.41 318.19,355.83 324.10,359.72 329.09,364.03 333.05,368.68 335.94,373.58 337.69,378.66 338.27,383.83 337.69,389.00 335.94,394.08 333.05,398.98 329.09,403.63 324.10,407.94 318.19,411.83" fill="none" stroke="#cfe6f2" stroke-width="1.00" opacity="0.50"/><polyline points="273.33,385.93 272.82,386.19 272.26,386.40 271.66,386.57 271.02,386.70 270.36,386.77 269.69,386.80 269.02,386.77 268.36,386.70 267.72,386.57 267.12,386.40 266.56,386.19 266.05,385.93 265.61,385.64 265.23,385.31 264.94,384.97 264.72,384.60 264.59,384.22 264.55,383.83 264.59,383.44 264.72,383.06 264.94,382.69 265.23,382.35 265.61,382.02 266.05,381.73 266.56,381.47 267.12,381.26 267.72,381.09 268.36,380.96 269.02,380.89 269.69,380.86 270.36,380.89 271.02,380.96 271.66,381.09 272.26,381.26 272.82,381.47 273.33,381.73 273.77,382.02 274.14,382.35 274.44,382.69 274.66,383.06 274.79,383.44 274.83,383.83 274.79,384.22 274.66,384.60 274.44,384.97 274.14,385.31 273.77,385.64 273.33,385.93" fill="none" stroke="#cfe6f2" stroke-width="1.40" opacity="0.70"/><g>
+        <polygon points="315.16,427.65 342.44,443.40 342.44,437.80 315.16,422.05" fill="#151519" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="369.72,427.65 342.44,443.40 342.44,437.80 369.72,422.05" fill="#1b1b23" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="342.44,406.30 369.72,422.05 342.44,437.80 315.16,422.05" fill="#262630" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g><g>
-        <polygon points="285.68,415.60 301.52,424.75 301.52,417.12 285.68,407.97" fill="#48505b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="309.45,420.17 301.52,424.75 301.52,417.12 309.45,412.55" fill="#5e6875" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="293.60,403.39 309.45,412.55 301.52,417.12 285.68,407.97" fill="#8b95a4" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="393.96,417.15 412.15,427.65 412.15,418.90 393.96,408.40" fill="#48505b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="421.24,422.40 412.15,427.65 412.15,418.90 421.24,413.65" fill="#5e6875" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="403.06,403.15 421.24,413.65 412.15,418.90 393.96,408.40" fill="#8b95a4" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g><g>
-        <polygon points="193.23,444.57 235.49,468.97 235.49,447.62 193.23,423.22" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="246.06,462.87 235.49,468.97 235.49,447.62 246.06,441.52" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="203.79,417.12 246.06,441.52 235.49,447.62 193.23,423.22" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="287.88,450.40 336.37,478.40 336.37,453.90 287.88,425.90" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="348.50,471.40 336.37,478.40 336.37,453.90 348.50,446.90" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="300.00,418.90 348.50,446.90 336.37,453.90 287.88,425.90" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
+        <g class="unit rig-context unit--laptop"><polygon points="1160.04,421.15 1140.43,430.20 1117.36,436.74 1091.41,440.63 1063.20,441.77 1033.44,440.12 1002.85,435.73 972.19,428.70 942.22,419.22 913.67,407.50 887.24,393.85 863.60,378.59 843.31,362.11 826.88,344.81 814.71,327.11 807.10,309.45 804.25,292.26 806.21,275.98 812.95,260.99 824.29,247.67 839.96,236.35 859.57,227.30 882.64,220.76 908.59,216.87 936.80,215.73 966.56,217.38 997.15,221.77 1027.81,228.80 1057.78,238.28 1086.33,250.00 1112.76,263.65 1136.40,278.91 1156.69,295.39 1173.12,312.69 1185.29,330.39 1192.90,348.05 1195.75,365.24 1193.79,381.52 1187.05,396.51 1175.71,409.83 1160.04,421.15" fill="#05070a" opacity="0.35"/><g>
+        <polygon points="948.47,204.50 1215.21,358.50 1215.21,176.50 948.47,22.50" fill="#181d25" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="1227.33,351.50 1215.21,358.50 1215.21,176.50 1227.33,169.50" fill="#1f2530" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="960.60,15.50 1227.33,169.50 1215.21,176.50 948.47,22.50" fill="#2b3240" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><polygon points="960.63,183.48 1203.11,323.48 1203.11,186.98 960.63,46.98" fill="#0d1b24" stroke="#39414f" stroke-width="0.80" opacity="1.00"/><polygon points="960.63,64.48 1203.11,204.48 1203.11,186.98 960.63,46.98" fill="#132430" stroke="none" stroke-width="0.50" opacity="0.90"/><polygon points="975.78,174.73 1066.71,227.23 1066.71,132.73 975.78,80.23" fill="#0b1f2b" stroke="none" stroke-width="0.50" opacity="1.00"/><line x1="987.91" y1="101.23" x2="1003.06" y2="109.98" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="987.91" y1="101.23" x2="987.91" y2="115.23" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="1054.59" y1="139.73" x2="1039.43" y2="130.98" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="1054.59" y1="139.73" x2="1054.59" y2="153.73" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="987.91" y1="167.73" x2="1003.06" y2="176.48" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="987.91" y1="167.73" x2="987.91" y2="153.73" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="1054.59" y1="206.23" x2="1039.43" y2="197.48" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="1054.59" y1="206.23" x2="1054.59" y2="192.23" stroke="#00d4ff" stroke-width="1.30" opacity="0.95" stroke-linecap="round"/><line x1="1087.93" y1="158.98" x2="1178.86" y2="211.48" stroke="#00d4ff" stroke-width="1.60" opacity="0.90" stroke-linecap="round"/><line x1="1087.93" y1="179.98" x2="1154.62" y2="218.48" stroke="#4a6b7d" stroke-width="1.60" opacity="0.45" stroke-linecap="round"/><line x1="1087.93" y1="200.98" x2="1166.74" y2="246.48" stroke="#4a6b7d" stroke-width="1.60" opacity="0.45" stroke-linecap="round"/><line x1="1087.93" y1="221.98" x2="1142.49" y2="253.48" stroke="#4a6b7d" stroke-width="1.60" opacity="0.45" stroke-linecap="round"/><g>
+        <polygon points="772.67,306.00 1039.40,460.00 1039.40,442.50 772.67,288.50" fill="#181d25" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="1227.33,351.50 1039.40,460.00 1039.40,442.50 1227.33,334.00" fill="#1f2530" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="960.60,180.00 1227.33,334.00 1039.40,442.50 772.67,288.50" fill="#2b3240" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><polygon points="960.60,179.97 1227.33,333.96 1209.15,344.46 942.41,190.47" fill="#171c24" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="948.47,214.93 966.66,225.43 950.29,234.88 932.10,224.38" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="971.51,228.23 989.69,238.73 973.33,248.18 955.14,237.68" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="994.54,241.53 1012.73,252.03 996.36,261.48 978.18,250.98" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1017.58,254.83 1035.77,265.33 1019.40,274.78 1001.21,264.28" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1040.62,268.13 1058.80,278.63 1042.44,288.08 1024.25,277.58" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1063.65,281.43 1081.84,291.93 1065.47,301.38 1047.28,290.88" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1086.69,294.73 1104.88,305.23 1088.51,314.68 1070.32,304.18" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1109.73,308.03 1127.91,318.53 1111.54,327.98 1093.36,317.48" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1132.76,321.33 1150.95,331.83 1134.58,341.28 1116.39,330.78" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1155.80,334.63 1173.98,345.13 1157.62,354.58 1139.43,344.08" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="927.25,227.18 945.44,237.68 929.07,247.13 910.89,236.63" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="950.29,240.48 968.48,250.98 952.11,260.43 933.92,249.93" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="973.33,253.78 991.51,264.28 975.15,273.73 956.96,263.23" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="996.36,267.08 1014.55,277.58 998.18,287.03 979.99,276.53" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1019.40,280.38 1037.59,290.88 1021.22,300.33 1003.03,289.83" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1042.44,293.68 1060.62,304.18 1044.25,313.63 1026.07,303.13" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1065.47,306.98 1083.66,317.48 1067.29,326.93 1049.10,316.43" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1088.51,320.28 1106.69,330.78 1090.33,340.23 1072.14,329.73" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1111.54,333.58 1129.73,344.08 1113.36,353.53 1095.18,343.03" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1134.58,346.88 1152.77,357.38 1136.40,366.83 1118.21,356.33" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="906.04,239.43 924.22,249.93 907.85,259.38 889.67,248.88" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="929.07,252.73 947.26,263.23 930.89,272.68 912.70,262.18" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="952.11,266.03 970.30,276.53 953.93,285.98 935.74,275.48" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="975.15,279.33 993.33,289.83 976.96,299.28 958.78,288.78" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="998.18,292.63 1016.37,303.13 1000.00,312.58 981.81,302.08" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1021.22,305.93 1039.40,316.43 1023.04,325.88 1004.85,315.38" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1044.25,319.23 1062.44,329.73 1046.07,339.18 1027.89,328.68" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1067.29,332.53 1085.48,343.03 1069.11,352.48 1050.92,341.98" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1090.33,345.83 1108.51,356.33 1092.15,365.78 1073.96,355.28" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1113.36,359.13 1131.55,369.63 1115.18,379.08 1096.99,368.58" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="884.82,251.68 903.01,262.18 886.64,271.63 868.45,261.13" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="907.85,264.98 926.04,275.48 909.67,284.93 891.49,274.43" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="930.89,278.28 949.08,288.78 932.71,298.23 914.52,287.73" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="953.93,291.58 972.11,302.08 955.75,311.53 937.56,301.03" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="976.96,304.88 995.15,315.38 978.78,324.83 960.60,314.33" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1000.00,318.18 1018.19,328.68 1001.82,338.13 983.63,327.63" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1023.04,331.48 1041.22,341.98 1024.85,351.43 1006.67,340.93" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1046.07,344.78 1064.26,355.28 1047.89,364.73 1029.70,354.23" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1069.11,358.08 1087.30,368.58 1070.93,378.03 1052.74,367.53" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="1092.15,371.38 1110.33,381.88 1093.96,391.33 1075.78,380.83" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="921.19,311.18 1000.00,356.68 957.56,381.18 878.76,335.68" fill="#2b3341" opacity="1.00" stroke="#3d4655" stroke-width="0.60"/></g>
         <g id="arduino" class="unit unit--arduino">
-        <g class="part part--pcb" data-rise="0"><polygon points="732.42,488.39 717.35,495.49 699.90,500.81 680.47,504.24 659.56,505.68 637.68,505.09 615.36,502.50 593.16,497.96 571.62,491.59 551.27,483.54 532.62,474.01 516.13,463.25 502.19,451.50 491.15,439.07 483.29,426.25 478.80,413.36 477.78,400.73 480.27,388.66 486.21,377.44 495.43,367.36 507.73,358.66 522.79,351.56 540.25,346.24 559.68,342.81 580.59,341.37 602.47,341.96 624.79,344.55 646.99,349.09 668.53,355.46 688.87,363.51 707.53,373.04 724.02,383.80 737.96,395.55 749.00,407.98 756.86,420.80 761.35,433.69 762.36,446.32 759.87,458.39 753.94,469.61 744.71,479.69 732.42,488.39" fill="#05070a" opacity="0.32"/><g>
-        <polygon points="458.95,411.94 640.15,516.55 640.15,511.67 458.95,407.06" fill="#0b202b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="781.20,435.12 640.15,516.55 640.15,511.67 781.20,430.24" fill="#0f2a38" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="600.00,325.62 781.20,430.24 640.15,511.67 458.95,407.06" fill="#16394b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><polygon points="600.00,337.79 760.07,430.20 640.15,499.44 480.08,407.02" fill="none" opacity="1.00" stroke="#00d4ff" stroke-width="0.50"/><polyline points="605.81,353.31 605.00,353.72 604.11,354.07 603.14,354.34 602.13,354.54 601.07,354.66 600.00,354.70 598.93,354.66 597.87,354.54 596.86,354.34 595.89,354.07 595.00,353.72 594.19,353.31 593.48,352.85 592.88,352.33 592.41,351.77 592.06,351.19 591.85,350.58 591.78,349.96 591.85,349.34 592.06,348.73 592.41,348.14 592.88,347.59 593.48,347.07 594.19,346.60 595.00,346.19 595.89,345.85 596.86,345.58 597.87,345.38 598.93,345.25 600.00,345.21 601.07,345.25 602.13,345.38 603.14,345.58 604.11,345.85 605.00,346.19 605.81,346.60 606.52,347.07 607.12,347.59 607.59,348.14 607.94,348.73 608.15,349.34 608.22,349.96 608.15,350.58 607.94,351.19 607.59,351.77 607.12,352.33 606.52,352.85 605.81,353.31" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/><polyline points="744.75,433.53 743.94,433.94 743.05,434.28 742.08,434.56 741.06,434.76 740.01,434.88 738.94,434.92 737.86,434.88 736.81,434.76 735.79,434.56 734.83,434.28 733.93,433.94 733.13,433.53 732.42,433.06 731.82,432.55 731.34,431.99 731.00,431.40 730.79,430.79 730.72,430.17 730.79,429.55 731.00,428.95 731.34,428.36 731.82,427.80 732.42,427.29 733.13,426.82 733.93,426.41 734.83,426.06 735.79,425.79 736.81,425.59 737.86,425.47 738.94,425.43 740.01,425.47 741.06,425.59 742.08,425.79 743.05,426.06 743.94,426.41 744.75,426.82 745.46,427.29 746.05,427.80 746.53,428.36 746.87,428.95 747.08,429.55 747.15,430.17 747.08,430.79 746.87,431.40 746.53,431.99 746.05,432.55 745.46,433.06 744.75,433.53" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/><polyline points="507.02,410.35 506.22,410.76 505.32,411.10 504.36,411.38 503.34,411.58 502.29,411.70 501.21,411.74 500.14,411.70 499.09,411.58 498.07,411.38 497.10,411.10 496.21,410.76 495.40,410.35 494.69,409.88 494.10,409.37 493.62,408.81 493.27,408.22 493.06,407.61 492.99,406.99 493.06,406.37 493.27,405.77 493.62,405.18 494.10,404.62 494.69,404.11 495.40,403.64 496.21,403.23 497.10,402.88 498.07,402.61 499.09,402.41 500.14,402.29 501.21,402.25 502.29,402.29 503.34,402.41 504.36,402.61 505.32,402.88 506.22,403.23 507.02,403.64 507.73,404.11 508.33,404.62 508.80,405.18 509.15,405.77 509.36,406.37 509.43,406.99 509.36,407.61 509.15,408.22 508.80,408.81 508.33,409.37 507.73,409.88 507.02,410.35" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/><polyline points="645.96,490.56 645.15,490.97 644.26,491.32 643.29,491.59 642.28,491.79 641.22,491.91 640.15,491.95 639.08,491.91 638.02,491.79 637.00,491.59 636.04,491.32 635.15,490.97 634.34,490.56 633.63,490.10 633.03,489.58 632.56,489.02 632.21,488.44 632.00,487.83 631.93,487.21 632.00,486.59 632.21,485.98 632.56,485.39 633.03,484.84 633.63,484.32 634.34,483.85 635.15,483.44 636.04,483.10 637.00,482.83 638.02,482.63 639.08,482.50 640.15,482.46 641.22,482.50 642.28,482.63 643.29,482.83 644.26,483.10 645.15,483.44 645.96,483.85 646.67,484.32 647.27,484.84 647.74,485.39 648.09,485.98 648.30,486.59 648.37,487.21 648.30,487.83 648.09,488.44 647.74,489.02 647.27,489.58 646.67,490.10 645.96,490.56" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/></g>
+        <g class="part part--pcb" data-rise="0"><polygon points="773.92,496.43 756.63,504.58 736.60,510.69 714.31,514.62 690.31,516.27 665.20,515.60 639.59,512.62 614.11,507.41 589.40,500.10 566.05,490.87 544.65,479.94 525.71,467.58 509.72,454.10 497.06,439.83 488.04,425.12 482.88,410.34 481.72,395.84 484.57,381.99 491.38,369.12 501.97,357.55 516.08,347.57 533.37,339.42 553.40,333.31 575.69,329.38 599.69,327.73 624.80,328.40 650.41,331.38 675.89,336.59 700.60,343.90 723.95,353.13 745.35,364.06 764.29,376.42 780.28,389.90 792.94,404.17 801.96,418.88 807.12,433.66 808.28,448.16 805.43,462.01 798.62,474.88 788.03,486.45 773.92,496.43" fill="#05070a" opacity="0.32"/><g>
+        <polygon points="460.10,408.70 668.04,528.75 668.04,523.15 460.10,403.10" fill="#0b202b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="829.90,435.30 668.04,528.75 668.04,523.15 829.90,429.70" fill="#0f2a38" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="621.96,309.65 829.90,429.70 668.04,523.15 460.10,403.10" fill="#16394b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><polygon points="621.96,323.62 805.65,429.66 668.04,509.12 484.35,403.06" fill="none" opacity="1.00" stroke="#00d4ff" stroke-width="0.50"/><polyline points="628.63,341.43 627.70,341.90 626.68,342.30 625.57,342.61 624.40,342.84 623.19,342.98 621.96,343.02 620.73,342.98 619.52,342.84 618.35,342.61 617.25,342.30 616.22,341.90 615.30,341.43 614.48,340.89 613.80,340.30 613.25,339.66 612.85,338.99 612.61,338.29 612.53,337.58 612.61,336.87 612.85,336.17 613.25,335.50 613.80,334.86 614.48,334.27 615.30,333.73 616.22,333.26 617.25,332.86 618.35,332.55 619.52,332.32 620.73,332.18 621.96,332.14 623.19,332.18 624.40,332.32 625.57,332.55 626.68,332.86 627.70,333.26 628.63,333.73 629.45,334.27 630.13,334.86 630.68,335.50 631.07,336.17 631.31,336.87 631.39,337.58 631.31,338.29 631.07,338.99 630.68,339.66 630.13,340.30 629.45,340.89 628.63,341.43" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/><polyline points="788.07,433.48 787.14,433.95 786.11,434.35 785.01,434.66 783.84,434.89 782.63,435.03 781.40,435.07 780.17,435.03 778.96,434.89 777.79,434.66 776.68,434.35 775.66,433.95 774.73,433.48 773.92,432.94 773.23,432.35 772.69,431.71 772.29,431.04 772.05,430.34 771.97,429.63 772.05,428.92 772.29,428.22 772.69,427.55 773.23,426.91 773.92,426.32 774.73,425.78 775.66,425.31 776.68,424.91 777.79,424.60 778.96,424.37 780.17,424.23 781.40,424.19 782.63,424.23 783.84,424.37 785.01,424.60 786.11,424.91 787.14,425.31 788.07,425.78 788.88,426.32 789.57,426.91 790.11,427.55 790.51,428.22 790.75,428.92 790.83,429.63 790.75,430.34 790.51,431.04 790.11,431.71 789.57,432.35 788.88,432.94 788.07,433.48" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/><polyline points="515.27,406.88 514.34,407.35 513.32,407.75 512.21,408.06 511.04,408.29 509.83,408.43 508.60,408.47 507.37,408.43 506.16,408.29 504.99,408.06 503.89,407.75 502.86,407.35 501.93,406.88 501.12,406.34 500.43,405.75 499.89,405.11 499.49,404.44 499.25,403.74 499.17,403.03 499.25,402.32 499.49,401.62 499.89,400.95 500.43,400.31 501.12,399.72 501.93,399.18 502.86,398.71 503.89,398.31 504.99,398.00 506.16,397.77 507.37,397.63 508.60,397.59 509.83,397.63 511.04,397.77 512.21,398.00 513.32,398.31 514.34,398.71 515.27,399.18 516.08,399.72 516.77,400.31 517.31,400.95 517.71,401.62 517.95,402.32 518.03,403.03 517.95,403.74 517.71,404.44 517.31,405.11 516.77,405.75 516.08,406.34 515.27,406.88" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/><polyline points="674.70,498.93 673.78,499.40 672.75,499.80 671.65,500.11 670.48,500.34 669.27,500.48 668.04,500.52 666.81,500.48 665.60,500.34 664.43,500.11 663.32,499.80 662.30,499.40 661.37,498.93 660.55,498.39 659.87,497.80 659.32,497.16 658.93,496.49 658.69,495.79 658.61,495.08 658.69,494.37 658.93,493.67 659.32,493.00 659.87,492.36 660.55,491.77 661.37,491.23 662.30,490.76 663.32,490.36 664.43,490.05 665.60,489.82 666.81,489.68 668.04,489.64 669.27,489.68 670.48,489.82 671.65,490.05 672.75,490.36 673.78,490.76 674.70,491.23 675.52,491.77 676.20,492.36 676.75,493.00 677.15,493.67 677.39,494.37 677.47,495.08 677.39,495.79 677.15,496.49 676.75,497.16 676.20,497.80 675.52,498.39 674.70,498.93" fill="none" stroke="#7f8b96" stroke-width="0.90" opacity="0.70"/></g>
         <g class="part part--jack" data-rise="84"><g>
-        <polygon points="555.10,342.39 592.08,363.75 592.08,330.19 555.10,308.84" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="615.85,350.02 592.08,363.75 592.08,330.19 615.85,316.47" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="578.87,295.12 615.85,316.47 592.08,330.19 555.10,308.84" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="570.44,328.90 612.87,353.40 612.87,314.90 570.44,290.40" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="640.15,337.65 612.87,353.40 612.87,314.90 640.15,299.15" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="597.72,274.65 640.15,299.15 612.87,314.90 570.44,290.40" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--hdr-a1" data-rise="106"><g>
-        <polygon points="613.21,354.60 666.03,385.10 666.03,359.17 613.21,328.67" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="679.24,377.47 666.03,385.10 666.03,359.17 679.24,351.55" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="626.41,321.05 679.24,351.55 666.03,359.17 613.21,328.67" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="637.12,342.90 697.74,377.90 697.74,348.15 637.12,313.15" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="712.90,369.15 697.74,377.90 697.74,348.15 712.90,339.40" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="652.27,304.40 712.90,339.40 697.74,348.15 637.12,313.15" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--reg" data-rise="38"><g>
-        <polygon points="586.79,369.85 607.92,382.05 607.92,369.85 586.79,357.65" fill="#151519" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="621.13,374.42 607.92,382.05 607.92,369.85 621.13,362.22" fill="#1b1b23" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="600.00,350.02 621.13,362.22 607.92,369.85 586.79,357.65" fill="#262630" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="606.81,360.40 631.06,374.40 631.06,360.40 606.81,346.40" fill="#151519" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="646.21,365.65 631.06,374.40 631.06,360.40 646.21,351.65" fill="#1b1b23" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="621.96,337.65 646.21,351.65 631.06,360.40 606.81,346.40" fill="#262630" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--usb" data-rise="84"><g>
-        <polygon points="475.86,388.14 518.12,412.55 518.12,379.00 475.86,354.59" fill="#48505b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="549.81,394.25 518.12,412.55 518.12,379.00 549.81,360.69" fill="#5e6875" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="507.55,336.30 549.81,360.69 518.12,379.00 475.86,354.59" fill="#8b95a4" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="479.50,381.40 528.00,409.40 528.00,370.90 479.50,342.90" fill="#48505b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="564.37,388.40 528.00,409.40 528.00,370.90 564.37,349.90" fill="#5e6875" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="515.88,321.90 564.37,349.90 528.00,370.90 479.50,342.90" fill="#8b95a4" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--hdr-a2" data-rise="106"><g>
-        <polygon points="676.60,391.19 724.14,418.64 724.14,392.72 676.60,365.27" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="737.35,411.02 724.14,418.64 724.14,392.72 737.35,385.09" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="689.81,357.64 737.35,385.09 724.14,392.72 676.60,365.27" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="709.87,384.90 764.42,416.40 764.42,386.65 709.87,355.15" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="779.58,407.65 764.42,416.40 764.42,386.65 779.58,377.90" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="725.02,346.40 779.58,377.90 764.42,386.65 709.87,355.15" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
-        <g class="part part--leds" data-rise="20"><polygon points="600.00,447.53 604.75,450.27 600.00,453.02 595.25,450.27" fill="#2ecc71" opacity="0.95" stroke="none" stroke-width="0.60"/><polygon points="607.92,452.10 612.68,454.85 607.92,457.59 603.17,454.85" fill="#f1c40f" opacity="0.95" stroke="none" stroke-width="0.60"/><polygon points="615.85,456.68 620.60,459.42 615.85,462.17 611.09,459.42" fill="#f1c40f" opacity="0.95" stroke="none" stroke-width="0.60"/><polygon points="623.77,461.25 628.53,464.00 623.77,466.74 619.02,464.00" fill="#e74c3c" opacity="0.95" stroke="none" stroke-width="0.60"/></g>
         <g class="part part--mcu" data-rise="66"><g>
-        <polygon points="589.43,404.92 666.03,449.14 666.03,436.94 589.43,392.72" fill="#151519" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="684.52,438.47 666.03,449.14 666.03,436.94 684.52,426.27" fill="#1b1b23" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="607.92,382.05 684.52,426.27 666.03,436.94 589.43,392.72" fill="#262630" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><line x1="613.21" y1="394.86" x2="609.51" y2="396.99" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="594.19" y1="405.83" x2="590.49" y2="407.97" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="618.49" y1="397.90" x2="614.79" y2="400.04" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="599.47" y1="408.88" x2="595.77" y2="411.02" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="623.77" y1="400.96" x2="620.07" y2="403.09" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="604.75" y1="411.94" x2="601.06" y2="414.07" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="629.06" y1="404.00" x2="625.36" y2="406.14" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="610.04" y1="414.99" x2="606.34" y2="417.12" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="634.34" y1="407.06" x2="630.64" y2="409.19" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="615.32" y1="418.03" x2="611.62" y2="420.17" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="639.62" y1="410.11" x2="635.92" y2="412.24" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="620.60" y1="421.08" x2="616.90" y2="423.22" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="644.90" y1="413.15" x2="641.21" y2="415.29" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="625.89" y1="424.13" x2="622.19" y2="426.27" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="650.19" y1="416.21" x2="646.49" y2="418.34" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="631.17" y1="427.19" x2="627.47" y2="429.32" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="655.47" y1="419.25" x2="651.77" y2="421.39" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="636.45" y1="430.24" x2="632.75" y2="432.37" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="660.75" y1="422.31" x2="657.05" y2="424.44" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="641.73" y1="433.28" x2="638.04" y2="435.42" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="666.03" y1="425.36" x2="662.34" y2="427.49" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="647.02" y1="436.33" x2="643.32" y2="438.47" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="671.32" y1="428.40" x2="667.62" y2="430.54" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="652.30" y1="439.38" x2="648.60" y2="441.52" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="676.60" y1="431.46" x2="672.90" y2="433.59" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="657.58" y1="442.43" x2="653.88" y2="444.57" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="681.88" y1="434.50" x2="678.18" y2="436.64" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="662.86" y1="445.49" x2="659.17" y2="447.62" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><polyline points="608.98,393.30 608.47,393.56 607.90,393.78 607.28,393.95 606.64,394.08 605.97,394.16 605.28,394.18 604.60,394.16 603.93,394.08 603.28,393.95 602.67,393.78 602.10,393.56 601.58,393.30 601.13,393.00 600.75,392.67 600.45,392.32 600.23,391.95 600.10,391.56 600.05,391.16 600.10,390.77 600.23,390.38 600.45,390.01 600.75,389.65 601.13,389.33 601.58,389.03 602.10,388.77 602.67,388.55 603.28,388.37 603.93,388.25 604.60,388.17 605.28,388.15 605.97,388.17 606.64,388.25 607.28,388.37 607.90,388.55 608.47,388.77 608.98,389.03 609.43,389.33 609.81,389.65 610.11,390.01 610.33,390.38 610.47,390.77 610.51,391.16 610.47,391.56 610.33,391.95 610.11,392.32 609.81,392.67 609.43,393.00 608.98,393.30" fill="none" stroke="#5d6470" stroke-width="1.00" opacity="0.90"/></g>
+        <polygon points="609.84,400.65 697.74,451.40 697.74,437.40 609.84,386.65" fill="#151519" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="718.96,439.15 697.74,451.40 697.74,437.40 718.96,425.15" fill="#1b1b23" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="631.06,374.40 718.96,425.15 697.74,437.40 609.84,386.65" fill="#262630" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><line x1="637.12" y1="389.10" x2="632.88" y2="391.55" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="615.30" y1="401.70" x2="611.05" y2="404.15" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="643.18" y1="392.60" x2="638.94" y2="395.05" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="621.36" y1="405.20" x2="617.11" y2="407.65" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="649.24" y1="396.10" x2="645.00" y2="398.55" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="627.42" y1="408.70" x2="623.18" y2="411.15" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="655.31" y1="399.60" x2="651.06" y2="402.05" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="633.48" y1="412.20" x2="629.24" y2="414.65" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="661.37" y1="403.10" x2="657.12" y2="405.55" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="639.54" y1="415.70" x2="635.30" y2="418.15" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="667.43" y1="406.60" x2="663.19" y2="409.05" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="645.61" y1="419.20" x2="641.36" y2="421.65" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="673.49" y1="410.10" x2="669.25" y2="412.55" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="651.67" y1="422.70" x2="647.42" y2="425.15" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="679.55" y1="413.60" x2="675.31" y2="416.05" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="657.73" y1="426.20" x2="653.49" y2="428.65" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="685.62" y1="417.10" x2="681.37" y2="419.55" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="663.79" y1="429.70" x2="659.55" y2="432.15" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="691.68" y1="420.60" x2="687.44" y2="423.05" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="669.85" y1="433.20" x2="665.61" y2="435.65" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="697.74" y1="424.10" x2="693.50" y2="426.55" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="675.92" y1="436.70" x2="671.67" y2="439.15" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="703.80" y1="427.60" x2="699.56" y2="430.05" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="681.98" y1="440.20" x2="677.74" y2="442.65" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="709.87" y1="431.10" x2="705.62" y2="433.55" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="688.04" y1="443.70" x2="683.80" y2="446.15" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="715.93" y1="434.60" x2="711.68" y2="437.05" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><line x1="694.10" y1="447.20" x2="689.86" y2="449.65" stroke="#9aa4b0" stroke-width="0.90" opacity="0.85" stroke-linecap="round"/><polyline points="632.27,387.31 631.68,387.61 631.03,387.87 630.32,388.07 629.58,388.21 628.81,388.30 628.03,388.33 627.24,388.30 626.47,388.21 625.73,388.07 625.03,387.87 624.37,387.61 623.78,387.31 623.26,386.97 622.83,386.60 622.48,386.19 622.23,385.76 622.08,385.32 622.02,384.87 622.08,384.41 622.23,383.97 622.48,383.54 622.83,383.13 623.26,382.76 623.78,382.42 624.37,382.12 625.03,381.86 625.73,381.66 626.47,381.52 627.24,381.43 628.03,381.40 628.81,381.43 629.58,381.52 630.32,381.66 631.03,381.86 631.68,382.12 632.27,382.42 632.79,382.76 633.22,383.13 633.57,383.54 633.82,383.97 633.98,384.41 634.03,384.87 633.98,385.32 633.82,385.76 633.57,386.19 633.22,386.60 632.79,386.97 632.27,387.31" fill="none" stroke="#5d6470" stroke-width="1.00" opacity="0.90"/></g>
+        <g class="part part--leds" data-rise="20"><polygon points="621.96,449.55 627.42,452.69 621.96,455.85 616.51,452.69" fill="#2ecc71" opacity="0.95" stroke="none" stroke-width="0.60"/><polygon points="631.06,454.80 636.51,457.94 631.06,461.10 625.60,457.94" fill="#f1c40f" opacity="0.95" stroke="none" stroke-width="0.60"/><polygon points="640.15,460.05 645.61,463.19 640.15,466.35 634.69,463.19" fill="#f1c40f" opacity="0.95" stroke="none" stroke-width="0.60"/><polygon points="649.24,465.30 654.70,468.44 649.24,471.60 643.79,468.44" fill="#e74c3c" opacity="0.95" stroke="none" stroke-width="0.60"/></g>
         <g class="part part--xtal" data-rise="44"><g>
-        <polygon points="564.34,407.21 582.83,417.88 582.83,407.21 564.34,396.53" fill="#48505b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="592.08,412.55 582.83,417.88 582.83,407.21 592.08,401.87" fill="#5e6875" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="573.59,391.19 592.08,401.87 582.83,407.21 564.34,396.53" fill="#8b95a4" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="581.04,403.27 602.26,415.52 602.26,403.27 581.04,391.02" fill="#48505b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="612.87,409.40 602.26,415.52 602.26,403.27 612.87,397.15" fill="#5e6875" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="591.65,384.90 612.87,397.15 602.26,403.27 581.04,391.02" fill="#8b95a4" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--hdr-d1" data-rise="106"><g>
-        <polygon points="500.95,425.51 559.06,459.06 559.06,433.13 500.95,399.58" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="572.27,451.43 559.06,459.06 559.06,433.13 572.27,425.51" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="514.16,391.96 572.27,425.51 559.06,433.13 500.95,399.58" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="508.30,424.27 574.98,462.77 574.98,433.02 508.30,394.52" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="590.14,454.02 574.98,462.77 574.98,433.02 590.14,424.27" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="523.45,385.77 590.14,424.27 574.98,433.02 508.30,394.52" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--icsp" data-rise="46"><g>
-        <polygon points="684.52,459.82 697.73,467.44 697.73,452.19 684.52,444.57" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="718.86,455.25 697.73,467.44 697.73,452.19 718.86,440.00" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="705.66,432.37 718.86,440.00 697.73,452.19 684.52,444.57" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="718.96,463.65 734.11,472.40 734.11,454.90 718.96,446.15" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="758.36,458.40 734.11,472.40 734.11,454.90 758.36,440.90" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="743.21,432.15 758.36,440.90 734.11,454.90 718.96,446.15" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--hdr-d2" data-rise="106"><g>
-        <polygon points="566.98,463.63 625.09,497.18 625.09,471.26 566.98,437.71" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="638.30,489.56 625.09,497.18 625.09,471.26 638.30,463.63" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="580.19,430.08 638.30,463.63 625.09,471.26 566.98,437.71" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="584.08,468.02 650.76,506.52 650.76,476.77 584.08,438.27" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="665.91,497.77 650.76,506.52 650.76,476.77 665.91,468.02" fill="#15151c" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="599.23,429.52 665.91,468.02 650.76,476.77 584.08,438.27" fill="#1e1e27" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
         </g></g>
         <g class="part part--reset" data-rise="46"><g>
-        <polygon points="629.06,491.85 642.26,499.47 642.26,487.27 629.06,479.65" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="655.47,491.85 642.26,499.47 642.26,487.27 655.47,479.65" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="642.26,472.02 655.47,479.65 642.26,487.27 629.06,479.65" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><polyline points="646.49,482.02 645.90,482.32 645.25,482.57 644.55,482.77 643.81,482.92 643.04,483.01 642.26,483.03 641.48,483.01 640.72,482.92 639.97,482.77 639.27,482.57 638.62,482.32 638.04,482.02 637.52,481.68 637.09,481.31 636.74,480.90 636.49,480.48 636.34,480.03 636.29,479.58 636.34,479.13 636.49,478.69 636.74,478.26 637.09,477.86 637.52,477.48 638.04,477.14 638.62,476.85 639.27,476.60 639.97,476.40 640.72,476.25 641.48,476.16 642.26,476.13 643.04,476.16 643.81,476.25 644.55,476.40 645.25,476.60 645.90,476.85 646.49,477.14 647.00,477.48 647.44,477.86 647.78,478.26 648.04,478.69 648.19,479.13 648.24,479.58 648.19,480.03 648.04,480.48 647.78,480.90 647.44,481.31 647.00,481.68 646.49,482.02" fill="none" stroke="#c0392b" stroke-width="1.20" opacity="0.90"/></g>
+        <polygon points="655.31,500.40 670.46,509.15 670.46,495.15 655.31,486.40" fill="#0c0c10" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="685.62,500.40 670.46,509.15 670.46,495.15 685.62,486.40" fill="#101015" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="670.46,477.65 685.62,486.40 670.46,495.15 655.31,486.40" fill="#17171d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><polyline points="675.31,489.13 674.64,489.47 673.89,489.76 673.09,489.99 672.24,490.15 671.36,490.26 670.46,490.29 669.57,490.26 668.69,490.15 667.84,489.99 667.03,489.76 666.29,489.47 665.61,489.13 665.02,488.74 664.52,488.31 664.12,487.85 663.84,487.35 663.66,486.85 663.60,486.33 663.66,485.81 663.84,485.31 664.12,484.81 664.52,484.35 665.02,483.92 665.61,483.53 666.29,483.19 667.03,482.90 667.84,482.67 668.69,482.51 669.57,482.40 670.46,482.37 671.36,482.40 672.24,482.51 673.09,482.67 673.89,482.90 674.64,483.19 675.31,483.53 675.90,483.92 676.40,484.35 676.80,484.81 677.09,485.31 677.26,485.81 677.32,486.33 677.26,486.85 677.09,487.35 676.80,487.85 676.40,488.31 675.90,488.74 675.31,489.13" fill="none" stroke="#c0392b" stroke-width="1.20" opacity="0.90"/></g>
         </g>
-        <g class="unit rig-context unit--laptop"><polygon points="1045.02,428.47 1028.62,436.12 1009.48,441.76 988.07,445.27 964.92,446.54 940.59,445.56 915.69,442.33 890.83,436.95 866.62,429.55 843.66,420.30 822.51,409.43 803.69,397.22 787.68,383.97 774.85,369.99 765.53,355.64 759.94,341.26 758.23,327.21 760.44,313.85 766.51,301.49 776.29,290.44 789.55,280.97 805.94,273.32 825.08,267.67 846.49,264.17 869.65,262.89 893.97,263.88 918.87,267.10 943.73,272.48 967.94,279.89 990.91,289.14 1012.05,300.00 1030.87,312.21 1046.89,325.47 1059.72,339.45 1069.04,353.80 1074.62,368.17 1076.33,382.22 1074.12,395.59 1068.05,407.95 1058.27,419.00 1045.02,428.47" fill="#05070a" opacity="0.35"/><g>
-        <polygon points="738.04,344.01 935.82,458.20 935.82,310.71 738.04,196.51" fill="#181d25" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="946.13,452.26 935.82,458.20 935.82,310.71 946.13,304.76" fill="#1f2530" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="748.34,190.57 946.13,304.76 935.82,310.71 738.04,196.51" fill="#2b3240" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><polygon points="756.60,333.29 937.91,437.97 937.91,309.50 756.60,204.83" fill="#0d1b24" stroke="#39414f" stroke-width="0.8"/><line x1="773.27" y1="323.67" x2="892.76" y2="392.66" stroke="#00d4ff" stroke-width="1.60" opacity="0.45" stroke-linecap="round"/><line x1="773.27" y1="302.26" x2="855.68" y2="349.84" stroke="#00d4ff" stroke-width="1.60" opacity="0.40" stroke-linecap="round"/><line x1="773.27" y1="280.85" x2="909.25" y2="359.36" stroke="#00d4ff" stroke-width="1.60" opacity="0.35" stroke-linecap="round"/><line x1="773.27" y1="259.44" x2="835.08" y2="295.12" stroke="#00d4ff" stroke-width="1.60" opacity="0.30" stroke-linecap="round"/><line x1="773.27" y1="238.03" x2="876.28" y2="297.50" stroke="#00d4ff" stroke-width="1.60" opacity="0.25" stroke-linecap="round"/><g>
-        <polygon points="748.34,338.06 946.13,452.26 946.13,440.36 748.34,326.17" fill="#181d25" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="1086.22,371.37 946.13,452.26 946.13,440.36 1086.22,359.48" fill="#1f2530" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="888.44,245.28 1086.22,359.48 946.13,440.36 748.34,326.17" fill="#2b3240" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><polygon points="942.01,295.19 999.69,328.50 958.49,352.29 900.80,318.98" fill="#2b3341" opacity="1.00" stroke="#3d4655" stroke-width="0.60"/><polygon points="838.99,297.57 851.35,304.71 840.23,311.13 827.87,304.00" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="854.65,306.61 867.01,313.75 855.89,320.17 843.52,313.04" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="870.31,315.65 882.67,322.79 871.54,329.21 859.18,322.08" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="885.97,324.69 898.33,331.83 887.20,338.25 874.84,331.12" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="901.62,333.73 913.99,340.87 902.86,347.29 890.50,340.16" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="917.28,342.77 929.64,349.91 918.52,356.33 906.16,349.20" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="932.94,351.81 945.30,358.95 934.18,365.37 921.81,358.24" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="948.60,360.85 960.96,367.99 949.83,374.42 937.47,367.28" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="964.26,369.90 976.62,377.03 965.49,383.46 953.13,376.32" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="979.91,378.94 992.28,386.07 981.15,392.50 968.79,385.36" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="824.57,305.90 836.93,313.04 825.81,319.46 813.44,312.32" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="840.23,314.94 852.59,322.08 841.46,328.50 829.10,321.36" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="855.89,323.98 868.25,331.12 857.12,337.54 844.76,330.40" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="871.54,333.02 883.91,340.16 872.78,346.58 860.42,339.44" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="887.20,342.06 899.56,349.20 888.44,355.62 876.08,348.48" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="902.86,351.10 915.22,358.24 904.10,364.66 891.73,357.52" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="918.52,360.14 930.88,367.28 919.75,373.70 907.39,366.56" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="934.18,369.18 946.54,376.32 935.41,382.74 923.05,375.60" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="949.83,378.22 962.20,385.36 951.07,391.78 938.71,384.64" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="965.49,387.26 977.85,394.40 966.73,400.82 954.37,393.69" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="810.15,314.23 822.51,321.36 811.38,327.79 799.02,320.65" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="825.81,323.27 838.17,330.40 827.04,336.83 814.68,329.69" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="841.46,332.31 853.83,339.44 842.70,345.87 830.34,338.73" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="857.12,341.35 869.48,348.48 858.36,354.91 846.00,347.77" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="872.78,350.39 885.14,357.52 874.02,363.95 861.65,356.81" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="888.44,359.43 900.80,366.56 889.67,372.99 877.31,365.85" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="904.10,368.47 916.46,375.60 905.33,382.03 892.97,374.89" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="919.75,377.51 932.12,384.64 920.99,391.07 908.63,383.93" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="935.41,386.55 947.77,393.69 936.65,400.11 924.29,392.97" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="951.07,395.59 963.43,402.73 952.31,409.15 939.95,402.01" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="795.73,322.55 808.09,329.69 796.96,336.11 784.60,328.98" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="811.38,331.59 823.75,338.73 812.62,345.15 800.26,338.02" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="827.04,340.63 839.40,347.77 828.28,354.19 815.92,347.06" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="842.70,349.67 855.06,356.81 843.94,363.23 831.57,356.10" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="858.36,358.71 870.72,365.85 859.59,372.27 847.23,365.14" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="874.02,367.75 886.38,374.89 875.25,381.31 862.89,374.18" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="889.67,376.79 902.04,383.93 890.91,390.35 878.55,383.22" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="905.33,385.83 917.69,392.97 906.57,399.39 894.21,392.26" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="920.99,394.87 933.35,402.01 922.23,408.43 909.87,401.30" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/><polygon points="936.65,403.91 949.01,411.05 937.89,417.48 925.52,410.34" fill="#232a36" opacity="1.00" stroke="#39414f" stroke-width="0.40"/></g>
         <g class="unit rig-context unit--card"><g>
-        <polygon points="87.57,293.90 230.21,376.25 230.21,373.51 87.57,291.16" fill="#0f202b" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="320.01,324.40 230.21,376.25 230.21,373.51 320.01,321.66" fill="#142a38" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        <polygon points="177.38,239.31 320.01,321.66 230.21,373.51 87.57,291.16" fill="#1d3a4d" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
-        </g><polygon points="177.38,254.52 293.60,321.62 230.21,358.22 113.99,291.12" fill="none" opacity="0.60" stroke="#00d4ff" stroke-width="0.50"/><polyline points="251.34,333.79 249.50,334.72 247.47,335.51 245.28,336.13 242.97,336.58 240.57,336.86 238.13,336.95 235.69,336.86 233.30,336.58 230.98,336.13 228.79,335.51 226.76,334.72 224.92,333.79 223.31,332.73 221.96,331.56 220.88,330.30 220.09,328.96 219.61,327.58 219.45,326.17 219.61,324.76 220.09,323.38 220.88,322.04 221.96,320.78 223.31,319.60 224.92,318.54 226.76,317.61 228.79,316.83 230.98,316.21 233.30,315.75 235.69,315.48 238.13,315.39 240.57,315.48 242.97,315.75 245.28,316.21 247.47,316.83 249.50,317.61 251.34,318.54 252.95,319.60 254.31,320.78 255.39,322.04 256.17,323.38 256.65,324.76 256.81,326.17 256.65,327.58 256.17,328.96 255.39,330.30 254.31,331.56 252.95,332.73 251.34,333.79" fill="none" stroke="#00d4ff" stroke-width="1.00" opacity="0.65"/><polyline points="259.26,338.37 256.32,339.86 253.07,341.11 249.57,342.11 245.87,342.83 242.03,343.27 238.13,343.42 234.23,343.27 230.40,342.83 226.70,342.11 223.19,341.11 219.94,339.86 217.00,338.37 214.42,336.67 212.25,334.80 210.52,332.77 209.27,330.63 208.50,328.42 208.25,326.17 208.50,323.92 209.27,321.70 210.52,319.57 212.25,317.54 214.42,315.67 217.00,313.97 219.94,312.48 223.19,311.23 226.70,310.23 230.40,309.50 234.23,309.06 238.13,308.92 242.03,309.06 245.87,309.50 249.57,310.23 253.07,311.23 256.32,312.48 259.26,313.97 261.84,315.67 264.01,317.54 265.74,319.57 267.00,321.70 267.76,323.92 268.02,326.17 267.76,328.42 267.00,330.63 265.74,332.77 264.01,334.80 261.84,336.67 259.26,338.37" fill="none" stroke="#00d4ff" stroke-width="1.00" opacity="0.40"/></g>
+        <polygon points="166.63,227.50 330.31,322.00 330.31,318.85 166.63,224.35" fill="#aab5c2" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="433.37,262.50 330.31,322.00 330.31,318.85 433.37,259.35" fill="#c7d0da" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        <polygon points="269.69,164.85 433.37,259.35 330.31,318.85 166.63,224.35" fill="#e8edf2" stroke="#05121a" stroke-width="0.80" stroke-linejoin="round"/>
+        </g><polygon points="269.69,178.81 409.12,259.31 330.31,304.81 190.88,224.31" fill="none" opacity="0.35" stroke="#1d3a4d" stroke-width="0.50"/><polyline points="347.44,262.00 347.51,262.48 347.51,262.97 347.46,263.45 347.34,263.93 347.16,264.41 346.91,264.87 346.61,265.33 346.24,265.77 345.82,266.19 345.35,266.59 344.83,266.97 344.25,267.33 343.64,267.66 342.98,267.96 342.28,268.24 341.55,268.48 340.79,268.69 340.00,268.86 339.19,269.00 338.37,269.11 337.54,269.18 336.70,269.21 335.85,269.21 335.01,269.17" fill="none" stroke="#1d3a4d" stroke-width="1.50" opacity="0.90" stroke-linecap="round"/><polyline points="358.50,261.21 358.64,262.18 358.65,263.15 358.54,264.13 358.30,265.09 357.94,266.04 357.45,266.97 356.84,267.88 356.11,268.76 355.28,269.60 354.33,270.40 353.28,271.17 352.13,271.88 350.90,272.54 349.58,273.15 348.19,273.69 346.72,274.18 345.20,274.60 343.63,274.95 342.02,275.23 340.37,275.44 338.70,275.58 337.02,275.64 335.34,275.64 333.66,275.55" fill="none" stroke="#1d3a4d" stroke-width="1.50" opacity="0.78" stroke-linecap="round"/><polyline points="369.56,260.43 369.77,261.88 369.79,263.34 369.63,264.80 369.27,266.24 368.72,267.67 367.99,269.06 367.07,270.43 365.99,271.74 364.73,273.01 363.31,274.22 361.73,275.36 360.02,276.43 358.16,277.42 356.18,278.33 354.09,279.15 351.90,279.88 349.62,280.51 347.26,281.03 344.84,281.45 342.37,281.77 339.87,281.98 337.35,282.08 334.82,282.06 332.30,281.94" fill="none" stroke="#1d3a4d" stroke-width="1.50" opacity="0.66" stroke-linecap="round"/><polyline points="380.62,259.64 380.91,261.58 380.93,263.53 380.71,265.47 380.23,267.40 379.50,269.30 378.52,271.16 377.31,272.97 375.86,274.73 374.18,276.42 372.29,278.03 370.19,279.55 367.90,280.98 365.42,282.30 362.79,283.51 360.00,284.61 357.07,285.58 354.03,286.41 350.89,287.12 347.66,287.68 344.37,288.10 341.03,288.38 337.67,288.51 334.30,288.49 330.94,288.33" fill="none" stroke="#1d3a4d" stroke-width="1.50" opacity="0.54" stroke-linecap="round"/><polygon points="260.60,201.53 287.88,217.28 266.66,229.53 239.38,213.78" fill="#c9a227" opacity="0.90" stroke="#8a6f1a" stroke-width="0.50"/></g>
+            <g class="wires wires--top rig-context">
+        <polyline class="wire" points="303.03,427.30 342.44,401.75 436.42,405.06 549.22,437.75 606.81,442.30" fill="none" stroke="#ff6b6b" stroke-width="2.00" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline class="wire" points="315.16,434.30 354.56,404.55 440.97,410.83 561.34,440.55 618.93,449.30" fill="none" stroke="#ffd166" stroke-width="2.00" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline class="wire" points="327.28,441.30 366.68,407.35 445.51,416.61 573.47,443.35 631.06,456.30" fill="none" stroke="#06d6a0" stroke-width="2.00" opacity="0.90" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
           </g>
           <g class="rig-labels">
-        <g class="rig-label" text-anchor="start"><path class="lead" d="M 177.4 385.4 L 117.4 480.4" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="177.4" cy="385.4" r="2.4" fill="#00d4ff"/><text class="lbl" x="125.4" y="477.4">RC522</text><text class="lbl-sub" x="125.4" y="493.4">13.56 MHz NFC reader</text></g>
-        <g class="rig-label" text-anchor="end"><path class="lead" d="M 203.8 312.2 L 125.8 242.2" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="203.8" cy="312.2" r="2.4" fill="#00d4ff"/><text class="lbl" x="117.8" y="239.2">MIFARE Card</text><text class="lbl-sub" x="117.8" y="255.2">Student credential</text></g>
-        <g class="rig-label" text-anchor="start"><path class="lead" d="M 618.5 417.4 L 626.5 535.4" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="618.5" cy="417.4" r="2.4" fill="#00d4ff"/><text class="lbl" x="634.5" y="532.4">Arduino</text><text class="lbl-sub" x="634.5" y="548.4">Serial relay</text></g>
-        <g class="rig-label" text-anchor="start"><path class="lead" d="M 600.0 113.9 L 634.0 35.9" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="600.0" cy="113.9" r="2.4" fill="#00d4ff"/><text class="lbl" x="642.0" y="32.9">Webcam</text><text class="lbl-sub" x="642.0" y="48.9">Logitech 1080p</text></g>
-        <g class="rig-label" text-anchor="start"><path class="lead" d="M 1006.8 354.9 L 1046.8 470.9" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="1006.8" cy="354.9" r="2.4" fill="#00d4ff"/><text class="lbl" x="1054.8" y="467.9">Laptop</text><text class="lbl-sub" x="1054.8" y="483.9">Acer Nitro 5 · GTX 1050</text></g>
+        <g class="rig-label" text-anchor="start"><path class="lead" d="M 336.4 262.5 L 486.4 188.5" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="336.4" cy="262.5" r="2.4" fill="#00d4ff"/><text class="lbl" x="494.4" y="184.5">MIFARE Card</text><text class="lbl-sub" x="494.4" y="203.5">Student credential</text></g>
+        <g class="rig-label" text-anchor="start"><path class="lead" d="M 269.7 382.5 L 199.7 486.5" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="269.7" cy="382.5" r="2.4" fill="#00d4ff"/><text class="lbl" x="207.7" y="482.5">RC522</text><text class="lbl-sub" x="207.7" y="501.5">13.56 MHz NFC reader</text></g>
+        <g class="rig-label" text-anchor="start"><path class="lead" d="M 643.2 415.0 L 649.2 531.0" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="643.2" cy="415.0" r="2.4" fill="#00d4ff"/><text class="lbl" x="657.2" y="527.0">Arduino</text><text class="lbl-sub" x="657.2" y="546.0">Serial relay</text></g>
+        <g class="rig-label" text-anchor="start"><path class="lead" d="M 792.0 115.0 L 844.0 49.0" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="792.0" cy="115.0" r="2.4" fill="#00d4ff"/><text class="lbl" x="852.0" y="45.0">Webcam</text><text class="lbl-sub" x="852.0" y="64.0">Logitech 1080p</text></g>
+        <g class="rig-label" text-anchor="start"><path class="lead" d="M 972.7 327.0 L 1038.7 445.0" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="972.7" cy="327.0" r="2.4" fill="#00d4ff"/><text class="lbl" x="1046.7" y="441.0">Laptop</text><text class="lbl-sub" x="1046.7" y="460.0">Acer Nitro 5 · GTX 1050</text></g>
           </g>
           <g class="part-labels">
-        <g class="part-label part-label--hdr-d2" text-anchor="start"><path class="lead" d="M 540.7 238.1 L 630.7 208.1" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="540.7" cy="238.1" r="2.6" fill="#00d4ff"/><text class="lbl" x="638.7" y="205.1">Headers</text><text class="lbl-sub" x="638.7" y="221.1">RC522 jumpers land here</text></g>
-        <g class="part-label part-label--usb" text-anchor="end"><path class="lead" d="M 410.5 132.9 L 340.5 112.9" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="410.5" cy="132.9" r="2.6" fill="#00d4ff"/><text class="lbl" x="332.5" y="109.9">USB-B</text><text class="lbl-sub" x="332.5" y="125.9">Serial link to the laptop</text></g>
-        <g class="part-label part-label--mcu" text-anchor="start"><path class="lead" d="M 617.3 247.5 L 727.3 257.5" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="617.3" cy="247.5" r="2.6" fill="#00d4ff"/><text class="lbl" x="735.3" y="254.5">ATmega328P</text><text class="lbl-sub" x="735.3" y="270.5">Reads the card ID, relays it</text></g>
-        <g class="part-label part-label--jack" text-anchor="end"><path class="lead" d="M 517.7 66.6 L 427.7 86.6" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="517.7" cy="66.6" r="2.6" fill="#00d4ff"/><text class="lbl" x="419.7" y="83.6">Power Jack</text><text class="lbl-sub" x="419.7" y="99.6">7–12 V input</text></g>
-        <g class="part-label part-label--xtal" text-anchor="end"><path class="lead" d="M 502.4 252.8 L 392.4 272.8" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="502.4" cy="252.8" r="2.6" fill="#00d4ff"/><text class="lbl" x="384.4" y="269.8">16 MHz Crystal</text><text class="lbl-sub" x="384.4" y="285.8">Clock source</text></g>
-        <g class="part-label part-label--pcb" text-anchor="start"><path class="lead" d="M 743.7 364.8 L 823.7 404.8" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="743.7" cy="364.8" r="2.6" fill="#00d4ff"/><text class="lbl" x="831.7" y="401.8">PCB</text><text class="lbl-sub" x="831.7" y="417.8">68.6 × 53.4 mm</text></g>
+        <g class="part-label part-label--hdr-d2" text-anchor="start"><path class="lead" d="M 537.0 244.0 L 627.0 214.0" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="537.0" cy="244.0" r="2.6" fill="#00d4ff"/><text class="lbl" x="635.0" y="210.0">Headers</text><text class="lbl-sub" x="635.0" y="229.0">RC522 jumpers land here</text></g>
+        <g class="part-label part-label--usb" text-anchor="end"><path class="lead" d="M 387.6 118.6 L 317.6 98.6" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="387.6" cy="118.6" r="2.6" fill="#00d4ff"/><text class="lbl" x="309.6" y="94.6">USB-B</text><text class="lbl-sub" x="309.6" y="113.6">Serial link to the laptop</text></g>
+        <g class="part-label part-label--mcu" text-anchor="start"><path class="lead" d="M 624.9 246.1 L 734.9 256.1" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="624.9" cy="246.1" r="2.6" fill="#00d4ff"/><text class="lbl" x="742.9" y="252.1">ATmega328P</text><text class="lbl-sub" x="742.9" y="271.1">Reads the card ID, relays it</text></g>
+        <g class="part-label part-label--jack" text-anchor="end"><path class="lead" d="M 510.6 42.4 L 420.6 62.4" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="510.6" cy="42.4" r="2.6" fill="#00d4ff"/><text class="lbl" x="412.6" y="58.4">Power Jack</text><text class="lbl-sub" x="412.6" y="77.4">7–12 V input</text></g>
+        <g class="part-label part-label--xtal" text-anchor="end"><path class="lead" d="M 493.0 247.6 L 383.0 267.6" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="493.0" cy="247.6" r="2.6" fill="#00d4ff"/><text class="lbl" x="375.0" y="263.6">16 MHz Crystal</text><text class="lbl-sub" x="375.0" y="282.6">Clock source</text></g>
+        <g class="part-label part-label--pcb" text-anchor="start"><path class="lead" d="M 769.9 366.7 L 849.9 406.7" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/><circle class="lead-dot" cx="769.9" cy="366.7" r="2.6" fill="#00d4ff"/><text class="lbl" x="857.9" y="402.7">PCB</text><text class="lbl-sub" x="857.9" y="421.7">68.6 × 53.4 mm</text></g>
           </g>
         </svg>
           <div class="board-3d">
@@ -487,115 +713,242 @@
 
     <!-- 9: RQ 1 -->
     <section class="slide slide--rq" data-slide="9" data-anim="rq">
-      <div class="slide__content">
-        <p class="rq-eyebrow">
-          <span class="rq-eyebrow__rule"></span>
-          <span class="rq-eyebrow__text">Research Question</span>
-          <span class="rq-eyebrow__rule"></span>
-        </p>
-        <div class="rq-number">1</div>
-        <div class="rq-icon">
-          <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
-            <path d="M50 30 L50 55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="50" cy="70" r="3" fill="currentColor"/>
-          </svg>
+      <div class="slide__content slide__content--rq">
+        <div class="rq-scroll">
+          <div class="rq-left">
+            <p class="rq-eyebrow">
+              <span class="rq-eyebrow__rule"></span>
+              <span class="rq-eyebrow__text">Research Question</span>
+              <span class="rq-eyebrow__rule"></span>
+            </p>
+            <div class="rq-number">1</div>
+            <p class="rq-label">What is the spoof rejection rate of the passive liveness detection component against spoofing such as printed photographs and screen replays?</p>
+          </div>
+          <div class="rq-fields">
+            <div class="rq-field">
+              <span class="rq-field__label">Data Source</span>
+              <span class="rq-field__value">60 spoof attempts (30 printed photographs, 30 screen replays)</span>
+            </div>
+            <div class="rq-field rq-field--mid">
+              <span class="rq-field__label">Sampling Technique</span>
+              <span class="rq-field__value">Purposive Sampling</span>
+            </div>
+            <div class="rq-field">
+              <span class="rq-field__label">Data Analysis</span>
+              <span class="rq-field__value">Frequency and Percentage</span>
+            </div>
+          </div>
         </div>
-        <p class="rq-label">Spoof Rejection Rate</p>
-        <div class="rq-data">
-          <span class="rq-stat">60</span>
-          <span class="rq-stat-label">spoof attempts</span>
-        </div>
+      </div>
+      <div class="rq-track">
+        <div class="rq-track__line"></div>
+        <div class="rq-track__dot"></div>
       </div>
     </section>
 
     <!-- 10: RQ 2 -->
     <section class="slide slide--rq" data-slide="10" data-anim="rq">
-      <div class="slide__content">
-        <p class="rq-eyebrow">
-          <span class="rq-eyebrow__rule"></span>
-          <span class="rq-eyebrow__text">Research Question</span>
-          <span class="rq-eyebrow__rule"></span>
-        </p>
-        <div class="rq-number">2</div>
-        <div class="rq-icon">
-          <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
-            <path d="M50 25 L50 50 L70 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="50" cy="50" r="3" fill="currentColor"/>
-          </svg>
+      <div class="slide__content slide__content--rq">
+        <div class="rq-scroll">
+          <div class="rq-left">
+            <p class="rq-eyebrow">
+              <span class="rq-eyebrow__rule"></span>
+              <span class="rq-eyebrow__text">Research Question</span>
+              <span class="rq-eyebrow__rule"></span>
+            </p>
+            <div class="rq-number">2</div>
+            <p class="rq-label">What is the performance of the developed Dual-Factor NFC and Facial Recognition Attendance System based on ISO/IEC 25010:2023 in terms of accuracy of attendance logs, delivery success rate of real-time guardian notifications, and notification latency?</p>
+          </div>
+          <div class="rq-fields">
+            <div class="rq-field">
+              <span class="rq-field__label">Data Source</span>
+              <span class="rq-field__value">100 valid entry attempts at the main guardpost</span>
+            </div>
+            <div class="rq-field rq-field--mid">
+              <span class="rq-field__label">Sampling Technique</span>
+              <span class="rq-field__value">Purposive Sampling</span>
+            </div>
+            <div class="rq-field">
+              <span class="rq-field__label">Data Analysis</span>
+              <span class="rq-field__value">Percentage, Mean, Standard Deviation</span>
+            </div>
+          </div>
         </div>
-        <p class="rq-label">System Performance</p>
-        <div class="rq-data">
-          <span class="rq-stat">100</span>
-          <span class="rq-stat-label">entry attempts</span>
-        </div>
+      </div>
+      <div class="rq-track">
+        <div class="rq-track__line"></div>
+        <div class="rq-track__dot"></div>
       </div>
     </section>
 
     <!-- 11: RQ 3 -->
     <section class="slide slide--rq" data-slide="11" data-anim="rq">
-      <div class="slide__content">
-        <p class="rq-eyebrow">
-          <span class="rq-eyebrow__rule"></span>
-          <span class="rq-eyebrow__text">Research Question</span>
-          <span class="rq-eyebrow__rule"></span>
-        </p>
-        <div class="rq-number">3</div>
-        <div class="rq-icon">
-          <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
-            <path d="M35 55 L45 65 L68 38" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+      <div class="slide__content slide__content--rq">
+        <div class="rq-scroll">
+          <div class="rq-left">
+            <p class="rq-eyebrow">
+              <span class="rq-eyebrow__rule"></span>
+              <span class="rq-eyebrow__text">Research Question</span>
+              <span class="rq-eyebrow__rule"></span>
+            </p>
+            <div class="rq-number">3</div>
+            <p class="rq-label">What is the level of acceptability of the developed Dual-Factor NFC and Facial Recognition Attendance System as evaluated by the intended users in terms of functional suitability, usability, reliability, and security?</p>
+          </div>
+          <div class="rq-fields">
+            <div class="rq-field">
+              <span class="rq-field__label">Data Source</span>
+              <span class="rq-field__value">40 Senior High School students and 30 parents or guardians</span>
+            </div>
+            <div class="rq-field rq-field--mid">
+              <span class="rq-field__label">Sampling Technique</span>
+              <span class="rq-field__value">Purposive Sampling</span>
+            </div>
+            <div class="rq-field">
+              <span class="rq-field__label">Data Analysis</span>
+              <span class="rq-field__value">Weighted Mean, Standard Deviation, Cronbach's Alpha</span>
+            </div>
+          </div>
         </div>
-        <p class="rq-label">Acceptability</p>
-        <div class="rq-data">
-          <span class="rq-stat">70</span>
-          <span class="rq-stat-label">participants</span>
-        </div>
+      </div>
+      <div class="rq-track">
+        <div class="rq-track__line"></div>
+        <div class="rq-track__dot"></div>
       </div>
     </section>
 
-    <!-- 12: Instruments -->
+    <!-- 12: Instruments — TODO: callout positions are approximate, align
+         leader-line endpoints to match actual node positions at runtime -->
     <section class="slide slide--instruments" data-slide="12" data-anim="instruments">
       <div class="slide__content">
         <h2 class="instruments-title">Instruments</h2>
-        <div class="instruments-grid">
-          <div class="instrument-card">
-            <div class="instrument-icon">
-              <svg viewBox="0 0 60 60">
-                <rect x="10" y="5" width="40" height="50" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
-                <line x1="18" y1="18" x2="42" y2="18" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="18" y1="28" x2="42" y2="28" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="18" y1="38" x2="35" y2="38" stroke="currentColor" stroke-width="1.5"/>
+        <div class="flow-board">
+          <div class="flow-flow">
+            <!-- Row 1: L→R -->
+            <div class="flow-row">
+              <div class="flow-node flow-node--start">
+                <div class="flow-node__box">Start</div>
+              </div>
+              <div class="flow-trace flow-trace--1">
+                <svg class="flow-trace__svg" viewBox="0 0 26 6" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="flow-trace__via" cx="3" cy="3" r="1.6"/>
+                  <path class="flow-trace__line" d="M4,3 L22,3"/>
+                  <circle class="flow-trace__via" cx="23" cy="3" r="1.6"/>
+                </svg>
+              </div>
+              <div class="flow-node">
+                <div class="flow-node__box">Obtain Admin Approval</div>
+                <div class="flow-node__label">Admin</div>
+              </div>
+            </div>
+            <!-- Down trace: right side -->
+            <div class="flow-vtrace flow-vtrace--right">
+              <svg class="flow-vtrace__svg" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
+                <circle class="flow-vtrace__via" cx="3" cy="3" r="1.6"/>
+                <path class="flow-vtrace__line" d="M3,4 L3,36"/>
+                <circle class="flow-vtrace__via" cx="3" cy="37" r="1.6"/>
               </svg>
             </div>
-            <span>Attendance Log</span>
+            <!-- Row 2: R→L -->
+            <div class="flow-row flow-row--reverse">
+              <div class="flow-node">
+                <div class="flow-node__box">Distribute &amp; Collect Forms</div>
+              </div>
+              <div class="flow-trace flow-trace--2">
+                <svg class="flow-trace__svg" viewBox="0 0 26 6" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="flow-trace__via" cx="3" cy="3" r="1.6"/>
+                  <path class="flow-trace__line" d="M4,3 L22,3"/>
+                  <circle class="flow-trace__via" cx="23" cy="3" r="1.6"/>
+                </svg>
+              </div>
+              <div class="flow-node">
+                <div class="flow-node__box">Enroll Students &amp; Issue NFC Cards</div>
+              </div>
+            </div>
+            <!-- Down trace: left side -->
+            <div class="flow-vtrace flow-vtrace--left">
+              <svg class="flow-vtrace__svg" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
+                <circle class="flow-vtrace__via" cx="3" cy="3" r="1.6"/>
+                <path class="flow-vtrace__line" d="M3,4 L3,36"/>
+                <circle class="flow-vtrace__via" cx="3" cy="37" r="1.6"/>
+              </svg>
+            </div>
+            <!-- Row 3: L→R -->
+            <div class="flow-row">
+              <div class="flow-node">
+                <div class="flow-node__box">Conduct Spoof Trials</div>
+              </div>
+              <div class="flow-trace flow-trace--3">
+                <svg class="flow-trace__svg" viewBox="0 0 26 6" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="flow-trace__via" cx="3" cy="3" r="1.6"/>
+                  <path class="flow-trace__line" d="M4,3 L22,3"/>
+                  <circle class="flow-trace__via" cx="23" cy="3" r="1.6"/>
+                </svg>
+              </div>
+              <div class="flow-node">
+                <div class="flow-node__box">Deploy System &amp; Record Logs</div>
+              </div>
+            </div>
+            <!-- Down trace: right side -->
+            <div class="flow-vtrace flow-vtrace--right">
+              <svg class="flow-vtrace__svg" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
+                <circle class="flow-vtrace__via" cx="3" cy="3" r="1.6"/>
+                <path class="flow-vtrace__line" d="M3,4 L3,36"/>
+                <circle class="flow-vtrace__via" cx="3" cy="37" r="1.6"/>
+              </svg>
+            </div>
+            <!-- Row 4: R→L -->
+            <div class="flow-row flow-row--reverse">
+              <div class="flow-node">
+                <div class="flow-node__box">Administer Surveys</div>
+              </div>
+              <div class="flow-trace flow-trace--4">
+                <svg class="flow-trace__svg" viewBox="0 0 26 6" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="flow-trace__via" cx="3" cy="3" r="1.6"/>
+                  <path class="flow-trace__line" d="M4,3 L22,3"/>
+                  <circle class="flow-trace__via" cx="23" cy="3" r="1.6"/>
+                </svg>
+              </div>
+              <div class="flow-node">
+                <div class="flow-node__box">Analyze Gathered Data</div>
+              </div>
+            </div>
+            <!-- Elbow: vertical down-left → horizontal right to End -->
+            <div class="flow-elbow flow-elbow--left">
+              <svg class="flow-elbow__svg" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                <circle class="flow-elbow__via" cx="3" cy="3" r="1.6"/>
+                <path class="flow-elbow__line" d="M3,4 L3,20 L117,20"/>
+                <circle class="flow-elbow__via" cx="118" cy="20" r="1.6"/>
+              </svg>
+            </div>
+            <!-- End centered -->
+            <div class="flow-row">
+              <div class="flow-node flow-node--end">
+                <div class="flow-node__box">End</div>
+              </div>
+            </div>
           </div>
-          <div class="instrument-card">
-            <div class="instrument-icon">
-              <svg viewBox="0 0 60 60">
-                <rect x="10" y="5" width="40" height="50" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
-                <circle cx="30" cy="25" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="25" y1="42" x2="35" y2="42" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="22" y1="47" x2="38" y2="47" stroke="currentColor" stroke-width="1.5"/>
+          <div class="flow-callouts">
+            <div class="flow-callout flow-callout--1">
+              <span class="flow-callout__text">Instrument 1</span>
+              <svg class="flow-callout__line" viewBox="0 0 60 20" preserveAspectRatio="none">
+                <line x1="0" y1="10" x2="52" y2="10" stroke="var(--copper)" stroke-width="1.5"/>
+                <circle cx="55" cy="10" r="3" fill="var(--copper)"/>
               </svg>
             </div>
-            <span>Spoof Trial Record</span>
-          </div>
-          <div class="instrument-card">
-            <div class="instrument-icon">
-              <svg viewBox="0 0 60 60">
-                <rect x="10" y="5" width="40" height="50" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
-                <rect x="18" y="15" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <rect x="18" y="28" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <rect x="18" y="41" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="32" y1="19" x2="42" y2="19" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="32" y1="32" x2="42" y2="32" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="32" y1="45" x2="42" y2="45" stroke="currentColor" stroke-width="1.5"/>
+            <div class="flow-callout flow-callout--2">
+              <svg class="flow-callout__line flow-callout__line--up" viewBox="0 0 20 40" preserveAspectRatio="none">
+                <line x1="10" y1="40" x2="10" y2="8" stroke="var(--copper)" stroke-width="1.5"/>
+                <circle cx="10" cy="4" r="3" fill="var(--copper)"/>
               </svg>
+              <span class="flow-callout__text">Instrument 2</span>
             </div>
-            <span>Survey Questionnaire</span>
+            <div class="flow-callout flow-callout--3">
+              <svg class="flow-callout__line flow-callout__line--up" viewBox="0 0 20 40" preserveAspectRatio="none">
+                <line x1="10" y1="40" x2="10" y2="8" stroke="var(--copper)" stroke-width="1.5"/>
+                <circle cx="10" cy="4" r="3" fill="var(--copper)"/>
+              </svg>
+              <span class="flow-callout__text">Instrument 3</span>
+            </div>
           </div>
         </div>
       </div>
@@ -604,36 +957,84 @@
     <!-- 13: Testing Protocols -->
     <section class="slide slide--protocols" data-slide="13" data-anim="protocols">
       <div class="slide__content">
-        <div class="protocols-split">
-          <div class="protocol protocol--1">
-            <div class="protocol-header">
-              <span class="protocol-num">1</span>
-              <span class="protocol-label">Spoof Rejection</span>
+        <h2 class="protocols-title">Protocols</h2>
+        <div class="protocols-board">
+          <div class="protocols-scan"></div>
+          <div class="protocols-split">
+            <div class="protocol protocol--1">
+              <div class="protocol-header">
+                <span class="protocol-num">1</span>
+                <span class="protocol-label">Spoof Rejection</span>
+              </div>
+              <div class="protocol-icon">
+                <svg viewBox="0 0 80 80">
+                  <rect x="10" y="5" width="60" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <line x1="25" y1="25" x2="55" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="55" y1="25" x2="25" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="protocol-stat">60</span>
+              <span class="protocol-unit">trials</span>
+              <div class="protocol-details">
+                <span class="protocol-detail">Photo · Screen</span>
+                <span class="protocol-detail">30 each + live</span>
+              </div>
             </div>
-            <div class="protocol-icon">
-              <svg viewBox="0 0 80 80">
-                <rect x="10" y="5" width="60" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-                <line x1="25" y1="25" x2="55" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                <line x1="55" y1="25" x2="25" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-              </svg>
+            <div class="protocol-divider"></div>
+            <div class="protocol protocol--2">
+              <div class="protocol-header">
+                <span class="protocol-num">2</span>
+                <span class="protocol-label">Performance</span>
+              </div>
+              <div class="protocol-icon">
+                <svg viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M40 20 L40 40 L55 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="protocol-stat">100</span>
+              <span class="protocol-unit">attempts</span>
+              <div class="protocol-details">
+                <span class="protocol-detail">Guardpost entry</span>
+                <span class="protocol-detail">notify &lt; 60s</span>
+              </div>
             </div>
-            <span class="protocol-stat">60</span>
-            <span class="protocol-unit">trials</span>
+            <div class="protocol-divider"></div>
+            <div class="protocol protocol--3">
+              <div class="protocol-header">
+                <span class="protocol-num">3</span>
+                <span class="protocol-label">Acceptability</span>
+              </div>
+              <div class="protocol-icon">
+                <svg viewBox="0 0 80 80">
+                  <path d="M28 65 C20 60 16 48 20 38 L24 28 C25 25 28 24 30 26 L34 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M34 34 L36 20 C37 17 40 16 42 18 L44 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M44 28 L46 16 C47 13 50 12 52 14 L52 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M52 28 L54 20 C55 17 58 16 60 18 L58 38" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M58 38 L56 48 C54 56 48 62 40 65" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="protocol-stat">70</span>
+              <span class="protocol-unit">respondents</span>
+              <div class="protocol-details">
+                <span class="protocol-detail">40 SHS</span>
+                <span class="protocol-detail">30 parents</span>
+              </div>
+            </div>
           </div>
-          <div class="protocol-divider"></div>
-          <div class="protocol protocol--2">
-            <div class="protocol-header">
-              <span class="protocol-num">2</span>
-              <span class="protocol-label">Performance</span>
+          <div class="protocols-outcome">
+            <div class="protocols-metric">
+              <span class="protocols-metric__value">—</span>
+              <span class="protocols-metric__label">Rejection Rate</span>
             </div>
-            <div class="protocol-icon">
-              <svg viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="2"/>
-                <path d="M40 20 L40 40 L55 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-              </svg>
+            <div class="protocols-metric">
+              <span class="protocols-metric__value">—</span>
+              <span class="protocols-metric__label">Log Accuracy</span>
             </div>
-            <span class="protocol-stat">100</span>
-            <span class="protocol-unit">attempts</span>
+            <div class="protocols-metric">
+              <span class="protocols-metric__value">—</span>
+              <span class="protocols-metric__label">Questionnaire</span>
+            </div>
           </div>
         </div>
       </div>
@@ -643,23 +1044,82 @@
     <section class="slide slide--survey" data-slide="14" data-anim="survey">
       <div class="slide__content">
         <h2 class="survey-title">Survey Instrument</h2>
-        <div class="survey-versions">
-          <div class="survey-version">
-            <span class="survey-version__count">20</span>
-            <span class="survey-version__label">items · Student</span>
+        <div class="survey-board">
+
+          <div class="survey-col">
+            <span class="survey-col__label">Student</span>
+            <div class="survey-trait-row" data-trait="fs">
+              <span class="survey-trait-name">Functional Suitability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row" data-trait="us">
+              <span class="survey-trait-name">Usability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row" data-trait="re">
+              <span class="survey-trait-name">Reliability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row" data-trait="se">
+              <span class="survey-trait-name">Security</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <span class="survey-col__total">20 items</span>
           </div>
-          <div class="survey-version">
-            <span class="survey-version__count">20</span>
-            <span class="survey-version__label">items · Guardian</span>
+
+          <svg class="survey-trace" viewBox="0 0 40 200" preserveAspectRatio="none">
+            <line x1="20" y1="0" x2="20" y2="200" stroke="var(--copper)" stroke-width="1.5"/>
+            <circle cx="20" cy="4" r="3" fill="var(--copper)"/>
+            <circle cx="20" cy="196" r="3" fill="var(--copper)"/>
+          </svg>
+
+          <div class="survey-col">
+            <span class="survey-col__label">Guardian</span>
+            <div class="survey-trait-row" data-trait="fs">
+              <span class="survey-trait-name">Functional Suitability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row" data-trait="us">
+              <span class="survey-trait-name">Usability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row" data-trait="re">
+              <span class="survey-trait-name">Reliability</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <div class="survey-trait-row" data-trait="se">
+              <span class="survey-trait-name">Security</span>
+              <span class="survey-trait-bar">
+                <span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span><span class="survey-seg"></span>
+              </span>
+              <span class="survey-trait-count">5</span>
+            </div>
+            <span class="survey-col__total">20 items</span>
           </div>
+
         </div>
-        <div class="survey-traits">
-          <span class="survey-trait">Functional Suitability <b>5</b></span>
-          <span class="survey-trait">Usability <b>5</b></span>
-          <span class="survey-trait">Reliability <b>5</b></span>
-          <span class="survey-trait">Security <b>5</b></span>
-        </div>
-        <p class="survey-participants">5 items per characteristic · 5-point Likert · ISO/IEC 25010:2023</p>
+        <p class="survey-footnote">5 items per characteristic · <span class="survey-footnote--iso">ISO/IEC 25010:2023</span> · 5-point Likert</p>
       </div>
     </section>
 
@@ -669,22 +1129,27 @@
         <h2 class="scale-title">Interpretation</h2>
         <div class="scale-ladder">
           <div class="scale-row" data-band="high">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">4.21 – 5.00</span>
             <span class="scale-row__desc">Highly Acceptable</span>
           </div>
           <div class="scale-row" data-band="good">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">3.41 – 4.20</span>
             <span class="scale-row__desc">Acceptable</span>
           </div>
           <div class="scale-row" data-band="mid">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">2.61 – 3.40</span>
             <span class="scale-row__desc">Moderately Acceptable</span>
           </div>
           <div class="scale-row" data-band="low">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">1.81 – 2.60</span>
             <span class="scale-row__desc">Slightly Acceptable</span>
           </div>
           <div class="scale-row" data-band="none">
+            <span class="scale-row__fill"></span>
             <span class="scale-row__range">1.00 – 1.80</span>
             <span class="scale-row__desc">Not Acceptable</span>
           </div>
@@ -694,59 +1159,8 @@
     </section>
 
     <!-- 16: Scope and Delimitation -->
-    <section class="slide slide--scope" data-slide="16" data-anim="scope">
-      <div class="slide__content">
-        <h2 class="scope-title">Scope</h2>
-        <div class="scope-split">
-          <div class="scope-col scope-col--in">
-            <span class="scope-col__label">In</span>
-            <ul class="scope-list">
-              <li>Main guardpost</li>
-              <li>Entry events</li>
-              <li>1:1 verification</li>
-              <li>Photo + replay spoofs</li>
-              <li>Email + Messenger</li>
-            </ul>
-          </div>
-          <div class="scope-divider"></div>
-          <div class="scope-col scope-col--out">
-            <span class="scope-col__label">Out</span>
-            <ul class="scope-list">
-              <li>Classroom attendance</li>
-              <li>Exit logs</li>
-              <li>1:N database search</li>
-              <li>3D masks · deepfakes</li>
-              <li>SMS</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 17: Expected Output -->
-    <section class="slide slide--output" data-slide="17" data-anim="output">
-      <div class="slide__content">
-        <h2 class="output-title">Expected Output</h2>
-        <div class="output-cards">
-          <div class="output-card">
-            <span class="output-card__num">01</span>
-            <span class="output-card__text">Working prototype</span>
-          </div>
-          <div class="output-card">
-            <span class="output-card__num">02</span>
-            <span class="output-card__text">Measured performance</span>
-          </div>
-          <div class="output-card">
-            <span class="output-card__num">03</span>
-            <span class="output-card__text">Validated acceptability</span>
-          </div>
-        </div>
-        <p class="output-note">Results pending data collection</p>
-      </div>
-    </section>
-
     <!-- 18: Thank You -->
-    <section class="slide slide--thanks" data-slide="18" data-anim="thanks">
+    <section class="slide slide--thanks" data-slide="16" data-anim="thanks">
       <div class="slide__content">
         <div class="thanks-text">
           <span class="thanks-word">Thank</span>
@@ -767,7 +1181,7 @@
   <div class="slide-counter">
     <span class="slide-counter__current">1</span>
     <span class="slide-counter__sep">/</span>
-    <span class="slide-counter__total">18</span>
+    <span class="slide-counter__total">16</span>
   </div>
 
   <!-- Nav Hint -->
@@ -780,8 +1194,12 @@
   <!-- present only once a model has been baked; the 3D board falls back to
        built-in geometry without it -->
   <script src="src/models/arduino-model.js"></script>
+  <script src="src/models/vtuber-model.js?v=4"></script>
+  <script src="src/models/phone-model.js"></script>
   <script src="src/js/model-loader.js"></script>
   <script src="src/js/hardware-3d.js"></script>
+  <script src="src/js/vtuber-3d.js"></script>
+  <script src="src/js/phone-3d.js"></script>
   <script src="src/js/animations.js"></script>
   <script src="src/js/timeline.js"></script>
   <script src="src/js/main.js"></script>

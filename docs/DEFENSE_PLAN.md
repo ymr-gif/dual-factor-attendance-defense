@@ -13,7 +13,7 @@
 | # | Slide | Time |
 |---|-------|------|
 | 1 | Title | 0:30 |
-| 2 | The Problem | 1:15 |
+| 2 | The Problem — sheet fills, the extra tick, stamp (3 presses) | 1:15 |
 | 3 | NFC + Face | 1:00 |
 | 4 | Liveness | 1:00 |
 | 5 | Guardian Notification | 0:45 |
@@ -41,7 +41,12 @@ slide as places to slow down and breathe.
 
 **1 — Title.** Name the school, the team and the section, then one line: "We propose S.A.F.E., a dual-factor attendance system." Do not read the four names off the slide — they are already on it.
 
-**2 — Problem.** HSCI logs attendance by hand at the guardpost. No one verifies who signed. Proxy attendance is possible. Parents learn nothing. Card-only systems verify the card, not the person.
+**2 — Problem.** Three beats, three presses. Do not rush them — this slide has 1:15.
+First beat, the sheet fills: "At HSCI, attendance is recorded by hand. A week looks like this — a tick for present, a blank for absent, an L for late."
+Second beat, the extra tick: wait for it to finish drawing, then let the question sit. "A tick tells us a mark was made. It does not tell us who made it, or whether that student was actually there."
+Third beat, the stamp: "So the record cannot be verified. And guardians are not told either way."
+Keep the tone descriptive, not accusatory — the sheet has a gap, and the study closes it.
+The card-only line belongs to slide 3 — do not spend it here.
 
 **3 — NFC + Face.** Card makes the claim. Face proves it. Two factors, one tap.
 

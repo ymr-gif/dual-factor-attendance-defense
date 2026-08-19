@@ -10,6 +10,8 @@ svg = "\n".join("        " + line if line.strip() else line for line in svg.spli
 
 html = open(INDEX).read()
 start = html.index('        <svg class="rig-svg"')
-end = html.index('        <p class="specs-caption">')
-open(INDEX, 'w').write(html[:start] + svg + "\n" + html[end:])
+# Stop at the SVG's own closing tag. Everything after it inside .rig-frame — the
+# .board-3d canvas and its labels — belongs to step 2 and must survive the embed.
+end = html.index('</svg>', start) + len('</svg>')
+open(INDEX, 'w').write(html[:start] + svg.rstrip("\n") + html[end:])
 print("embedded scene.svg into index.html")

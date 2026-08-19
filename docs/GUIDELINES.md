@@ -18,6 +18,9 @@
 - Update `ANIMATIONS.md` when changing animations
 - Use CSS variables for theming
 - Use `stagger()` for sequential animations
+- Overlap timeline entries with `'-=ms'` or an absolute millisecond position.
+  `'<'` does **not** start an entry with the previous one in the vendored
+  anime build — it appends, like the default
 - Use `createTimeline()` for sequenced slide animations
 - Key animations by `data-anim` name, one function per name, in `animations.js`
 - Return `{ steps: [...] }` for slides the presenter walks through in beats
