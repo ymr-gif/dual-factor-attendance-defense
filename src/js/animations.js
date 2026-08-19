@@ -1095,7 +1095,7 @@ const slideAnimations = {
       y: [15, 0],
       duration: 500,
     }, '-=200')
-    .add(q(el, '.rq-table'), {
+    .add(q(el, '.rq-table-card'), {
       opacity: [0, 1],
       y: [15, 0],
       duration: 500,
