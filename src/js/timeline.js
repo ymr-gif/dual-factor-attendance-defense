@@ -50,6 +50,13 @@ const masterTimeline = {
     if (window.vtuber3D) window.vtuber3D.stopAll();
     if (window.phone3D) window.phone3D.stopAll();
 
+    // Cancel any canvas wave animation on this slide
+    const waveCanvas = slideEl.querySelector('.ipo-wave');
+    if (waveCanvas && waveCanvas._waveRaf) {
+      cancelAnimationFrame(waveCanvas._waveRaf);
+      waveCanvas._waveRaf = null;
+    }
+
     const running = this.timelines[slideNum];
     if (running && typeof running.pause === 'function') running.pause();
     delete this.timelines[slideNum];

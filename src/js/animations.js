@@ -859,7 +859,8 @@ const slideAnimations = {
     const caption = q(el, '.specs-caption');
     const risers = parts.filter((p) => Number(p.dataset.rise) > 0);
     // everything that clears away when the camera pushes into the board
-    const context = qa(el, '.rig-context');
+    // The budget block clears with the rig — step 2 is about the board alone.
+    const context = qa(el, '.rig-context').concat(qa(el, '.specs-budget'));
     const stage3d = q(el, '.board-3d');
     const labels3d = qa(el, '.label3d');
     let rigTl = null;
@@ -877,6 +878,7 @@ const slideAnimations = {
       utils.set(context, { opacity: 1 });
       utils.set(qa(el, '.part-label'), { opacity: 0 });
       utils.set(qa(el, '.rig-label'), { opacity: 0 });
+      utils.set(q(el, '.specs-budget'), { opacity: 0 });
       caption.textContent = 'Guardpost rig';
 
       const tl = createTimeline({ defaults: { ease: 'outExpo' } });
@@ -906,6 +908,11 @@ const slideAnimations = {
         delay: stagger(110),
         duration: 450,
       }, '-=500')
+      .add(q(el, '.specs-budget'), {
+        opacity: [0, 1],
+        y: [12, 0],
+        duration: 500,
+      }, '-=400')
       .add(q(el, '.specs-caption'), {
         opacity: [0, 1],
         duration: 400,
@@ -919,119 +926,19 @@ const slideAnimations = {
       return tl;
     };
 
-    // Step 2 — everything else clears and the board comes apart. The 3D board
-    // is the real thing; the isometric explode below stands in wherever WebGL
-    // is unavailable, so the slide always has a second beat.
-    const handoff = () => {
-      // The presenter may hit step 2 before step 1 has settled. Stop that
-      // timeline and jump to its end state, or its tweens finish after ours
-      // and put the rig back.
-      if (rigTl) rigTl.pause();
-      utils.set(units, { opacity: 1, y: 0 });
-      utils.set(wires, { opacity: 0.9 });
-      utils.set(qa(el, '.rig-label'), { opacity: 1 });
-      utils.set([q(el, '.specs-title'), caption, q(el, '.specs-stack')], { opacity: 1 });
-      caption.textContent = 'Arduino · exploded';
-    };
+    // ── Section 2 removed per user request ──────────────────────────
+    // The 3D board-explode beat (handoff, explode3D, explodeSVG, trackLabels)
+    // was deleted from the live presentation. Leftovers kept below as
+    // documentation only — none of this code runs.
+    //
+    // const handoff = () => { ... };
+    // const trackLabels = () => { ... };
+    // const explode3D = () => { ... };
+    // const explodeSVG = () => { ... };
+    // const explode = () => { ... };
+    // ─────────────────────────────────────────────────────────────────
 
-    // Labels sit in fixed callout columns either side of the board — the way a
-    // product diagram does it — and only the leader line moves, re-aimed at the
-    // part every frame while it travels.
-    const trackLabels = () => {
-      const box = q(el, '.board-3d').getBoundingClientRect();
-      labels3d.forEach((label) => {
-        const point = view.project(label.dataset.part);
-        if (!point) {                       // model has no part by that name
-          label.style.visibility = 'hidden';
-          return;
-        }
-        label.style.visibility = '';
-
-        const left = label.dataset.side === 'left';
-        const x = box.width * (left ? 0.28 : 0.72);
-        const y = box.height * (0.2 + Number(label.dataset.slot) * 0.19);
-        label.style.transform = `translate(${x}px, ${y}px)`;
-
-        const dx = point.x - x;
-        const dy = point.y - y;
-        label.querySelector('.label3d__leader').style.width = Math.hypot(dx, dy) + 'px';
-        label.querySelector('.label3d__leader').style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
-        label.querySelector('.label3d__dot').style.transform = `translate(${dx}px, ${dy}px)`;
-      });
-    };
-
-    const explode3D = () => {
-      if (!view) {
-        view = window.hardware3D.mount(q(el, '.board-3d__canvas'));
-        view.onFrame = trackLabels;
-      }
-      view.resize();
-      view.assemble();
-      view.start();
-      utils.set(labels3d, { opacity: 0 });
-      trackLabels();
-
-      const risers = Object.keys(view.parts).filter((name) => view.riseFor(name) > 0);
-
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-      tl.add(qa(el, '.rig-label'), { opacity: 0, duration: 300 })
-        .add(context.concat([q(el, '.rig-svg')]), { opacity: 0, duration: 450 }, '-=200')
-        .add(stage3d, { opacity: [0, 1], duration: 600 }, '-=250');
-
-      risers.forEach((name, i) => {
-        tl.add(view.parts[name].position, {
-          y: view.rest[name] + view.riseFor(name),
-          duration: 1400,
-          ease: 'outQuint',
-        }, i === 0 ? '-=300' : `-=${1400 - 90}`);
-      });
-
-      tl.add(labels3d, {
-        opacity: [0, 1],
-        delay: stagger(90),
-        duration: 400,
-      }, '-=500');
-
-      return tl;
-    };
-
-    // Isometric fallback: same beat, no WebGL
-    const explodeSVG = () => {
-      const parts = qa(el, '.part');
-      const risers = parts.filter((p) => Number(p.dataset.rise) > 0);
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-
-      tl.add(qa(el, '.rig-label'), { opacity: 0, duration: 300 })
-        .add(context, { opacity: 0, duration: 450 }, '-=200')
-        .add(q(el, '.rig-stage'), {
-          scale: 1.45,
-          x: -54.1,
-          y: -71.5,
-          duration: 1100,
-          ease: 'inOutQuad',
-        }, '-=350')
-        .add(risers, {
-          y: (p) => -Number(p.dataset.rise),
-          delay: stagger(70),
-          duration: 900,
-        }, '-=600')
-        .add(qa(el, '.part-label'), {
-          opacity: [0, 1],
-          delay: stagger(90),
-          duration: 400,
-        }, '-=400');
-
-      return tl;
-    };
-
-    const explode = () => {
-      handoff();
-      const can3D = stage3d && window.hardware3D && window.hardware3D.supported();
-      return can3D ? explode3D() : explodeSVG();
-    };
-
-    return { steps: [rig, explode] };
+    return { steps: [rig] };
   },
 
   // Research questions — shared by all three RQ slides
@@ -1130,27 +1037,99 @@ const slideAnimations = {
     return tl;
   },
 
-  // Protocols — two halves enter from opposite sides
+  // Protocols — two steps: cards enter, then details + outcomes reveal
   protocols(el) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    let boardTl = null;
 
-    tl.add(q(el, '.protocol--1'), {
-      opacity: [0, 1],
-      x: [-50, 0],
-      duration: 700,
-    })
-    .add(q(el, '.protocol--2'), {
-      opacity: [0, 1],
-      x: [50, 0],
-      duration: 700,
-    }, '-=500')
-    .add(q(el, '.protocol-divider'), {
-      scaleY: [0, 1],
-      opacity: [0, 0.3],
-      duration: 400,
-    }, '-=300');
+    // Step 1 — title, board, three cards stagger in, dividers rise
+    const enter = () => {
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    return tl;
+      tl.add(q(el, '.protocols-title'), {
+        opacity: [0, 1],
+        y: [-20, 0],
+        duration: 500,
+      })
+      .add(q(el, '.protocols-board'), {
+        opacity: [0, 1],
+        scale: [0.95, 1],
+        duration: 600,
+      }, '-=200')
+      .add(q(el, '.protocol--1'), {
+        opacity: [0, 1],
+        x: [-50, 0],
+        duration: 700,
+      }, '-=300')
+      .add(q(el, '.protocol--2'), {
+        opacity: [0, 1],
+        x: [50, 0],
+        duration: 700,
+      }, '-=500')
+      .add(q(el, '.protocol--3'), {
+        opacity: [0, 1],
+        x: [50, 0],
+        duration: 700,
+      }, '-=500')
+      .add(qa(el, '.protocol-divider'), {
+        scaleY: [0, 1],
+        opacity: [0, 0.3],
+        delay: stagger(120),
+        duration: 400,
+      }, '-=400');
+
+      boardTl = tl;
+      return tl;
+    };
+
+    // Step 2 — details, outcome row, scan line sweep
+    const reveal = () => {
+      if (boardTl) boardTl.pause();
+      const procs = qa(el, '.protocol');
+      procs.forEach((p) => {
+        p.style.opacity = '1';
+        p.style.transform = 'none';
+      });
+      utils.set(qa(el, '.protocol-divider'), { opacity: 0.3, scaleY: 1 });
+
+      const details = qa(el, '.protocol-details');
+      const metrics = qa(el, '.protocols-metric');
+      const scanLine = q(el, '.protocols-scan');
+
+      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+
+      tl.add(details, {
+        opacity: [0, 1],
+        y: [10, 0],
+        duration: 500,
+      })
+      .add(q(el, '.protocols-outcome'), {
+        opacity: [0, 1],
+        duration: 400,
+      }, '-=200')
+      .add(metrics, {
+        opacity: [0, 1],
+        y: [12, 0],
+        delay: stagger(100),
+        duration: 400,
+      }, '-=200')
+      .add(scanLine, {
+        opacity: [0, 1],
+        duration: 150,
+      }, '-=300')
+      .add(scanLine, {
+        left: ['0%', '100%'],
+        duration: 1200,
+        ease: 'linear',
+      }, '-=150')
+      .add(scanLine, {
+        opacity: 0,
+        duration: 150,
+      }, '-=150');
+
+      return tl;
+    };
+
+    return { steps: [enter, reveal] };
   },
 
   // Survey — instrument structure, no result claims
