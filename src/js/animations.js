@@ -1305,11 +1305,10 @@ const slideAnimations = {
 
   // Scroll transition between RQ slides (outgoing scrolls up, incoming scrolls in from below)
   rqScrollTransition(outEl, inEl, onDone) {
-    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-    const outScroll = q(outEl, '.rq-scroll');
     const inScroll = q(inEl, '.rq-scroll');
+    const outScroll = q(outEl, '.rq-scroll');
 
-    // Make incoming slide content visible for the scroll (rq() will replay after)
+    // Make incoming slide content visible for the scroll
     utils.set(q(inEl, '.rq-eyebrow'), { opacity: 1 });
     utils.set(qa(inEl, '.rq-eyebrow__rule'), { scaleX: 1 });
     utils.set(q(inEl, '.rq-number'), { opacity: 1, scale: 1 });
@@ -1319,6 +1318,14 @@ const slideAnimations = {
     // Incoming starts below viewport, outgoing on top
     utils.set(inScroll, { y: 480 });
     outEl.style.zIndex = 2;
+
+    const tl = createTimeline({
+      defaults: { ease: 'outExpo' },
+      onComplete() {
+        outEl.style.zIndex = '';
+        if (onDone) onDone();
+      },
+    });
 
     // Outgoing scrolls up and fades
     tl.add(outScroll, {
@@ -1332,11 +1339,6 @@ const slideAnimations = {
       y: 0,
       duration: 600,
     }, 0);
-
-    tl.finished.then(() => {
-      outEl.style.zIndex = '';
-      if (onDone) onDone();
-    });
   },
 };
 
