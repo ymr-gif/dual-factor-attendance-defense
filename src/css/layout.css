@@ -558,19 +558,28 @@
   opacity: 0;
 }
 
-/* Liveness row layout — SVG scene + 3D phone side by side */
-.liveness-row {
-  display: flex;
+/* Liveness slide layout — left column (scan scene + title/subtitle) beside
+   the big 3D phone, mirroring .slide__content--solution/.solution-left. */
+.slide__content--liveness {
   flex-direction: row;
   align-items: center;
+  max-width: 1200px;
   gap: var(--spacing-xl);
 }
 
-/* 3D phone container — slide 4 */
+.liveness-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+/* 3D phone container — slide 4. Sized to dominate the right side now that
+   the scan scene + title/subtitle carry the left column on their own. */
 .phone-3d {
   flex-shrink: 0;
-  width: 280px;
-  height: 400px;
+  width: 460px;
+  height: 660px;
   border-radius: 12px;
   overflow: hidden;
   opacity: 0;
@@ -584,6 +593,55 @@
   display: block;
 }
 
+/* Carousel photo — a flat 2D overlay standing in for the phone's screen.
+   The screen mesh itself mirrors any texture across its centerline (a
+   baked-in UV bug — see the header comment in phone-3d.js), so the actual
+   photo lives here instead, positioned over the mesh's on-screen rect. */
+.liveness-photo-frame {
+  position: absolute;
+  left: 22%;
+  top: 9%;
+  width: 56%;
+  height: 80%;
+  border-radius: 14px;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 1;
+}
+
+.liveness-photo-frame__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Spoof-detection box — slides between face positions as the carousel
+   swipes through photos. Position/size are set from JS per photo, not here. */
+.liveness-spoof-box {
+  position: absolute;
+  border: 1.5px solid var(--danger);
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 0 8px rgba(255, 51, 102, 0.4);
+}
+
+.liveness-spoof-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 6px);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--danger);
+  text-shadow: 0 0 6px rgba(255, 51, 102, 0.5);
+}
+
 /* Architecture Slide */
 .arch-title {
   font-size: clamp(20px, 4vw, 36px);
@@ -591,6 +649,35 @@
   color: var(--text-primary);
   margin-bottom: var(--spacing-lg);
   opacity: 0;
+}
+
+.arch-board {
+  position: relative;
+  padding: var(--spacing-lg) var(--spacing-md);
+  border: 1px solid var(--copper);
+  border-radius: var(--radius-md);
+  background-image: radial-gradient(circle, var(--copper-glow) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.arch-scan {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  left: 0;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 180, 255, 0.5) 25%,
+    rgba(0, 212, 255, 0.8) 50%,
+    rgba(0, 180, 255, 0.5) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 0 6px rgba(0, 180, 255, 0.3);
 }
 
 .arch-flow {
@@ -611,16 +698,32 @@
 }
 
 .arch-node__icon {
+  position: relative;
   width: 56px;
   height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg-secondary);
-  border: 1px solid var(--accent);
+  border: 1px solid var(--copper);
   border-radius: var(--radius-md);
   color: var(--accent);
 }
+
+/* Pin nubs — reads as a component footprint rather than a generic icon tile */
+.arch-node__icon::before,
+.arch-node__icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 3px;
+  background: var(--copper);
+  transform: translateY(-50%);
+}
+
+.arch-node__icon::before { left: -6px; }
+.arch-node__icon::after { right: -6px; }
 
 .arch-node__icon svg {
   width: 60%;
@@ -635,13 +738,45 @@
   letter-spacing: 0.05em;
 }
 
-.arch-arrow {
-  width: 22px;
-  height: 2px;
-  background: var(--accent);
+.arch-trace {
+  width: 26px;
+  height: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.arch-trace__svg {
+  width: 26px;
+  height: 6px;
+  overflow: visible;
+}
+
+.arch-trace__line {
+  fill: none;
+  stroke: var(--copper);
+  stroke-width: 2.2;
+  stroke-linecap: round;
   opacity: 0;
-  transform: scaleX(0);
-  transform-origin: left;
+}
+
+/* Traveling highlight overlaid on .arch-trace__line — stays hidden (zero
+   draw length) except during the Phase 2 pulse, so the base trace never
+   disappears once drawn in. */
+.arch-trace__pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.arch-trace__via {
+  fill: var(--bg-secondary);
+  stroke: var(--copper);
+  stroke-width: 1.4;
+  opacity: 0;
 }
 
 /* RQ Slides */
@@ -654,7 +789,7 @@
 
 .rq-eyebrow__text {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: clamp(18px, 3vw, 28px);
   letter-spacing: 0.36em;
   text-transform: uppercase;
   color: var(--accent);
@@ -670,7 +805,7 @@
 }
 
 .rq-number {
-  font-size: clamp(60px, 15vw, 160px);
+  font-size: clamp(36px, 8vw, 80px);
   font-weight: 900;
   color: var(--accent);
   line-height: 1;
@@ -678,47 +813,42 @@
   transform: scale(0.5);
 }
 
-.rq-icon {
-  width: 80px;
-  height: 80px;
-  color: var(--text-secondary);
-  opacity: 0;
-  transform: scale(0);
-}
-
-.rq-icon svg {
-  width: 100%;
-  height: 100%;
-}
 
 .rq-label {
-  font-size: clamp(14px, 2.5vw, 22px);
+  font-size: clamp(15px, 2vw, 20px);
   color: var(--text-secondary);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  max-width: 700px;
+  line-height: 1.6;
   opacity: 0;
 }
 
-.rq-data {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-xs);
+/* RQ Table */
+.rq-table {
+  width: 100%;
+  max-width: 750px;
+  border-collapse: collapse;
   opacity: 0;
 }
 
-.rq-stat {
-  font-size: clamp(36px, 8vw, 72px);
-  font-weight: 800;
-  color: var(--text-primary);
+.rq-table th {
   font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--accent);
+  background: var(--bg-secondary);
 }
 
-.rq-stat-label {
-  font-size: 12px;
-  color: var(--text-dim);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+.rq-table td {
+  font-size: 14px;
+  color: var(--text-primary);
+  padding: 18px 14px;
+  border-bottom: 1px solid var(--text-dim);
+  min-height: 48px;
 }
 
 /* Instruments Slide */
@@ -729,44 +859,92 @@
   opacity: 0;
 }
 
-.instruments-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-lg);
+/* Slide 12 — data-gathering flow, same visual language as slide 7 */
+.flow-board {
+  position: relative;
+  padding: var(--spacing-lg) var(--spacing-md);
+  border: 1px solid var(--copper);
+  border-radius: var(--radius-md);
+  background-image: radial-gradient(circle, var(--copper-glow) 1px, transparent 1px);
+  background-size: 16px 16px;
 }
 
-.instrument-card {
+.flow-flow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flow-node {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  gap: var(--spacing-xs);
   opacity: 0;
   transform: translateY(20px);
 }
 
-.instrument-card:hover {
-  border-color: var(--accent);
+.flow-node__box {
+  min-width: 90px;
+  max-width: 110px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--copper);
+  border-radius: var(--radius-md);
+  font-size: 9px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--text-primary);
 }
 
-.instrument-icon {
-  width: 60px;
-  height: 60px;
+.flow-node--start .flow-node__box,
+.flow-node--end .flow-node__box {
+  border-radius: 999px;
+  min-width: 60px;
+  max-width: 72px;
+  border-color: var(--accent);
   color: var(--accent);
 }
 
-.instrument-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.instrument-card span {
-  font-size: 12px;
+.flow-node__label {
+  font-size: 10px;
   color: var(--text-secondary);
   letter-spacing: 0.05em;
+}
+
+.flow-trace {
+  width: 26px;
+  height: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.flow-trace__svg {
+  width: 26px;
+  height: 6px;
+  overflow: visible;
+}
+
+.flow-trace__line {
+  fill: none;
+  stroke: var(--copper);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.flow-trace__via {
+  fill: var(--bg-secondary);
+  stroke: var(--copper);
+  stroke-width: 1.4;
+  opacity: 0;
 }
 
 /* Specs Slide — isometric prototype rig, then the 3D board */
@@ -1328,6 +1506,11 @@
 }
 
 /* Framework Slide */
+.slide--framework .slide__content {
+  transform: scale(1.6) translateY(-70px);
+  transform-origin: top center;
+}
+
 .framework-title {
   font-size: clamp(20px, 4vw, 36px);
   font-weight: 700;
@@ -1336,6 +1519,7 @@
 }
 
 .ipo {
+  position: relative;
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -1353,6 +1537,21 @@
   border-radius: var(--radius-md);
   text-align: left;
   opacity: 0;
+}
+
+@keyframes ipo-shake {
+  0%   { transform: translateY(-8px) translateX(0); }
+  15%  { transform: translateY(-8px) translateX(-4px); }
+  30%  { transform: translateY(-8px) translateX(4px); }
+  45%  { transform: translateY(-8px) translateX(-3px); }
+  60%  { transform: translateY(-8px) translateX(2px); }
+  75%  { transform: translateY(-8px) translateX(-1px); }
+  85%  { transform: translateY(-4px) translateX(0); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+.ipo-stage--shake {
+  animation: ipo-shake 0.5s ease-out forwards;
 }
 
 .ipo-stage[data-stage="input"]   { border-top: 3px solid var(--accent); }
@@ -1376,7 +1575,6 @@
 .ipo-list li {
   font-size: 12px;
   color: var(--text-primary);
-  opacity: 0;
 }
 
 .ipo-arrow {
@@ -1390,12 +1588,21 @@
 }
 
 .ipo-feedback {
+  position: relative;
   width: 100%;
   max-width: 640px;
   padding-top: var(--spacing-sm);
-  border-top: 1px dashed var(--text-dim);
   opacity: 0;
   transform: scaleX(0.6);
+}
+
+.ipo-wave {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  pointer-events: none;
 }
 
 .ipo-feedback__label {
@@ -1587,8 +1794,17 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .instruments-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .flow-flow {
+    flex-direction: column;
+  }
+
+  .flow-trace {
+    width: 6px;
+    height: 26px;
+  }
+
+  .flow-trace__svg {
+    transform: rotate(90deg);
   }
 
   .protocols-split {
@@ -1668,10 +1884,12 @@
     margin: 0 auto;
   }
 
-  .arch-arrow {
-    width: 2px;
-    height: 20px;
-    transform: scaleY(0);
-    transform-origin: top;
+  .arch-trace {
+    width: 6px;
+    height: 26px;
+  }
+
+  .arch-trace__svg {
+    transform: rotate(90deg);
   }
 }
