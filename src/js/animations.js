@@ -1075,6 +1075,12 @@ const slideAnimations = {
   rq(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
+    // Set track dot position based on slide number (9→0, 10→36, 11→72)
+    const slideNum = parseInt(el.dataset.slide, 10);
+    const dotOffset = (slideNum - 9) * 36;
+    const dot = q(el, '.rq-track__dot');
+    if (dot) dot.style.top = dotOffset + 'px';
+
     tl.add(q(el, '.rq-eyebrow'), {
       opacity: [0, 1],
       y: [-12, 0],
@@ -1098,7 +1104,11 @@ const slideAnimations = {
     .add(q(el, '.rq-fields'), {
       opacity: [0, 1],
       duration: 400,
-    }, '-=200');
+    }, '-=200')
+    .add(q(el, '.rq-track'), {
+      opacity: [0, 1],
+      duration: 400,
+    }, '-=300');
 
     return tl;
   },
@@ -1121,33 +1131,33 @@ const slideAnimations = {
     tl.add(q(el, '.instruments-title'), {
       opacity: [0, 1],
       y: [-20, 0],
-      duration: 600,
+      duration: 300,
     })
     .add(qa(el, '.flow-node'), {
       opacity: [0, 1],
       y: [20, 0],
       scale: [0.85, 1],
-      delay: stagger(120),
-      duration: 500,
-    }, '-=300')
+      delay: stagger(60),
+      duration: 250,
+    }, '-=150')
     .add(allVias, {
       opacity: [0, 1],
-      duration: 200,
-    }, '-=300')
+      duration: 100,
+    }, '-=150')
     .add(traceContainers, {
       opacity: [0, 1],
-      duration: 200,
-    }, '-=200')
+      duration: 100,
+    }, '-=100')
     .add(allTraceLines, {
       opacity: [0, 1],
-      delay: stagger(250),
-      duration: 200,
-    }, '-=100')
+      delay: stagger(125),
+      duration: 100,
+    }, '-=50')
     .add(svg.createDrawable(allTraceLines), {
       draw: ['0 0', '0 1'],
-      delay: stagger(250),
-      duration: 300,
-    }, '-=100');
+      delay: stagger(125),
+      duration: 150,
+    }, '-=50');
 
     return tl;
   },
@@ -1315,6 +1325,13 @@ const slideAnimations = {
     utils.set(q(inEl, '.rq-label'), { opacity: 1 });
     utils.set(q(inEl, '.rq-fields'), { opacity: 1 });
 
+    // Set incoming track dot position and show both tracks
+    const inSlideNum = parseInt(inEl.dataset.slide, 10);
+    const inDot = q(inEl, '.rq-track__dot');
+    if (inDot) inDot.style.top = ((inSlideNum - 9) * 36) + 'px';
+    utils.set(q(inEl, '.rq-track'), { opacity: 1 });
+    utils.set(q(outEl, '.rq-track'), { opacity: 1 });
+
     // Incoming starts below viewport, outgoing on top
     utils.set(inScroll, { y: 480 });
     outEl.style.zIndex = 2;
@@ -1327,17 +1344,22 @@ const slideAnimations = {
       },
     });
 
-    // Outgoing scrolls up and fades
+    // Outgoing scrolls up and fades (track fades with it)
     tl.add(outScroll, {
       y: -480,
       opacity: [1, 0],
       duration: 600,
+    }, 0)
+    .add(q(outEl, '.rq-track'), {
+      opacity: [1, 0],
+      duration: 400,
     }, 0);
 
-    // Incoming scrolls up from below
+    // Incoming scrolls up from below with bounce
     tl.add(inScroll, {
       y: 0,
-      duration: 600,
+      duration: 700,
+      ease: 'outBack',
     }, 0);
   },
 };
