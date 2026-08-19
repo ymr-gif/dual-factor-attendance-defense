@@ -1073,62 +1073,34 @@ const slideAnimations = {
 
   // Research questions — shared by all three RQ slides
   rq(el) {
-    const STEP = 140;
-    const scroll = q(el, '.rq-scroll');
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    // Step 0 — entry: fade in left side + fields
-    const step0 = () => {
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    tl.add(q(el, '.rq-eyebrow'), {
+      opacity: [0, 1],
+      y: [-12, 0],
+      duration: 450,
+    })
+    .add(qa(el, '.rq-eyebrow__rule'), {
+      scaleX: [0, 1],
+      duration: 500,
+    }, '-=250')
+    .add(q(el, '.rq-number'), {
+      opacity: [0, 1],
+      scale: [0.3, 1],
+      duration: 800,
+      ease: 'outElastic(1, 0.5)',
+    }, '-=250')
+    .add(q(el, '.rq-label'), {
+      opacity: [0, 1],
+      y: [15, 0],
+      duration: 500,
+    }, '-=200')
+    .add(q(el, '.rq-fields'), {
+      opacity: [0, 1],
+      duration: 400,
+    }, '-=200');
 
-      tl.add(q(el, '.rq-eyebrow'), {
-        opacity: [0, 1],
-        y: [-12, 0],
-        duration: 450,
-      })
-      .add(qa(el, '.rq-eyebrow__rule'), {
-        scaleX: [0, 1],
-        duration: 500,
-      }, '-=250')
-      .add(q(el, '.rq-number'), {
-        opacity: [0, 1],
-        scale: [0.3, 1],
-        duration: 800,
-        ease: 'outElastic(1, 0.5)',
-      }, '-=250')
-      .add(q(el, '.rq-label'), {
-        opacity: [0, 1],
-        y: [15, 0],
-        duration: 500,
-      }, '-=200')
-      .add(q(el, '.rq-fields'), {
-        opacity: [0, 1],
-        duration: 400,
-      }, '-=200');
-
-      return tl;
-    };
-
-    // Step 1 — scroll up to card 2
-    const step1 = () => {
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-      tl.add(scroll, {
-        y: -STEP,
-        duration: 600,
-      });
-      return tl;
-    };
-
-    // Step 2 — scroll up to card 3
-    const step2 = () => {
-      const tl = createTimeline({ defaults: { ease: 'outExpo' } });
-      tl.add(scroll, {
-        y: -STEP * 2,
-        duration: 600,
-      });
-      return tl;
-    };
-
-    return { steps: [step0, step1, step2] };
+    return tl;
   },
 
   // Instruments — three cards stagger in
@@ -1149,32 +1121,32 @@ const slideAnimations = {
     tl.add(q(el, '.instruments-title'), {
       opacity: [0, 1],
       y: [-20, 0],
-      duration: 800,
+      duration: 600,
     })
     .add(qa(el, '.flow-node'), {
       opacity: [0, 1],
       y: [20, 0],
       scale: [0.85, 1],
-      delay: stagger(160),
-      duration: 600,
-    }, '-=400')
+      delay: stagger(120),
+      duration: 500,
+    }, '-=300')
     .add(allVias, {
       opacity: [0, 1],
-      duration: 300,
-    }, 300)
+      duration: 200,
+    }, '-=300')
     .add(traceContainers, {
       opacity: [0, 1],
       duration: 200,
-    }, 300)
+    }, '-=200')
     .add(allTraceLines, {
       opacity: [0, 1],
-      delay: stagger(350),
-      duration: 300,
+      delay: stagger(250),
+      duration: 200,
     }, '-=100')
     .add(svg.createDrawable(allTraceLines), {
       draw: ['0 0', '0 1'],
-      delay: stagger(350),
-      duration: 500,
+      delay: stagger(250),
+      duration: 300,
     }, '-=100');
 
     return tl;
@@ -1329,6 +1301,42 @@ const slideAnimations = {
     }, '-=300');
 
     return tl;
+  },
+
+  // Scroll transition between RQ slides (outgoing scrolls up, incoming scrolls in from below)
+  rqScrollTransition(outEl, inEl, onDone) {
+    const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const outScroll = q(outEl, '.rq-scroll');
+    const inScroll = q(inEl, '.rq-scroll');
+
+    // Make incoming slide content visible for the scroll (rq() will replay after)
+    utils.set(q(inEl, '.rq-eyebrow'), { opacity: 1 });
+    utils.set(qa(inEl, '.rq-eyebrow__rule'), { scaleX: 1 });
+    utils.set(q(inEl, '.rq-number'), { opacity: 1, scale: 1 });
+    utils.set(q(inEl, '.rq-label'), { opacity: 1 });
+    utils.set(q(inEl, '.rq-fields'), { opacity: 1 });
+
+    // Incoming starts below viewport, outgoing on top
+    utils.set(inScroll, { y: 480 });
+    outEl.style.zIndex = 2;
+
+    // Outgoing scrolls up and fades
+    tl.add(outScroll, {
+      y: -480,
+      opacity: [1, 0],
+      duration: 600,
+    }, 0);
+
+    // Incoming scrolls up from below
+    tl.add(inScroll, {
+      y: 0,
+      duration: 600,
+    }, 0);
+
+    tl.finished.then(() => {
+      outEl.style.zIndex = '';
+      if (onDone) onDone();
+    });
   },
 };
 
