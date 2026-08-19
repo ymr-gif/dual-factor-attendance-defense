@@ -623,167 +623,130 @@ const slideAnimations = {
     return tl;
   },
 
-  // Framework — IPO cards appear sequentially, the waveform itself swells
-  // upward toward whichever card is current (the canvas never moves)
+  // Framework — IPO cards appear in turn, each landing with a small hop and
+  // rattle. The wave below is an ambient spectrum meter: it never reacts to
+  // the cards, it just keeps running.
   framework(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
     const waveCanvas = q(el, '.ipo-wave');
     const stages = qa(el, '.ipo-stage');
-    let waveOffset = 0;
-    // Animated by the timeline below; drawWave() reads these live every
-    // frame. The "wave" is a localized rise in the drawn line, not the
-    // canvas being repositioned — a swell that glides under whichever card
-    // is current and gives a little extra nudge on arrival.
-    const waveState = { bumpX: 0, bumpAmount: 0 };
-
-    // Helper: x-position of a card's center, in the canvas's local coord space
-    function cardCenterX(i) {
-      if (!waveCanvas || !stages[i]) return 0;
-      const stageRect = stages[i].getBoundingClientRect();
-      const canvasRect = waveCanvas.getBoundingClientRect();
-      return stageRect.left + stageRect.width / 2 - canvasRect.left;
-    }
 
     if (waveCanvas && waveCanvas.getContext) {
       const ctx = waveCanvas.getContext('2d');
       const dpr = Math.min(window.devicePixelRatio, 2);
       let w, h;
 
+      // .ipo-wave is a normal-flow block inside .ipo-block, which is
+      // width: fit-content around .ipo — so the canvas's own rendered box
+      // is *already* exactly as wide as the card row, by CSS alone. No
+      // measuring card positions or setting an explicit left offset.
       function sizeCanvas() {
-        const rect = waveCanvas.parentElement.getBoundingClientRect();
-        w = rect.width;
-        h = 20;
+        w = waveCanvas.clientWidth;
+        h = 18;
         waveCanvas.width = w * dpr;
         waveCanvas.height = h * dpr;
-        waveCanvas.style.width = w + 'px';
-        waveCanvas.style.height = h + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
 
-      // Roughly a card's half-width, so the swell reads as a broad rise
-      // under the whole card rather than a thin spike.
-      const BUMP_SIGMA = 90;
+      const BAR_PITCH = 4;
+      const BAR_WIDTH = 2;
+      const BAR_AMP = 6;   // tallest a bar reaches, in the 18px strip
 
-      function waveY(x) {
-        const mid = h / 2;
-        const amp = 4;
-        const freq = 0.05;
-        const dx = x - waveState.bumpX;
-        const bump = waveState.bumpAmount
-          * Math.exp(-(dx * dx) / (2 * BUMP_SIGMA * BUMP_SIGMA));
-        return mid + Math.sin(x * freq + waveOffset) * amp - bump;
+      // Cheap deterministic hash, not a real PRNG — just enough so each
+      // bar's idle jitter has its own phase/speed and the row never moves
+      // in lockstep, the way a real spectrum visualizer never sits still.
+      function hash(i) {
+        const s = Math.sin(i * 12.9898) * 43758.5453;
+        return s - Math.floor(s);
       }
 
-      function drawWave() {
+      function drawWave(t) {
         ctx.clearRect(0, 0, w, h);
+        const barCount = Math.floor(w / BAR_PITCH);
 
-        ctx.beginPath();
-        ctx.strokeStyle = '#4a4a5e';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([4, 4]);
-        for (let x = 0; x < w; x++) {
-          const y = waveY(x);
-          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.stroke();
+        for (let i = 0; i < barCount; i++) {
+          const x = i * BAR_PITCH + BAR_WIDTH / 2;
+          const phase = hash(i) * Math.PI * 2;
+          const freq = 0.0018 + hash(i + 1) * 0.0012;
+          const level = Math.abs(Math.sin(t * freq + phase));
+          const height = Math.max(1, Math.min(h - 2, level * BAR_AMP));
 
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0,212,255,0.5)';
-        ctx.lineWidth = 1.5;
-        ctx.shadowColor = 'rgba(0,212,255,0.4)';
-        ctx.shadowBlur = 6;
-        ctx.setLineDash([]);
-        for (let x = 0; x < w; x++) {
-          const y = waveY(x);
-          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          // A bar burns hotter the taller it is, the way a real meter peaks.
+          ctx.beginPath();
+          ctx.lineCap = 'round';
+          ctx.lineWidth = BAR_WIDTH;
+          ctx.strokeStyle = `rgba(${Math.round(level * 130)}, ${Math.round(200 + level * 55)}, 255, ${0.3 + level * 0.55})`;
+          ctx.shadowColor = 'rgba(0, 212, 255, 0.5)';
+          ctx.shadowBlur = 2 + level * 4;
+          ctx.moveTo(x, h);
+          ctx.lineTo(x, h - height);
+          ctx.stroke();
         }
-        ctx.stroke();
         ctx.shadowBlur = 0;
 
-        waveOffset += 0.03;
         waveCanvas._waveRaf = requestAnimationFrame(drawWave);
       }
 
       sizeCanvas();
-      waveState.bumpX = cardCenterX(0);
-      drawWave();
+      drawWave(performance.now());
+
+      // framework() runs again on every visit to the slide, so drop the
+      // previous visit's listener — it closes over a dead ctx/canvas state.
+      if (waveCanvas._waveResize) {
+        window.removeEventListener('resize', waveCanvas._waveResize);
+      }
+      waveCanvas._waveResize = sizeCanvas;
       window.addEventListener('resize', sizeCanvas);
     }
 
-    // 1) Title
+    // Entrance beats, at absolute millisecond positions. These are the same
+    // times the previous relative ('-=X') chain resolved to — made explicit
+    // so the wave beats below can be timed against them without drifting
+    // whenever a duration changes.
     tl.add(q(el, '.framework-title'), {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 500,
-    })
+    }, 0);
 
-    // 2) Input card + wave nudges up beneath it
-    .add(stages[0], {
-      opacity: [0, 1],
-      y: [30, 0],
-      duration: 800,
-    }, '-=100')
-    .add(waveState, {
-      bumpAmount: [0, 9],
-      duration: 500,
-      ease: 'outElastic(1, 0.5)',
-    }, '-=600')
+    // One unbroken motion per card: it fades in, rises, swells past its
+    // resting size and settles. Previously the entrance decelerated to a
+    // dead stop at y:0 and a *separate* pop tween then jerked it up again
+    // — a visible kink in the middle of every card. Cards also overlap by
+    // ~450ms now, so the row cascades instead of stepping one at a time.
+    const CARD_AT = [400, 850, 1300];
+    const CARD_MS = 900;
 
-    // 3) Arrow 1
-    .add(q(el, '.ipo-arrow:nth-child(2)'), {
+    // Plain value arrays only. The per-property `{ to: [...], ease }` form
+    // silently keeps just the first two stops in this vendored anime build,
+    // so a 3-stop scale ended stuck at its peak instead of settling back.
+    CARD_AT.forEach((at, i) => {
+      tl.add(stages[i], {
+        opacity: [0, 1],
+        y: [30, -3, 0],
+        scale: [0.96, 1.06, 1],
+        duration: CARD_MS,
+        ease: 'inOutSine',
+      }, at);
+    });
+
+    // Arrows bridge the cards, drawing while the next one is still rising.
+    tl.add(q(el, '.ipo-arrow:nth-child(2)'), {
       opacity: [0, 1],
       scaleX: [0, 1],
-      duration: 400,
-    }, '-=200')
-
-    // 4) Process card + wave glides over and nudges
-    .add(stages[1], {
-      opacity: [0, 1],
-      y: [30, 0],
-      duration: 800,
-    }, '-=100')
-    .add(waveState, {
-      bumpX: cardCenterX(1),
-      duration: 500,
-      ease: 'outExpo',
-    }, '-=600')
-    .add(waveState, {
-      bumpAmount: [9, 13, 9],
-      duration: 500,
-      ease: 'outElastic(1, 0.5)',
-    }, '-=500')
-
-    // 5) Arrow 2
+      duration: 450,
+    }, 1000)
     .add(q(el, '.ipo-arrow:nth-child(4)'), {
       opacity: [0, 1],
       scaleX: [0, 1],
-      duration: 400,
-    }, '-=200')
-
-    // 6) Output card + wave glides over and nudges
-    .add(stages[2], {
-      opacity: [0, 1],
-      y: [30, 0],
-      duration: 800,
-    }, '-=100')
-    .add(waveState, {
-      bumpX: cardCenterX(2),
-      duration: 500,
-      ease: 'outExpo',
-    }, '-=600')
-    .add(waveState, {
-      bumpAmount: [9, 13, 9],
-      duration: 500,
-      ease: 'outElastic(1, 0.5)',
-    }, '-=500')
-
-    // 7) Feedback bar
+      duration: 450,
+    }, 1450)
     .add(q(el, '.ipo-feedback'), {
       opacity: [0, 1],
       scaleX: [0.6, 1],
-      duration: 600,
-    }, '-=200');
+      duration: 700,
+    }, 1900);
 
     return tl;
   },
@@ -1217,22 +1180,42 @@ const slideAnimations = {
   // Scale — interpretation ladder builds from the bottom band up
   scale(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
+    const rows = qa(el, '.scale-row');
+    const fills = qa(el, '.scale-row__fill');
+    const target = q(el, '.scale-row[data-band="high"]');
 
     tl.add(q(el, '.scale-title'), {
       opacity: [0, 1],
       y: [-20, 0],
       duration: 500,
     })
-    .add(qa(el, '.scale-row'), {
+    .add(rows, {
       opacity: [0, 1],
-      x: [-30, 0],
-      delay: stagger(120, { from: 'last' }),
-      duration: 450,
+      duration: 200,
+      delay: stagger(80),
     }, '-=200')
+    .add(fills, {
+      scaleX: [0, 1],
+      duration: 350,
+      delay: stagger(300),
+    }, '-=200')
+    .add(qa(el, '.scale-row:not([data-band="high"])'), {
+      y: [0, 22],
+      duration: 400,
+      delay: stagger(100),
+      ease: 'outBack',
+    }, '-=50')
+    .add(target, {
+      scale: [1, 1.04, 1],
+      borderLeftWidth: ['3px', '5px'],
+      duration: 400,
+      ease: 'outBack',
+      begin() { target.classList.add('scale-row--glow-loop'); },
+    })
     .add(q(el, '.scale-footnote'), {
       opacity: [0, 1],
       duration: 400,
-    }, '-=100');
+    }, '-=200');
 
     return tl;
   },
