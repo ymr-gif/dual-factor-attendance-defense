@@ -1783,109 +1783,6 @@
 }
 
 /* Scope Slide */
-.scope-title {
-  font-size: clamp(20px, 4vw, 36px);
-  font-weight: 700;
-  color: var(--text-primary);
-  opacity: 0;
-}
-
-.scope-split {
-  display: flex;
-  align-items: stretch;
-  gap: var(--spacing-xl);
-}
-
-.scope-col {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  min-width: 220px;
-  text-align: left;
-  opacity: 0;
-}
-
-.scope-col__label {
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-
-.scope-col--in .scope-col__label { color: var(--success); }
-.scope-col--out .scope-col__label { color: var(--danger); }
-
-.scope-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  list-style: none;
-}
-
-.scope-list li {
-  font-size: 14px;
-  color: var(--text-primary);
-  opacity: 0;
-}
-
-.scope-col--out .scope-list li {
-  color: var(--text-secondary);
-}
-
-.scope-divider {
-  width: 1px;
-  background: var(--text-dim);
-  opacity: 0;
-  transform: scaleY(0);
-}
-
-/* Output Slide */
-.output-title {
-  font-size: clamp(20px, 4vw, 36px);
-  font-weight: 700;
-  color: var(--text-primary);
-  opacity: 0;
-}
-
-.output-cards {
-  display: flex;
-  gap: var(--spacing-lg);
-}
-
-.output-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--spacing-sm);
-  width: 200px;
-  padding: var(--spacing-lg) var(--spacing-md);
-  background: var(--bg-secondary);
-  border: 1px solid var(--text-dim);
-  border-radius: var(--radius-md);
-  text-align: left;
-  opacity: 0;
-}
-
-.output-card__num {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-}
-
-.output-card__text {
-  font-size: 15px;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-.output-note {
-  font-size: 12px;
-  color: var(--text-dim);
-  letter-spacing: 0.1em;
-  font-family: var(--font-mono);
-  opacity: 0;
-}
-
 /* Thanks Slide */
 .thanks-text {
   display: flex;
@@ -2048,9 +1945,7 @@
   }
 
   .ipo,
-  .scope-split,
-  .survey-versions,
-  .output-cards {
+  .survey-versions {
     flex-direction: column;
   }
 
@@ -2061,12 +1956,6 @@
     transform-origin: top;
   }
 
-  .scope-divider {
-    width: 60%;
-    height: 1px;
-    margin: 0 auto;
-  }
-
   .arch-trace {
     width: 10px;
     height: 40px;
@@ -2075,4 +1964,11 @@
   .arch-trace__svg {
     transform: rotate(90deg);
   }
+}
+
+/* Scale slides 14 and 15 by 2x */
+.slide--survey .slide__content,
+.slide--scale .slide__content {
+  transform: scale(2);
+  transform-origin: center center;
 }
