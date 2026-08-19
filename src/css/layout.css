@@ -787,8 +787,8 @@
   gap: 60px;
   overflow: hidden;
   height: 480px;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 96%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 96%, transparent 100%);
 }
 
 .rq-scroll {
@@ -911,17 +911,17 @@
 
 .rq-track__line {
   width: 2px;
-  height: 80px;
+  height: 120px;
   background: var(--text-dim);
   border-radius: 1px;
 }
 
 .rq-track__dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
+  box-shadow: 0 0 14px var(--accent);
   position: absolute;
   top: 0;
   transition: top 600ms cubic-bezier(0.34, 1.56, 0.64, 1);

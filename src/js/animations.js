@@ -1075,9 +1075,9 @@ const slideAnimations = {
   rq(el) {
     const tl = createTimeline({ defaults: { ease: 'outExpo' } });
 
-    // Set track dot position based on slide number (9→0, 10→36, 11→72)
+    // Set track dot position based on slide number (9→0, 10→50, 11→100)
     const slideNum = parseInt(el.dataset.slide, 10);
-    const dotOffset = (slideNum - 9) * 36;
+    const dotOffset = (slideNum - 9) * 50;
     const dot = q(el, '.rq-track__dot');
     if (dot) dot.style.top = dotOffset + 'px';
 
@@ -1328,7 +1328,7 @@ const slideAnimations = {
     // Set incoming track dot position and show both tracks
     const inSlideNum = parseInt(inEl.dataset.slide, 10);
     const inDot = q(inEl, '.rq-track__dot');
-    if (inDot) inDot.style.top = ((inSlideNum - 9) * 36) + 'px';
+    if (inDot) inDot.style.top = ((inSlideNum - 9) * 50) + 'px';
     utils.set(q(inEl, '.rq-track'), { opacity: 1 });
     utils.set(q(outEl, '.rq-track'), { opacity: 1 });
 
