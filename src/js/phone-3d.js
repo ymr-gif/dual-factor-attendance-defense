@@ -1,8 +1,18 @@
 // Real-time 3D Samsung phone for slide 4 (Liveness).
 //
-// Displays a baked Samsung S26 Ultra model with a procedural screen texture
-// that scrolls to simulate an app swipe. The entrance is a GSAP-driven
-// Apple-style kinetic spin. The SVG liveness scene runs alongside it.
+// Displays a baked Samsung S26 Ultra model. The entrance is a GSAP-driven
+// Apple-style kinetic spin; after it settles the phone idly spins in place
+// forever (a slow turntable/product-display rotation), screen off, and a
+// red X stamp (matching the left scene's .liveness-stamp) slams onto it
+// once and stays — a "rejected" verdict, not a demo of the screen content.
+//
+// The phone's screen mesh has a baked-in UV bug — confirmed with a labeled
+// test-grid texture — that mirrors whatever's applied to it across the
+// screen's centerline (both halves sample the same UV range in opposite
+// directions, the classic symptom of a mirror-modifier-built mesh whose UVs
+// were never split for the two mirrored halves). That's moot now (the
+// screen never shows content, just a flat off/black glow), but is why one
+// wasn't attempted here.
 //
 // Exposed as window.phone3D — animations.js drives mount/stop.
 (function () {
@@ -10,78 +20,15 @@
 
   const TARGET_WIDTH = 0.55;
 
-  // Screen mesh names — the largest flat black plane on the front face.
-  // Tried in order; first match wins.
-  const SCREEN_CANDIDATES = ['Object_46', 'Object_4', 'Object_6'];
-
-  // ── Procedural screen texture ──────────────────────────────────────
-  // A tall canvas with coloured bands and simple shapes to read as
-  // scrolling app UI. Different colours make the swipe obvious.
-
-  const UI_WIDTH = 300;
-  const UI_HEIGHT = 1200;
-
-  function createScreenCanvas() {
-    const canvas = document.createElement('canvas');
-    canvas.width = UI_WIDTH;
-    canvas.height = UI_HEIGHT;
-    const ctx = canvas.getContext('2d');
-
-    // Background
-    ctx.fillStyle = '#0d1117';
-    ctx.fillRect(0, 0, UI_WIDTH, UI_HEIGHT);
-
-    const bands = [
-      { y: 0,   h: 140, color: '#161b22' },
-      { y: 140, h: 120, color: '#1a1f2e' },
-      { y: 260, h: 160, color: '#0d1117' },
-      { y: 420, h: 100, color: '#1c2333' },
-      { y: 520, h: 140, color: '#161b22' },
-      { y: 660, h: 120, color: '#1a1f2e' },
-      { y: 780, h: 160, color: '#0d1117' },
-      { y: 940, h: 130, color: '#1c2333' },
-      { y: 1070,h: 130, color: '#161b22' },
-    ];
-
-    bands.forEach((b) => {
-      ctx.fillStyle = b.color;
-      ctx.fillRect(0, b.y, UI_WIDTH, b.h);
-
-      // Card-like rounded rects
-      ctx.fillStyle = '#21262d';
-      roundRect(ctx, 20, b.y + 15, UI_WIDTH - 40, b.h - 30, 8);
-      ctx.fill();
-
-      // Coloured accent dots
-      const colors = ['#00d4ff', '#7b2ff7', '#00ff88', '#ff3366', '#ffaa00'];
-      const dotColor = colors[(b.y / 140) % colors.length | 0];
-      ctx.beginPath();
-      ctx.arc(50, b.y + b.h / 2, 12, 0, Math.PI * 2);
-      ctx.fillStyle = dotColor;
-      ctx.fill();
-
-      // Fake text lines
-      ctx.fillStyle = '#30363d';
-      ctx.fillRect(80, b.y + b.h / 2 - 10, 140, 6);
-      ctx.fillRect(80, b.y + b.h / 2 + 4, 100, 6);
-    });
-
-    return canvas;
-  }
-
-  function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-  }
+  // Screen mesh names. The bake for this model produced 4 near-duplicate,
+  // near-coplanar meshes covering the phone's front face (confirmed by
+  // dumping every mesh's bounding box: Object_46/4/6/44 all share almost
+  // the same box). Treating any single one as "the" screen and giving it a
+  // texture only works until z-fighting picks a different winner — verified
+  // this by coloring all 4 differently: the visible face flickered between
+  // them. Applying the same material to every match sidesteps the z-fight
+  // instead of trying to predict its winner.
+  const SCREEN_CANDIDATES = ['Object_46', 'Object_4', 'Object_6', 'Object_44'];
 
   // ── Procedural environment ─────────────────────────────────────────
 
@@ -155,54 +102,69 @@
     // Build model
     const model = window.modelLoader.build(window.phoneModel, TARGET_WIDTH);
     const group = new THREE.Group();
-    let screenMesh = null;
 
     Object.keys(model).forEach((name) => {
-      const part = model[name];
-      group.add(part);
+      group.add(model[name]);
+    });
 
-      // Identify screen mesh
-      if (!screenMesh && SCREEN_CANDIDATES.includes(name)) {
-        screenMesh = part;
-      }
+    // Identify every screen-candidate mesh present (see SCREEN_CANDIDATES
+    // comment) — all of them get the same material below.
+    const screenMeshTargets = [];
+    for (const name of SCREEN_CANDIDATES) {
+      const part = model[name];
+      if (!part) continue;
+      part.traverse((child) => { if (child.isMesh) screenMeshTargets.push(child); });
+    }
+
+    // Body/casing recolor — the bake's own material is a light cream that
+    // reads as an off-white phone; every mesh gets its own fresh material
+    // instance (model-loader.js's materialFor() is called per-primitive,
+    // never shared), so overriding properties here only touches these
+    // parts, not the screen. Dark grey rather than pure black so the phone
+    // still reads as a distinct silhouette against the slide's near-black
+    // background, instead of disappearing into it.
+    //
+    // Verified live (dumped each mesh's material): color and envMapIntensity
+    // WERE both applying correctly, yet the body still rendered off-white —
+    // the real cause is roughness, baked near 0 (mirror-smooth) on most of
+    // these parts. At that roughness, bright specular highlights from the
+    // direct lights (not environment reflection) dominate the visible
+    // surface regardless of diffuse color or envMapIntensity. model-
+    // loader.js's roughnessFor() already patches this exact failure mode for
+    // the Arduino shells, but only when metalness >= 0.9 — these parts sit
+    // at 0.32-0.84, under that threshold, so it never kicked in here.
+    const BODY_COLOR = 0x2b2d33;
+    Object.keys(model).forEach((name) => {
+      if (SCREEN_CANDIDATES.includes(name)) return;
+      model[name].traverse((child) => {
+        if (!child.isMesh) return;
+        child.material.color.set(BODY_COLOR);
+        child.material.roughness = Math.max(child.material.roughness, 0.6);
+        child.material.envMapIntensity = 0.35;
+      });
     });
 
     scene.add(group);
 
-    // ── Screen texture ─────────────────────────────────────────────
-
-    const screenCanvas = createScreenCanvas();
-    const screenTexture = new THREE.CanvasTexture(screenCanvas);
-    screenTexture.wrapS = THREE.ClampToEdgeWrapping;
-    screenTexture.wrapT = THREE.RepeatWrapping;
-    screenTexture.repeat.set(1, 2 / 3); // show ~1/3 of the UI at a time (UV v range is [0, 0.5])
-    screenTexture.offset.y = 0;
-    screenTexture.minFilter = THREE.LinearFilter;
-    screenTexture.magFilter = THREE.LinearFilter;
-
-    // Apply screen material
-    if (screenMesh) {
-      // The baked model has geometry in groups — find the mesh inside
-      let target = null;
-      screenMesh.traverse((child) => {
-        if (child.isMesh && !target) target = child;
-      });
-      if (target) {
-        target.material = new THREE.MeshStandardMaterial({
-          map: screenTexture,
-          roughness: 0.1,
-          metalness: 0.0,
-          emissive: 0xffffff,
-          emissiveIntensity: 0.3,
-          emissiveMap: screenTexture,
-        });
-      }
-    }
+    // ── Screen material ────────────────────────────────────────────
+    // Flat on/off backlight glow only — no texture (see file header for
+    // why: the mesh mirrors any texture across the screen centerline).
+    // Every screen-candidate mesh shares this one material instance, so
+    // whichever one wins the z-fight on a given frame shows the same thing.
+    const screenMaterial = new THREE.MeshStandardMaterial({
+      roughness: 0.1,
+      metalness: 0.0,
+      emissive: 0xffffff,
+      emissiveIntensity: 0.3,
+    });
+    screenMeshTargets.forEach((mesh) => { mesh.material = screenMaterial; });
 
     // ── Lighting ───────────────────────────────────────────────────
 
-    // Key — warm, upper-right-front
-    const key = new THREE.DirectionalLight(0xfff5e8, 1.4);
+    // Key — warm, upper-right-front. Bumped from 1.4: with the hero-angle
+    // VIEW_DIR the grey body (BODY_COLOR) was reading almost black — this
+    // was tuned for the flat dead-on camera angle used briefly earlier.
+    const key = new THREE.DirectionalLight(0xfff5e8, 2.4);
     key.position.set(2, 3, 3);
     scene.add(key);
 
@@ -218,6 +180,11 @@
 
     // ── Camera framing ─────────────────────────────────────────────
 
+    // Off-axis "hero shot" angle. This was briefly flattened to (0,0,1)
+    // dead-on while a flat 2D photo overlay needed to sit flush against the
+    // screen's projected rect — now that the phone just spins with no
+    // overlay to align, there's no reason not to have the more cinematic
+    // angle back.
     const VIEW_DIR = new THREE.Vector3(0.3, 0.15, 1).normalize();
     const lookAt = new THREE.Vector3(0, 0, 0);
 
@@ -281,73 +248,168 @@
     function stop() {
       if (loop) cancelAnimationFrame(loop);
       loop = null;
+      if (entranceTimeline) { entranceTimeline.kill(); entranceTimeline = null; }
+      if (idleTimeline)     { idleTimeline.kill();     idleTimeline = null; }
+      if (scanTween)        { scanTween.kill();        scanTween = null; }
+      if (stampTween)       { stampTween.kill();       stampTween = null; }
     }
 
     resize();
     window.addEventListener('resize', () => { resize(); render(); });
 
-    // ── GSAP entrance + scroll animation ───────────────────────────
+    // ── GSAP entrance + idle spin + scan + stamp ──────────────────────
+    // All owned here so a single stop() can kill whichever is running:
+    //   entranceTimeline — one-shot, slides the phone in with the screen off
+    //   idleTimeline      — repeat:-1, slow turntable spin, forever
+    //   scanTween         — one-shot, glow bar sweeps the screen once
+    //   stampTween        — one-shot, the X stamp slams on and stays
 
     let entranceTimeline = null;
+    let idleTimeline = null;
+    let scanTween = null;
+    let stampTween = null;
+
+    const container = canvas.parentElement; // .phone-3d
+    const scanEl = container.querySelector('.phone-scan-line');
+    const stampEl = container.querySelector('.phone-stamp');
+
+    function setScreenOff() {
+      const m = screenMaterial;
+      m.color.set(0x000000);
+      m.emissive.set(0x000000);
+      m.emissiveIntensity = 0;
+      m.needsUpdate = true;
+    }
 
     function playEntrance() {
       if (entranceTimeline) return;
-
-      const container = canvas.parentElement; // .phone-3d
 
       // Starting pose — far off-screen right and behind camera
       group.position.set(18, -4, -15);
       group.rotation.set(0.1, -Math.PI * 1.5, 0);
 
-      // Start container off-screen right. '100%' would be relative to the
-      // container's own (280px) width, which isn't enough to clear the free
-      // space around it in the layout — use a viewport-relative unit so it
-      // actually starts beyond the visible frame.
-      gsap.set(container, { x: '100vw' });
+      // Start container off-screen right — computed from where the
+      // container actually sits on screen right now, not a static guess.
+      // A fixed '100vw' assumes the container's resting position is near
+      // the left edge; wherever it really sits (nested in a centered flex
+      // row, etc.), the true distance to clear the right edge is the
+      // viewport width minus the container's own left edge, plus its own
+      // width so it lands fully past the edge, not just touching it. A
+      // static value being short of that is exactly what reads as the
+      // phone "materializing" partway in rather than entering from off-
+      // screen — it starts inside the visible area, just outside the
+      // *container's* own footprint, not outside the *screen's*.
+      const startRect = container.getBoundingClientRect();
+      const offscreenX = window.innerWidth - startRect.left + startRect.width;
+      gsap.set(container, { x: offscreenX });
+
+      // Screen stays off — the phone never shows content beyond the scan
+      // sweep below, just spins with a dark screen and takes the stamp.
+      setScreenOff();
+      if (scanEl) gsap.set(scanEl, { top: '12%', opacity: 0 });
+      if (stampEl) gsap.set(stampEl, { opacity: 0, scale: 2.5, rotation: -30 });
 
       entranceTimeline = gsap.timeline({
         onComplete: () => { entranceTimeline = null; },
       });
 
+      // 75% speed = duration / 0.75 (speed and duration are inverse for a
+      // fixed distance) — was 4s.
+      const ENTRANCE_DURATION = 4 / 0.75;
+
       // Phase 0: slide container in from right (matches 3D entrance timing)
       entranceTimeline.to(container, {
         x: 0,
-        duration: 4,
+        duration: ENTRANCE_DURATION,
         ease: 'power2.out',
       }, 0);
 
       // Phase 1: entrance spin (slow-mo for preview)
       entranceTimeline.to(group.position, {
         x: 0, y: 0, z: 0,
-        duration: 4,
+        duration: ENTRANCE_DURATION,
         ease: 'power2.out',
       }, 0);
 
       entranceTimeline.to(group.rotation, {
-        y: Math.PI - 0.2,
-        x: 0.1,
+        y: Math.PI,
+        x: 0,
         z: 0,
-        duration: 4,
+        duration: ENTRANCE_DURATION,
         ease: 'power2.out',
       }, 0);
 
-      // Phase 2: screen scroll — overlaps the end of the entrance
-      entranceTimeline.to(screenTexture.offset, {
-        y: 2 / 3,
-        duration: 2.5,
-        ease: 'power2.inOut',
-      }, 2.5);
+      // Idle spin + scan start before the entrance finishes, not on its
+      // onComplete — with power2.out easing the phone is already nearly
+      // settled by 80% in, so this overlaps the tail of the arrival
+      // instead of a dead "arrive, pause, then scan" beat. Same 80%
+      // fraction as before, scaled to the new duration.
+      entranceTimeline.call(() => {
+        playIdleSpin();
+        playScan();
+      }, [], ENTRANCE_DURATION * 0.8);
+    }
+
+    // Infinite: a bounded showcase wobble, not a full spin — a full
+    // rotation briefly shows the phone's back (camera bump, logo), and
+    // .phone-stamp is a fixed 2D screen-space overlay that doesn't rotate
+    // with it, so it would end up floating over the wrong side. Rocking
+    // within a range that never turns the front away sidesteps that
+    // entirely, and fits the story better besides: a liveness rejection is
+    // a front-of-phone thing. yoyo:true reverses the same tween forever —
+    // Math.PI (wherever it rests after the entrance) is one endpoint,
+    // Math.PI + swing is the other.
+    function playIdleSpin() {
+      if (idleTimeline) return;
+      const swing = Math.PI / 4; // 45° (was ~35°, +10° per user request)
+      idleTimeline = gsap.timeline({ repeat: -1, yoyo: true });
+      idleTimeline.to(group.rotation, {
+        y: Math.PI + swing,
+        duration: 3,
+        ease: 'sine.inOut',
+      });
+    }
+
+    // One-shot: a glow bar sweeps down the (still dark) screen once,
+    // mirroring the left scene's .liveness-scan-line, then hands off to
+    // playStamp() — this is the lead-in beat, so playStamp() no longer
+    // needs its own fixed delay.
+    function playScan() {
+      if (scanTween || !scanEl) { playStamp(); return; }
+      scanTween = gsap.timeline({
+        delay: 0.3,
+        onComplete: () => { scanTween = null; playStamp(); },
+      });
+      scanTween
+        .to(scanEl, { opacity: 1, duration: 0.15 })
+        .to(scanEl, { top: '85%', duration: 1.0, ease: 'none' })
+        .to(scanEl, { opacity: 0, duration: 0.15 });
+    }
+
+    // One-shot: the X stamp slams on (matching .liveness-stamp's left-scene
+    // entrance) right after the scan sweep, and stays — it does not repeat
+    // or track the phone's continued rotation underneath it.
+    function playStamp() {
+      if (!stampEl || stampTween) return;
+      stampTween = gsap.to(stampEl, {
+        opacity: 1,
+        scale: 1,
+        rotation: -15,
+        duration: 0.35,
+        ease: 'back.out(1.7)',
+        delay: 0.1,
+        onComplete: () => { stampTween = null; },
+      });
     }
 
     // ── API ────────────────────────────────────────────────────────
 
     const api = {
-      renderer, scene, camera, group, model, screenTexture,
+      renderer, scene, camera, group, model,
       onFrame: null,
       resize, render, start, stop, frame, playEntrance,
       dispose() {
-        stop();
-        if (entranceTimeline) { entranceTimeline.kill(); entranceTimeline = null; }
+        stop(); // also kills entranceTimeline/idleTimeline/stampTween
         api.onFrame = null;
         renderer.dispose();
         scene.traverse((node) => {
