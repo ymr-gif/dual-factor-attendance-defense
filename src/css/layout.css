@@ -651,13 +651,17 @@
   opacity: 0;
 }
 
+.slide--architecture .slide__content {
+  margin-top: -20px;
+}
+
 .arch-board {
   position: relative;
-  padding: var(--spacing-lg) var(--spacing-md);
+  padding: 48px 24px;
   border: 1px solid var(--copper);
   border-radius: var(--radius-md);
-  background-image: radial-gradient(circle, var(--copper-glow) 1px, transparent 1px);
-  background-size: 16px 16px;
+  background-image: radial-gradient(circle, var(--copper-glow) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
 }
 
 .arch-scan {
@@ -683,8 +687,8 @@
 .arch-flow {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
+  gap: 12px;
+  flex-wrap: nowrap;
   justify-content: center;
 }
 
@@ -692,15 +696,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 8px;
   opacity: 0;
   transform: translateY(20px);
 }
 
 .arch-node__icon {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -716,14 +720,14 @@
   content: '';
   position: absolute;
   top: 50%;
-  width: 6px;
-  height: 3px;
+  width: 8px;
+  height: 4px;
   background: var(--copper);
   transform: translateY(-50%);
 }
 
-.arch-node__icon::before { left: -6px; }
-.arch-node__icon::after { right: -6px; }
+.arch-node__icon::before { left: -8px; }
+.arch-node__icon::after { right: -8px; }
 
 .arch-node__icon svg {
   width: 60%;
@@ -731,16 +735,16 @@
 }
 
 .arch-node__label {
-  max-width: 84px;
+  max-width: 150px;
   text-align: center;
-  font-size: 10px;
+  font-size: 16px;
   color: var(--text-secondary);
   letter-spacing: 0.05em;
 }
 
 .arch-trace {
-  width: 26px;
-  height: 6px;
+  width: 40px;
+  height: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -748,15 +752,15 @@
 }
 
 .arch-trace__svg {
-  width: 26px;
-  height: 6px;
+  width: 40px;
+  height: 10px;
   overflow: visible;
 }
 
 .arch-trace__line {
   fill: none;
   stroke: var(--copper);
-  stroke-width: 2.2;
+  stroke-width: 3.5;
   stroke-linecap: round;
   opacity: 0;
 }
@@ -767,7 +771,7 @@
 .arch-trace__pulse {
   fill: none;
   stroke: var(--accent);
-  stroke-width: 2.8;
+  stroke-width: 4;
   stroke-linecap: round;
   opacity: 0;
 }
@@ -775,7 +779,7 @@
 .arch-trace__via {
   fill: var(--bg-secondary);
   stroke: var(--copper);
-  stroke-width: 1.4;
+  stroke-width: 2;
   opacity: 0;
 }
 
@@ -899,7 +903,7 @@
 /* RQ Scroll Track */
 .rq-track {
   position: absolute;
-  left: calc(50% - 360px);
+  left: calc(50% - 660px);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -2064,8 +2068,8 @@
   }
 
   .arch-trace {
-    width: 6px;
-    height: 26px;
+    width: 10px;
+    height: 40px;
   }
 
   .arch-trace__svg {
