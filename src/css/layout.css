@@ -780,6 +780,22 @@
 }
 
 /* RQ Slides */
+.slide__content--rq {
+  flex-direction: row;
+  align-items: center;
+  max-width: 1200px;
+  gap: 60px;
+}
+
+.rq-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  flex: 1;
+  min-width: 0;
+}
+
 .rq-eyebrow {
   display: flex;
   align-items: center;
@@ -825,35 +841,44 @@
 
 /* RQ Fields */
 .rq-fields {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 16px;
-  width: 100%;
-  max-width: 800px;
+  flex-shrink: 0;
+  width: 340px;
   opacity: 0;
 }
 
 .rq-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 18px 16px;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 24px 20px;
   background: var(--bg-secondary);
   border: 1px solid var(--text-dim);
   border-radius: var(--radius-md);
-  text-align: left;
+  text-align: center;
+}
+
+.rq-field--mid {
+  padding: 32px 24px;
+  transform: scale(1.08);
+  border-color: var(--accent);
 }
 
 .rq-field__label {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 .rq-field__value {
-  font-size: 14px;
+  font-size: 20px;
   color: #ffffff;
   line-height: 1.5;
 }
@@ -882,10 +907,18 @@
 
 .flow-flow {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flow-row {
+  display: flex;
   align-items: center;
   gap: 14px;
-  flex-wrap: wrap;
-  justify-content: center;
+}
+
+.flow-row--reverse {
+  flex-direction: row-reverse;
 }
 
 .flow-node {
@@ -952,6 +985,45 @@
 }
 
 .flow-trace__via {
+  fill: var(--bg-secondary);
+  stroke: var(--copper);
+  stroke-width: 2;
+  opacity: 0;
+}
+
+/* Vertical PCB traces — connect serpentine rows */
+.flow-vtrace {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  opacity: 0;
+}
+
+.flow-vtrace--right {
+  align-self: flex-end;
+  margin-right: calc(50% - 120px);
+}
+
+.flow-vtrace--left {
+  align-self: flex-start;
+  margin-left: calc(50% - 120px);
+}
+
+.flow-vtrace__svg {
+  width: 6px;
+  height: 40px;
+  overflow: visible;
+}
+
+.flow-vtrace__line {
+  fill: none;
+  stroke: var(--copper);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.flow-vtrace__via {
   fill: var(--bg-secondary);
   stroke: var(--copper);
   stroke-width: 2;
@@ -1809,6 +1881,12 @@
     flex-direction: column;
   }
 
+  .flow-row,
+  .flow-row--reverse {
+    flex-direction: column;
+    gap: 0;
+  }
+
   .flow-trace {
     width: 10px;
     height: 48px;
@@ -1816,6 +1894,13 @@
 
   .flow-trace__svg {
     transform: rotate(90deg);
+  }
+
+  .flow-vtrace--right,
+  .flow-vtrace--left {
+    align-self: center;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .protocols-split {
