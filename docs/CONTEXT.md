@@ -122,12 +122,15 @@ Source: `9 Aragon et al. - S.A.F.E ... .pdf`
 - **Ethics:** RA 10173 (Data Privacy Act of 2012), student assent + written parental consent for minors, guardian consent
 - **Delimitations:** entry only at the main guardpost; no classroom attendance, exit logs, or movement tracking; 1:1 not 1:N; common spoofs only (no 3D masks, silicone masks, deepfakes); facial coverings must be removed; findings not generalized beyond HSCI
 
-## Deck Slide Map (18 slides, current build)
+## Deck Slide Map (16 slides, current build)
 
 1 Title · 2 Problem · 3 NFC + Face · 4 Liveness · 5 Guardian Notification ·
 6 Conceptual Framework · 7 Architecture · 8 Hardware · 9–11 RQ1–RQ3 ·
 12 Instruments · 13 Protocols · 14 Survey Instrument · 15 Interpretation ·
-16 Scope · 17 Expected Output · 18 Thank You
+16 Thank You
+
+Scope/Delimitation and Expected Output slides were cut; that content now
+lives in `DEFENSE_PLAN.md`'s Q&A Bank instead of dedicated slides.
 
 See `ARCHITECTURE.md` for the `data-anim` key of each slide, `DEFENSE_PLAN.md`
 for speaker assignment and narration.

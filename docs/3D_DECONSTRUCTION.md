@@ -4,9 +4,16 @@
 
 Hyper-realistic 3D exploded view of the Arduino Uno, inspired by Apple's product visualizations (iPhone/MacBook teardowns). Components lift off the PCB in a choreographed animation, revealing internal architecture while labels identify each part.
 
-**Current state:** Shipped 2026-08-18 — real-time WebGL board with PBR materials,
-studio lighting and tracked callout labels (slide 8, step 2). The isometric SVG
-explode is still there as the fallback when WebGL is unavailable.
+**Current state:** Shipped 2026-08-18 — real-time WebGL board with PBR materials
+and studio lighting. **Relocated 2026-08-20:** this mechanism now plays on the
+**title slide's step 2** (assembled board explodes with additive "shock ring"
+effects), not slide 8 — slide 8 was simplified to a single-step SVG breadboard
+rig with no WebGL beat at all (see `ARCHITECTURE.md`'s "Title Slide Scene"
+section for the current wiring). The tracked-callout-label mechanism described
+below (`view.project(part)`, leader lines) is dormant since the move — the
+title's blast effect doesn't use labels — but the code path still exists in
+`hardware-3d.js` if a future slide wants it. The isometric SVG explode is
+still there as the fallback when WebGL is unavailable.
 
 ## What shipped, and where it departs from the plan below
 

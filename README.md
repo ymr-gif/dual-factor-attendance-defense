@@ -18,6 +18,9 @@ Open index.html in Chrome → F11 for fullscreen
 - [Guidelines](docs/GUIDELINES.md) — Rules for cold sessions
 - [Build Plan](docs/BUILD_PLAN.md) — What still needs work
 - [Defense Plan](docs/DEFENSE_PLAN.md) — Running order, script, Q&A prep
+- [Cache Busting](docs/CACHE_BUSTING.md) — Dev workflow for asset changes
+- [3D Model Pipeline](docs/3D_MODEL_PIPELINE.md) — Blender → baked model → runtime
+- [3D Deconstruction](docs/3D_DECONSTRUCTION.md) — The exploded-board effect (title slide)
 
 ## Presentation Controls
 
@@ -27,4 +30,4 @@ Open index.html in Chrome → F11 for fullscreen
 | `←` | Previous step |
 | `F` | Toggle fullscreen |
 | `R` | Restart presentation |
-| `P` | Pause / resume |
+| `P` | Reserved — not implemented |

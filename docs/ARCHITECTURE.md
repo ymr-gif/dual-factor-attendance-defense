@@ -22,19 +22,21 @@ ppt-js/
 │   │   └── animations.css    # Shared keyframes, utility classes
 │   ├── js/
 │   │   ├── main.js           # Init, keyboard nav, slide engine
+│   │   ├── fit.js             # Per-slide content scaling (--slide-scale)
 │   │   ├── timeline.js       # Dispatch by data-anim
 │   │   ├── animations.js     # One function per data-anim name
-│   │   ├── hardware-3d.js    # WebGL Arduino for slide 8, step 2
+│   │   ├── hardware-3d.js    # WebGL exploded board, now used on the title slide
 │   │   ├── vtuber-3d.js      # WebGL vtuber portrait for slide 3
+│   │   ├── phone-3d.js       # WebGL phone for slide 4 (Liveness)
 │   │   └── model-loader.js   # Builds meshes from baked Blender models
 │   └── vendor/
 │       ├── anime.umd.min.js  # anime.js v4.5.0, local copy
 │       └── three.min.js      # three.js r149, local copy
-├── src/models/               # Baked Blender models (arduino, vtuber)
+├── src/models/               # Baked Blender models (arduino, vtuber, phone)
 ├── tools/
 │   ├── model/                # .glb → baked JS geometry (bake.js, bake-vtuber.js)
-│   └── scene/                # Isometric SVG generator for slide 8
-└── index.html                # Main entry — 18 slides
+│   └── scene/                # Isometric SVG generator — breadboard rig for slide 8
+└── index.html                # Main entry — 16 slides
 ```
 
 ## Tech Stack
@@ -49,7 +51,7 @@ ppt-js/
 | Package | Version | Source | Purpose |
 |---------|---------|--------|---------|
 | anime.js | 4.5.0 | `src/vendor/` (CDN fallback) | Animation engine |
-| three.js | r149 | `src/vendor/` | WebGL board on slide 8 |
+| three.js | r149 | `src/vendor/` | WebGL rendering — title board, slide 3 vtuber, slide 4 phone |
 
 r149 is deliberate: it is the last release shipping a plain-script build. ES
 modules and import maps do not load over `file://`, and the deck has to run from
@@ -70,18 +72,18 @@ Load order in `index.html`:
 Local first so the deck works with no internet at the venue. The CDN line only
 fires if the vendored file is missing.
 
-## Slide Order (18)
+## Slide Order (16)
 
 | # | data-anim | Slide |
 |---|-----------|-------|
-| 1 | `title` | Title — school, S.A.F.E., team, section |
+| 1 | `title` | Title — school, S.A.F.E., team, section — 2 steps: intro, then the board assembles and blasts apart with shock rings |
 | 2 | `problem` | A week of the manual attendance sheet, a tick added to an empty box, UNVERIFIED stamp (3 steps) |
 | 3 | `solution` | NFC + Face converge — 3D vtuber portrait on right |
-| 4 | `liveness` | Spoof rejected |
+| 4 | `liveness` | Spoof rejected — left scene and the 3D phone's own scan/stamp are timed together, see `ANIMATIONS.md` |
 | 5 | `notify` | Guardian notified — email, Messenger, < 60s |
 | 6 | `framework` | Conceptual framework (IPO) |
 | 7 | `architecture` | Tap → reader → API → capture → match → log → notify |
-| 8 | `hardware` | Prototype rig, then the Arduino exploded — **2 steps** |
+| 8 | `hardware` | Prototype rig — single step, SVG breadboard only |
 | 9 | `rq` | RQ1 — spoof rejection rate |
 | 10 | `rq` | RQ2 — system performance |
 | 11 | `rq` | RQ3 — acceptability |
@@ -89,9 +91,10 @@ fires if the vendored file is missing.
 | 13 | `protocols` | Protocol 1 and 2 |
 | 14 | `survey` | Instrument structure |
 | 15 | `scale` | Interpretation ranges |
-| 16 | `scope` | In scope / out of scope |
-| 17 | `output` | Expected output |
-| 18 | `thanks` | Thank you |
+| 16 | `thanks` | Thank you |
+
+Scope/Delimitation and Expected Output slides were cut from the deck (see
+`DEFENSE_PLAN.md`'s Q&A Bank for that content now).
 
 ## DOM Structure
 
@@ -108,7 +111,7 @@ fires if the vendored file is missing.
   <div class="slide-counter">
     <span class="slide-counter__current">1</span>
     <span class="slide-counter__sep">/</span>
-    <span class="slide-counter__total">18</span>
+    <span class="slide-counter__total">16</span>
   </div>
   <div class="nav-hint">← → Space Click</div>
 </body>
@@ -124,6 +127,21 @@ fires if the vendored file is missing.
 5. On the next animation frame — not a timer — `masterTimeline.playSlide()` runs
    that slide's animation
 6. Progress bar updates on every move
+
+### Per-slide fit (fit.js)
+
+`--slide-scale` cannot be computed in pure CSS — `scale()` takes a `<number>`,
+and there's no way to turn a viewport length into one. `fit.js` measures each
+slide's `.slide__content` box (`offsetWidth`/`offsetHeight`, which report
+layout size and ignore any transform already applied) and writes a scale
+factor to `--slide-scale` on the `<section>` itself, capped by that slide's
+own `data-fit-max`/`data-fit-pad` attributes (default `max: 1` — a no-op for
+slides that already fit at any viewport size). Written to the section, not
+`.slide__content`, because `masterTimeline.reset()` strips inline styles from
+every *descendant* of a slide but not the slide itself, so the factor
+survives a slide reset. `window.slideFit.schedule()` re-measures on resize,
+fullscreen toggle, and once web fonts finish loading (metrics shift once the
+real faces land); `main.js` also calls it on every slide change.
 
 ### No flash of finished content
 
@@ -153,15 +171,18 @@ the presenter advances through in beats. Step 1 plays on entry; each further
 arrow press calls `masterTimeline.nextStep()`, which returns `true` while it
 still has steps left — `nextSlide()` in `main.js` only moves on once it returns
 `false`. Leaving the slide clears its step state, so coming back replays from
-step 1. Slides 2 and 8 are the stepped slides today.
+step 1. Slides 1 (title — intro, then the board assembles and blasts apart)
+and 2 (problem) are the stepped slides today. Slide 8 (`hardware()`) used to
+be a second stepped slide (rig, then an exploded-board beat) but is now a
+single plain timeline — the exploded-board mechanism moved onto slide 1's
+step 2 instead.
 
 A later step must not assume the previous one finished — the presenter can press
-early. `hardware()` pauses the step-1 timeline and sets its end state before
-step 2 animates, otherwise the older tweens land after the newer ones.
-
-`problem()` does the same across three steps, and additionally clears the
-`stroke-dasharray` / `stroke-dashoffset` that `svg.createDrawable` writes — a
-half-drawn signature keeps those values and would stay half-drawn forever.
+early. `problem()` pauses each step's timeline (`fillTl.pause()`) and sets its
+end state before the next step animates, across all three of its steps, and
+additionally clears the `stroke-dasharray` / `stroke-dashoffset` that
+`svg.createDrawable` writes — a half-drawn signature keeps those values and
+would stay half-drawn forever.
 
 ## Animation Engine (animations.js)
 
@@ -182,16 +203,28 @@ half-drawn signature keeps those values and would stay half-drawn forever.
 
 ## Slide 8 Scene
 
-Step 1 is the isometric rig — generated, not hand-written, see
-`tools/scene/README.md`. `data-rise` on each part group carries how far it lifts,
-so the geometry stays the single source of truth for the animation.
+Single step now — the isometric breadboard rig, generated (not hand-written)
+by `tools/scene/scene.py`'s `breadboard()` unit, see `tools/scene/README.md`.
+`data-rise` on each part group carries how far it lifts, which is a holdover
+from when this slide also had an explode step — that step, and the WebGL
+board behind it, moved to the title slide (below). `.unit`/`.wire` fade and
+draw in once; there's no second beat, no callouts, no WebGL on this slide
+any more.
 
-Step 2 hands over to WebGL. `hardware-3d.js` builds the Arduino from primitives,
-lights it with a procedural studio environment, frames the camera on the board's
-exploded bounds, and exposes `project(part)` so HTML callout labels can track
-each part as it travels. If WebGL is missing the same step runs the isometric
-explode instead, so the slide always has a second beat. `stopAll()` halts the
-render loop on every slide change — see `docs/3D_DECONSTRUCTION.md`.
+## Title Slide Scene
+
+Step 2 of the title (`title()`'s `step2` in `animations.js`) hands off to
+WebGL. `hardware-3d.js` (`window.hardware3D`) builds the board from
+primitives, lights it with a procedural studio environment, and exposes
+`parts`/`rest`/`riseFor(name)` so each part can rise off the board on its own
+staggered tween. Three additive "shock ring" meshes (`api.shock`,
+`shockRest`) sit flat on the board and expand outward with a short alpha
+spike and a long decay, fired ~150ms apart alongside the part rise — the
+"blast" the title now opens with. `assemble()` resets the rig (parts back to
+rest, rings back to `shockRest`) so a revisit never opens on a spent blast.
+`stopAll()` halts the render loop on every slide change — see
+`docs/3D_DECONSTRUCTION.md`, though its slide-8-specific framing is now
+historical (the mechanism it describes lives here).
 
 A modelled board can replace the built-in geometry: `tools/model/bake.js` turns
 a `.glb` into base64 geometry that loads without a fetch or a loader, which is
@@ -206,14 +239,15 @@ with idle turntable rotation and studio lighting.
 `vtuber-3d.js` mounts a three.js scene on a `<canvas>` element. The model
 arrives as baked base64 geometry via `tools/model/bake-vtuber.js`, which
 filters the GLB to keep only face/hair/eye meshes and discards the body.
-`model-loader.js` builds the geometry — same pipeline as the Arduino on
-slide 8. The scene is simpler: no explode, no labels, just a showcase
+`model-loader.js` builds the geometry — same pipeline as the title slide's
+board. The scene is simpler: no explode, no labels, just a showcase
 turntable. `stopAll()` halts the render loop on slide change.
 
 ## 3D Exploded View
 
-Slide 8 includes a hyper-realistic 3D exploded view of the Arduino Uno,
-inspired by Apple's product visualizations. See `docs/3D_DECONSTRUCTION.md`
+The title slide includes a hyper-realistic 3D exploded view of the Arduino
+Uno, inspired by Apple's product visualizations — moved here from slide 8,
+which now only shows the SVG breadboard rig. See `docs/3D_DECONSTRUCTION.md`
 for full technical details on:
 
 - Blender workflow (modeling, materials, export)
