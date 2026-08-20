@@ -18,11 +18,16 @@
    git push -u origin main
    ```
 
-3. Enable GitHub Pages
+3. Enable GitHub Pages via Actions (not "Deploy from branch")
    - Go to repo Settings → Pages
-   - Source: Deploy from branch
-   - Branch: `main` / `/ (root)`
-   - Save
+   - Source: **GitHub Actions**
+   - The repo already has `.github/workflows/pages.yml` — it checks out the
+     repo as-is and uploads it directly, no build step. This replaced the
+     legacy "Deploy from branch" pipeline, which runs the content through
+     Jekyll and broke on the vendored anime.js/three.js bundles (Jekyll
+     treats `{{`/`{%` in vendored JS as Liquid syntax)
+   - Pushing to `main` triggers the workflow automatically; it can also be
+     run manually from the Actions tab (`workflow_dispatch`)
 
 4. Your presentation is live at:
    ```
@@ -35,7 +40,10 @@ After any change:
 ```bash
 git add . && git commit -m "Update: description" && git push
 ```
-GitHub Pages auto-deploys within ~30 seconds.
+Pushing to `main` triggers the "Deploy deck to Pages" Actions workflow, which
+finishes in well under a minute. Check `gh run list --workflow=pages.yml` to
+confirm it succeeded rather than assuming — a broken run does not block the
+push.
 
 ---
 

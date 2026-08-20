@@ -31,5 +31,5 @@ Defense panel / thesis committee
 ## Tech Stack
 
 - Vanilla HTML/CSS/JS (no framework)
-- anime.js v4.5.0 via CDN
+- anime.js v4.5.0 and three.js r149, vendored locally in `src/vendor/`, CDN as offline-first fallback only
 - No build tools required

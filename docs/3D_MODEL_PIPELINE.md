@@ -1,8 +1,11 @@
-# Model Pipeline — Blender to Slides 3 and 8
+# Model Pipeline — Blender to the Title, Slide 3, and Slide 4
 
 How a modelled asset gets into the deck, and exactly what the file has to look
-like. Both the Arduino on slide 8 and the vtuber portrait on slide 3 use the
-same bake-and-decode pipeline; each has its own bake script and model file.
+like. The Arduino board (rendered on the **title slide**, not slide 8 — see
+the attribution note below), the vtuber portrait on slide 3, and the phone on
+slide 4 (Liveness) all use the same bake-and-decode pipeline; each has its own
+bake script and model file: `tools/model/bake.js` → `src/models/arduino-model.js`,
+`bake-vtuber.js` → `vtuber-model.js`, `bake-phone.js` → `phone-model.js`.
 
 ---
 
@@ -192,6 +195,39 @@ current model (Mint from Neverness to Everness) bakes to ~7K vertices across
 
 ---
 
+## Slide 4 — Phone (Liveness)
+
+`tools/model/bake-phone.js` bakes the whole model (no mesh-name filtering like
+bake-vtuber.js) to `src/models/phone-model.js` (`window.phoneModel`), which
+`src/js/phone-3d.js` reads at runtime.
+
+```
+node tools/model/bake-phone.js ~/Downloads/phone.glb
+```
+
+### A baked-in UV defect, confirmed and worked around, not fixed
+
+The bake for this model produced 4 near-duplicate, near-coplanar meshes
+covering the phone's front face (`SCREEN_CANDIDATES` in `phone-3d.js`:
+`Object_46`, `Object_4`, `Object_6`, `Object_44` — found by dumping every
+mesh's bounding box and noticing they nearly coincide). Treating any single
+one as "the" screen only works until z-fighting picks a different winner at
+render time; `phone-3d.js` gives all 4 the same shared material instead of
+trying to predict the winner.
+
+Separately, whichever mesh is "the screen" has a baked-in UV bug: any texture
+applied to it mirrors across the screen's centerline — both halves sample the
+same UV range in opposite directions, the classic symptom of a
+mirror-modifier-built mesh whose UVs were never split for the two mirrored
+halves. Confirmed with a labeled test-grid texture, not just suspected. This
+can't be fixed from JS/texture code — only by re-authoring the source mesh in
+Blender (splitting the UVs before the mirror modifier is applied, or applying
+the modifier and manually re-unwrapping). Current design sidesteps it
+entirely: the screen never displays a texture, just a flat off/black glow
+(`setScreenOff()`), so the mirroring never becomes visible.
+
+---
+
 ## Checking a model without the deck
 
 `tools/model/bake.js` prints bounds and part names, which catches the two
@@ -206,12 +242,21 @@ and Draco left switched on.
 |-------|--------|---------|-------|
 | [Arduino UNO](https://sketchfab.com/3d-models/arduino-uno-51dd4e0cdfad4c4c95354bc5e29dcf1a) (Sketchfab) | Helindu | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | 2026-08-18 |
 | [Mint — Neverness to Everness](https://sketchfab.com/3d-models) (Sketchfab) | — | — | 2026-08-19 |
+| Phone model (baked as a Samsung S26 Ultra) | — unconfirmed | — unconfirmed | ~2026-08-19 |
 
 CC BY requires visible attribution, not just a credit buried in the repo —
-the deck is hosted publicly, so slide 8 carries an on-screen credit line
-("Arduino model by Helindu · CC BY 4.0") under the spec-stack text, in both
-steps of the slide. The vtuber model attribution should be added once the
-license is confirmed.
+the deck is hosted publicly. **Stale as of 2026-08-20:** the credit line
+("Arduino model by Helindu · CC BY 4.0", `index.html:661`) still only lives
+on slide 8's `.specs-stack` text, but the WebGL render of this same modelled
+board (via `window.arduinoModel` + `model-loader.js`, conditionally used by
+`hardware-3d.js`) moved to the **title slide** — slide 8 itself no longer
+renders the model at all, just the SVG breadboard rig. The credit is
+currently attached to the wrong slide for CC BY purposes; it needs to move
+to (or also appear on) the title slide where the model is actually shown.
+This is a real compliance gap, not just a docs nit — flagging for a code
+fix, not fixing here. The vtuber and phone model attributions should be
+added once each license is confirmed — the phone model currently has no
+attribution anywhere, including no note of where it was sourced from.
 
 ## Framing a portrait (slide 3, vtuber)
 

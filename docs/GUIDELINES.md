@@ -14,7 +14,7 @@
 - Use anime.js v4 syntax (not v3)
   - v4: `import { animate, stagger } from 'animejs';`
   - v3: `anime({ targets: ... })` — DO NOT USE
-- Test all 18 slides after changes
+- Test all 16 slides after changes
 - Update `ANIMATIONS.md` when changing animations
 - Use CSS variables for theming
 - Use `stagger()` for sequential animations
@@ -48,7 +48,11 @@
 - Change the anime.js version without checking compatibility
 - Use `autoplay: true` on slide animations (trigger on nav only)
 - Hardcode colors (use CSS variables)
-- Add npm/node dependencies
+- Add npm/node dependencies to the deck runtime — it still ships zero-install,
+  opened straight from `file://` or the built static site. `tools/` scripts
+  that run offline on your own machine (e.g. `tools/model/bake-vtuber.js`,
+  which uses the tracked `sharp` dependency in `package.json` to process
+  textures at bake time) are exempt — they never ship to the page
 
 ## File Ownership
 
@@ -63,7 +67,7 @@
 
 1. Read `docs/ANIMATIONS.md` for current state
 2. Edit `src/js/animations.js`
-3. Test ALL 18 slides (not just the changed one)
+3. Test ALL 16 slides (not just the changed one)
 4. Update `docs/ANIMATIONS.md`:
    - What changed
    - Why it changed
@@ -94,7 +98,7 @@
 - Loaded from `src/vendor/anime.umd.min.js`, CDN only as fallback
 - Vanilla JS (no framework)
 - No build tools
-- No npm/node
+- No npm/node for the deck runtime (offline `tools/` scripts are exempt — see Don't)
 
 ## Animation API Reference (v4)
 

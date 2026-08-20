@@ -6,7 +6,7 @@
 > **Aragon presents the whole deck.** The other three sit in and field questions
 > in their own areas — Cabucos on the system and liveness, De Guzman on hardware
 > and the RQs, Loreno on instruments and protocols.
-> Slide numbers match the built deck (18 slides, as of 2026-08-18).
+> Slide numbers match the built deck (16 slides, as of 2026-08-20).
 
 ## Running Order
 
@@ -19,7 +19,7 @@
 | 5 | Guardian Notification | 0:45 |
 | 6 | Conceptual Framework | 1:15 |
 | 7 | Architecture | 1:30 |
-| 8 | Prototype — rig, then exploded Arduino (2 presses) | 1:15 |
+| 8 | Prototype — the rig | 1:15 |
 | 9 | RQ1 — Spoof Rejection | 0:45 |
 | 10 | RQ2 — Performance | 0:45 |
 | 11 | RQ3 — Acceptability | 0:45 |
@@ -27,15 +27,16 @@
 | 13 | Testing Protocols | 1:15 |
 | 14 | Survey Structure | 0:45 |
 | 15 | Interpretation Scale | 0:30 |
-| 16 | Scope & Delimitation | 0:45 |
-| 17 | Expected Output | 0:30 |
-| 18 | Thank You | 0:15 |
+| 16 | Thank You | 0:15 |
 
-**Total: ~14:45.** Leaves buffer. Demo runs after, or during slide 7.
+**Total: ~14:15.** Leaves buffer. Demo runs after, or during slide 7. Scope &
+Delimitation and Expected Output slides were cut from the deck — fold their
+content into Q&A or the written paper if the panel asks.
 
 Rule: slides carry 3–5 words. Everything below is spoken, never shown. One
-voice for fifteen minutes is a lot — mark the slide-8 second beat and the scope
-slide as places to slow down and breathe.
+voice for fifteen minutes is a lot — mark slide 7 (Architecture, the longest
+single slide) and slide 2's three-press sequence as places to slow down and
+breathe.
 
 ## Narration Cues
 
@@ -58,9 +59,7 @@ The card-only line belongs to slide 3 — do not spend it here.
 
 **7 — Architecture.** Walk the flow once, left to right. Name each hop. Do not read specs — they are on the next slide.
 
-**8 — Prototype.** Two beats, two presses.
-First beat: the rig. RC522 reader, MIFARE card, Arduino, 1080p webcam, laptop. Off-the-shelf, ₱4,245 total, already acquired.
-Second beat: inside the Arduino. Card ID arrives at the headers, the ATmega relays it over USB to the laptop. Do not narrate every part — name the path the card ID takes and move on.
+**8 — Prototype.** One beat, no press needed. The rig: RC522 reader, MIFARE card, Arduino, 1080p webcam, laptop. Off-the-shelf, ₱4,245 total, already acquired. The exploded-Arduino breakdown now plays on slide 1's title reveal instead of here — do not promise a second beat on this slide.
 
 **9 — RQ1.** 60 spoof attempts: 30 printed photos, 30 screen replays. Measured as spoof rejection rate, frequency and percentage.
 
@@ -76,11 +75,11 @@ Second beat: inside the Arduino. Card ID arrives at the headers, the ATmega rela
 
 **15 — Scale.** 4.21–5.00 Highly Acceptable, down to 1.00–1.80 Not Acceptable.
 
-**16 — Scope.** Main guardpost only. Verified entry only — no classroom attendance, no exit logs, no movement tracking. 1:1 verification, not 1:N. Common spoofs only — not 3D masks or deepfakes. Email and Messenger, not SMS. State the limits before the panel finds them.
+Scope/delimitations and expected output no longer have dedicated slides —
+see the Q&A Bank below (Practical section) for the delimitations list, and
+be ready to state it unprompted if the panel doesn't ask.
 
-**17 — Expected Output.** A working prototype, three measured outcomes, and a validated acceptability rating.
-
-**18 — Thank You.** Stop talking. Do not summarize. Hand the floor to the panel.
+**16 — Thank You.** Stop talking. Do not summarize. Hand the floor to the panel.
 
 ## Q&A Bank
 
@@ -121,6 +120,8 @@ Every answer: one sentence, then stop. Do not defend beyond the question.
 - **Scales to the whole campus?** Out of scope. Prototype at one guardpost. Say it plainly.
 - **Exit events?** Out of scope — entry only.
 - **Build order of the prototype?** Tap, log, and notify end to end first; then facial verification; liveness last. Each layer is confirmed working before the next is added.
+- **Full delimitations, if asked directly?** Main guardpost only, verified entry only — no classroom attendance, no exit logs, no movement tracking. 1:1 verification, not 1:N. Common spoofs only, not 3D masks or deepfakes. Email and Messenger, not SMS.
+- **What's the expected output of the study?** A working prototype, three measured outcomes (RQ1–RQ3), and a validated acceptability rating.
 
 ## Demo Contingency
 
@@ -136,7 +137,7 @@ Every answer: one sentence, then stop. Do not defend beyond the question.
 
 - [ ] Full run-through, timed, start to finish, no stopping
 - [ ] Deck opens with wifi off
-- [ ] All 18 slides advance and animate on the venue resolution
+- [ ] All 16 slides advance and animate on the venue resolution
 - [ ] Demo video exported and playable offline
 - [ ] Prototype packed: reader, Arduino, cards, webcam, cables, laptop
 - [ ] Printed copy of the proposal for each panelist

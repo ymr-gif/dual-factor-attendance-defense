@@ -2,6 +2,12 @@
 
 > Status as of 2026-08-18. Deck: 18 slides, skeleton animations on all of them.
 > Priority: P0 = defense-blocking. P1 = credibility. P2 = polish.
+>
+> **Note (2026-08-20):** the deck has since grown past this plan's P0 batch —
+> Scope & Expected Output (added here as new slides 16–17) were later cut
+> again, so the deck is 16 slides today. The P0/P1 sections below are a
+> changelog of what shipped on 2026-08-18 and are left as-is; see the P2
+> section for a current correction pass.
 
 ## P0 — Blocking — DONE 2026-08-18
 
@@ -50,7 +56,9 @@ Verified by headless render of all 18 slides at 1920×1080.
 
 ### 7. Per-slide steps — engine done 2026-08-18
 Animations can now return `{ steps: [...] }`; the presenter's arrow press advances
-the step before the slide. Slide 8 uses it. Still worth adding beats to the
+the step before the slide. Slides 1 (title) and 2 (problem) use it as of
+2026-08-20 — slide 8 no longer does, it dropped its second step when the
+exploded-board beat moved to slide 1. Still worth adding beats to the
 architecture flow (7) and the protocols split (13).
 
 ### 8. Presenter notes overlay
@@ -58,11 +66,11 @@ Four speakers, one deck. Press `N` → cue card for the current slide. Hidden fr
 
 ## P2 — Polish
 
-- `P` (pause) is a no-op in `main.js:94` but README and ARCHITECTURE both list it. Implement or delete from docs.
-- Number keys → jump to slide. Panel will say "go back to your architecture." Currently you arrow-spam.
-- Backward nav replays animations from zero instead of restoring end state. `masterTimeline.resetSlide()` is never called.
-- Test 1920×1080, 1366×768, **and 1024×768** — school projectors are often 4:3 XGA.
-- Software stack slide (FastAPI / PostgreSQL / Redis / face_recognition / MiniFASNet) — currently only crammed into one hardware card.
+- `P` (pause) is still a no-op in `main.js` (~line 127) but README and ARCHITECTURE both list it. Implement or delete from docs. Still open.
+- Number keys → jump to slide. Panel will say "go back to your architecture." Currently you arrow-spam. Still open.
+- ~~Backward nav replays animations from zero instead of restoring end state. `masterTimeline.resetSlide()` is never called.~~ Resolved — `resetSlide()` is now called on every transition, forward and back (`main.js:48,55`).
+- ~~Test 1920×1080, 1366×768, **and 1024×768** — school projectors are often 4:3 XGA.~~ Largely addressed by `src/js/fit.js` (per-slide `--slide-scale`, see `ARCHITECTURE.md`), which scales each slide's content to fit whatever viewport it's rendered at. Still worth a manual pass on an actual 4:3 projector before defense day — fit.js hasn't been eyeballed on real XGA hardware.
+- Software stack slide (FastAPI / PostgreSQL / Redis / face_recognition / MiniFASNet) — currently only crammed into one hardware card. Still open.
 
 ## Order of work
 
