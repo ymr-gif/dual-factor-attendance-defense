@@ -2,6 +2,15 @@
 
 Web-based animated presentation built with anime.js v4.
 
+This repo is the presentation only. The system it defends — NFC + facial
+recognition attendance with passive liveness detection — lives in
+[Dual-Factor-Attendance-System](https://github.com/ymr-gif/Dual-Factor-Attendance-System),
+vendored here as a git submodule at [`backend/`](backend) for reference.
+
+```
+git submodule update --init backend   # pull the backend code in
+```
+
 ## Quick Start
 
 ```
