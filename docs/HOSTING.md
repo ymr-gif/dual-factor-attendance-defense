@@ -5,7 +5,7 @@
 ### One-Time Setup
 
 1. Create a new GitHub repository
-   - Name: `ppt-safe` or `yourusername.github.io`
+   - Name: `dual-factor-attendance-defense` or `yourusername.github.io`
    - Public visibility
 
 2. Push the project files
