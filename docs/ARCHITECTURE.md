@@ -7,13 +7,9 @@ ppt-js/
 ├── README.md                 # Entry point
 ├── docs/                     # Documentation
 │   ├── PROJECT.md
-│   ├── CONTEXT.md
 │   ├── ARCHITECTURE.md
 │   ├── ANIMATIONS.md
-│   ├── BUILD_PLAN.md
-│   ├── DEFENSE_PLAN.md
 │   ├── HOSTING.md
-│   └── GUIDELINES.md
 ├── src/
 │   ├── css/
 │   │   ├── reset.css         # Normalize
@@ -94,7 +90,7 @@ fires if the vendored file is missing.
 | 16 | `thanks` | Thank you |
 
 Scope/Delimitation and Expected Output slides were cut from the deck (see
-`DEFENSE_PLAN.md`'s Q&A Bank for that content now).
+the spoken Q&A covers that content instead).
 
 ## DOM Structure
 
