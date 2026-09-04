@@ -10,6 +10,9 @@ ppt-js/
 │   ├── ARCHITECTURE.md
 │   ├── ANIMATIONS.md
 │   ├── HOSTING.md
+│   ├── CACHE_BUSTING.md
+│   ├── 3D_MODEL_PIPELINE.md
+│   └── 3D_DECONSTRUCTION.md
 ├── src/
 │   ├── css/
 │   │   ├── reset.css         # Normalize
