@@ -242,7 +242,7 @@ and Draco left switched on.
 |-------|--------|---------|---------|-------|
 | [Arduino UNO](https://sketchfab.com/3d-models/arduino-uno-51dd4e0cdfad4c4c95354bc5e29dcf1a) (Sketchfab) | Helindu | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | Processed in Blender (see "Preparing a messy source"), then baked | 2026-08-18 |
 | [Mint - Neverness To Everness](https://sketchfab.com/3d-models/mint-neverness-to-everness-d29dd26ffcbc4ef0a1fd326f34ae6d14) (Sketchfab) | [Jun Hungry](https://sketchfab.com/JunHungry) | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | Top half only (vertices below Y=0.45 discarded), then baked | 2026-08-19 |
-| Phone model (baked as a Samsung S26 Ultra) | — unconfirmed | — unconfirmed | | ~2026-08-19 |
+| [samsung s 26 ultra 3d model](https://sketchfab.com/3d-models/samsung-s-26-ultra-3d-model-3356099ca99d488d95a6a253d05577f7) (Sketchfab) | [achrixx](https://sketchfab.com/achrixx) | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | Baked; screen material replaced at runtime | ~2026-08-19 |
 
 CC BY requires visible attribution, not just a credit buried in the repo —
 the deck is hosted publicly. Each credit sits on the slide that renders the
@@ -255,9 +255,10 @@ model, as a `.model-credit` element in `index.html` (styled in
   Author and license were checked against the Sketchfab listing on 2026-10-10.
   Mint is a character from the game Neverness to Everness: the CC BY license is
   the modeller's and covers this model, not the character.
-- **Phone** — no credit anywhere. Its source and license are still
-  unconfirmed, which means it has no clear license to sit in a public repo.
-  Confirm it, then add a row here and a credit on slide 4, or replace the model.
+- **Phone** — slide 4, inside `.phone-3d`. The source was not written down
+  when the model was added; it was identified on 2026-10-10 by the baked file's
+  recorded source name (`samsung_s_26_ultra_3d_model.glb`), which matches this
+  listing's title exactly, and confirmed by the author of the deck.
 
 ## Framing a portrait (slide 3, vtuber)
 
