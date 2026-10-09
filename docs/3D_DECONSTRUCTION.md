@@ -66,9 +66,9 @@ We adapt this for real-time WebGL using Three.js.
 
 | Approach | Quality | File Size | Load Time |
 |----------|---------|-----------|-----------|
-| GLTF + Three.js | ★★★★★ | 200-500 KB | ~100ms |
-| Sprite sheet (60 frames) | ★★★★★ | 5-20 MB | ~2s |
-| CSS 3D transforms | ★★★☆☆ | 10-50 KB | ~10ms |
+| GLTF + Three.js | 5 of 5 | 200-500 KB | ~100ms |
+| Sprite sheet (60 frames) | 5 of 5 | 5-20 MB | ~2s |
+| CSS 3D transforms | 3 of 5 | 10-50 KB | ~10ms |
 
 GLTF wins on quality/size ratio.
 

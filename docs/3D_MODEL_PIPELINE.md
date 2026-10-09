@@ -89,10 +89,10 @@ below.
 File → Export → glTF 2.0 (.glb)
   Format:        glTF Binary (.glb)
   Include:       Selected Objects (or the whole scene)
-  Transform:     +Y Up            ✔
-  Data:          Apply Modifiers  ✔
+  Transform:     +Y Up            on
+  Data:          Apply Modifiers  on
                  Materials: Export
-                 Compression      ✘   ← must stay off
+                 Compression      off  ← must stay off
 ```
 
 ---

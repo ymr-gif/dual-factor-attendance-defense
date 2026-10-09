@@ -10,7 +10,7 @@
 
 2. Push the project files
    ```bash
-   cd /home/scylla/dev/ppt-js
+   cd path/to/deck
    git init
    git add .
    git commit -m "Initial commit: S.A.F.E. presentation"
