@@ -1425,6 +1425,41 @@
   opacity: 0.7;
 }
 
+/* The same credit, on the slide that actually renders the model. Absolutely
+   positioned so it takes no layout space. Inside a model's own container it
+   fades in and out with the render, and the dark backing keeps it readable
+   over a light part of the model. */
+.model-credit {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: rgba(10, 10, 15, 0.72);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+/* Title slide: the board fills the slide and the title block moves over it,
+   so the credit goes in the one corner nothing else uses. */
+.model-credit--corner {
+  top: 16px;
+  right: 24px;
+  bottom: auto;
+  left: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  text-align: right;
+}
+
 /* Protocols Slide */
 .protocols-title {
   font-size: clamp(20px, 4vw, 36px);

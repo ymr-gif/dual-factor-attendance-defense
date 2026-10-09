@@ -238,25 +238,26 @@ and Draco left switched on.
 
 ## Attribution
 
-| Model | Author | License | Added |
-|-------|--------|---------|-------|
-| [Arduino UNO](https://sketchfab.com/3d-models/arduino-uno-51dd4e0cdfad4c4c95354bc5e29dcf1a) (Sketchfab) | Helindu | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | 2026-08-18 |
-| [Mint — Neverness to Everness](https://sketchfab.com/3d-models) (Sketchfab) | — | — | 2026-08-19 |
-| Phone model (baked as a Samsung S26 Ultra) | — unconfirmed | — unconfirmed | ~2026-08-19 |
+| Model | Author | License | Changes | Added |
+|-------|--------|---------|---------|-------|
+| [Arduino UNO](https://sketchfab.com/3d-models/arduino-uno-51dd4e0cdfad4c4c95354bc5e29dcf1a) (Sketchfab) | Helindu | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | Processed in Blender (see "Preparing a messy source"), then baked | 2026-08-18 |
+| [Mint - Neverness To Everness](https://sketchfab.com/3d-models/mint-neverness-to-everness-d29dd26ffcbc4ef0a1fd326f34ae6d14) (Sketchfab) | [Jun Hungry](https://sketchfab.com/JunHungry) | CC BY 4.0 — http://creativecommons.org/licenses/by/4.0/ | Top half only (vertices below Y=0.45 discarded), then baked | 2026-08-19 |
+| Phone model (baked as a Samsung S26 Ultra) | — unconfirmed | — unconfirmed | | ~2026-08-19 |
 
 CC BY requires visible attribution, not just a credit buried in the repo —
-the deck is hosted publicly. **Stale as of 2026-08-20:** the credit line
-("Arduino model by Helindu · CC BY 4.0", `index.html:661`) still only lives
-on slide 8's `.specs-stack` text, but the WebGL render of this same modelled
-board (via `window.arduinoModel` + `model-loader.js`, conditionally used by
-`hardware-3d.js`) moved to the **title slide** — slide 8 itself no longer
-renders the model at all, just the SVG breadboard rig. The credit is
-currently attached to the wrong slide for CC BY purposes; it needs to move
-to (or also appear on) the title slide where the model is actually shown.
-This is a real compliance gap, not just a docs nit — flagging for a code
-fix, not fixing here. The vtuber and phone model attributions should be
-added once each license is confirmed — the phone model currently has no
-attribution anywhere, including no note of where it was sourced from.
+the deck is hosted publicly. Each credit sits on the slide that renders the
+model, as a `.model-credit` element in `index.html` (styled in
+`src/css/layout.css`):
+
+- **Arduino** — title slide, top-right corner. The older line in slide 8's
+  `.specs-stack` is still there, although slide 8 no longer renders the model.
+- **Mint** — slide 3, inside `.vtuber-3d`, so it fades in with the portrait.
+  Author and license were checked against the Sketchfab listing on 2026-10-10.
+  Mint is a character from the game Neverness to Everness: the CC BY license is
+  the modeller's and covers this model, not the character.
+- **Phone** — no credit anywhere. Its source and license are still
+  unconfirmed, which means it has no clear license to sit in a public repo.
+  Confirm it, then add a row here and a credit on slide 4, or replace the model.
 
 ## Framing a portrait (slide 3, vtuber)
 
