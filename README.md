@@ -41,7 +41,9 @@ not need `npm install`.
 | Swipe right, on a touch screen | Same as `Left arrow` |
 
 Input handling is in `src/js/main.js`. Letter keys work in either case, and a
-swipe needs more than 50 pixels of horizontal travel.
+swipe needs more than 50 pixels of horizontal travel. The deck does not turn
+off the browser's own swipe gestures: in Chrome, a right swipe can go back in
+the tab's history when there is an earlier page there, which leaves the deck.
 
 ## What is in the repo
 
