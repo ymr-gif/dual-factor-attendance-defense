@@ -16,17 +16,13 @@ git clone https://github.com/ymr-gif/dual-factor-attendance-defense.git
 ```
 
 Open `index.html` in a browser. The docs and `tools/check-flash.py` assume
-Chrome or Chromium. There is nothing to build, install or serve: every
-stylesheet and script is a local file with a relative path, the scripts are
-classic scripts rather than ES modules, and the deck's own code makes no network
-requests, so the page works from the filesystem (`file://`) with no connection.
-The one exception is a fallback: if the vendored anime.js or GSAP file fails to
-load, `index.html` asks jsDelivr for that library. Serving the folder over HTTP
-works too, which is how the live copy runs.
+Chrome or Chromium. There is nothing to build, install or serve: every script
+and stylesheet is a local file, so the page works from the filesystem with no
+connection. One exception: if the vendored anime.js or GSAP file fails to load,
+`index.html` asks jsDelivr for it.
 
-`package.json` defines no scripts. Its one dependency, `sharp`, is used only by
-the authoring script `tools/model/bake-vtuber.js`, so presenting the deck does
-not need `npm install`.
+`npm install` is only for the authoring script `tools/model/bake-vtuber.js`,
+which uses `sharp`. Presenting the deck does not need it.
 
 ## Controls
 
@@ -95,10 +91,8 @@ The libraries in `src/vendor/` are third-party too, checked in as plain scripts:
 | [anime.js](https://animejs.com/) | 4.5.0 | MIT | The slide animations in `src/js/animations.js` |
 | [GSAP](https://gsap.com/) | 3.12.5 | GreenSock standard license | The phone scene in `src/js/phone-3d.js` |
 
-Versions and licenses come from each file's header comment, except the three.js
-revision, which is the `REVISION` constant inside the bundle. GSAP is not under
-an open-source license: its header reads "Copyright 2024, GreenSock. All rights
-reserved" and makes it subject to the terms at https://gsap.com/standard-license.
+GSAP is not open source. Its header reads "Copyright 2024, GreenSock. All rights
+reserved", under the terms at https://gsap.com/standard-license.
 
 ## Companion repository
 
@@ -110,3 +104,14 @@ nothing from it, and a plain clone leaves that directory empty. To fill it:
 ```
 git submodule update --init backend
 ```
+
+## License
+
+- The deck's own code (markup, scripts, styles and `tools/`) is under the
+  [MIT License](LICENSE).
+- The research content shown on the slides, meaning the study's text and
+  figures, belongs to the four authors named on the title slide. All rights
+  reserved.
+- The 3D models and the libraries in `src/vendor/` keep their own licenses,
+  listed under Credits. The files in `src/models/` are built from those models
+  and stay under CC BY 4.0.

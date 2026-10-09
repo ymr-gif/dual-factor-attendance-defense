@@ -198,7 +198,6 @@ would stay half-drawn forever.
 | `←` | Previous slide |
 | `F` | Toggle fullscreen |
 | `R` | Restart |
-| `P` | Reserved — not implemented |
 
 ## Slide 8 Scene
 
