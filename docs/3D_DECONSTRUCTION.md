@@ -2,7 +2,7 @@
 
 ## Concept
 
-Hyper-realistic 3D exploded view of the Arduino Uno, inspired by Apple's product visualizations (iPhone/MacBook teardowns). Components lift off the PCB in a choreographed animation, revealing internal architecture while labels identify each part.
+A 3D exploded view of the Arduino Uno, in the style of a product teardown. Components lift off the PCB in a choreographed animation, revealing internal architecture while labels identify each part.
 
 **Current state:** Shipped 2026-08-18 — real-time WebGL board with PBR materials
 and studio lighting. **Relocated 2026-08-20:** this mechanism now plays on the
@@ -19,14 +19,13 @@ still there as the fallback when WebGL is unavailable.
 
 | Plan | Shipped | Why |
 |------|---------|-----|
-| Three.js 0.170 as ESM + import map | **three.js r149, vendored to `src/vendor/three.min.js`** | The deck is opened straight from the filesystem. ES modules and import maps are blocked by CORS on `file://`, and a CDN fetch fails on venue wifi. r149 is the last release with a plain-script build. |
-| Model authored in Blender, exported to `.glb` | **Geometry built in code** (`src/js/hardware-3d.js`) | No model exists, and a licensed download has the same problem as a stock image. Extruded rounded boxes, cylinders and pin strips read as well as a mesh at this scale, and nothing has to load. |
-| GLTFLoader + DRACOLoader | **Neither** | Nothing to load, so nothing to decompress — and the DRACO decoder path in the plan pointed at a CDN. |
+| Three.js 0.170 as ESM + import map | **three.js r149, vendored to `src/vendor/three.min.js`** | The deck is opened straight from the filesystem. ES modules and import maps are blocked by CORS on `file://`, and a CDN fetch fails on venue wifi. r149 is the last release whose plain-script build loads without a deprecation warning; r161 removed that build. |
+| Model authored in Blender, exported to `.glb` | **A baked model, with geometry built in code as the fallback** | A `.glb` cannot be fetched from `file://`, so `tools/model/bake.js` writes the geometry into `src/models/arduino-model.js` (model credit: `docs/3D_MODEL_PIPELINE.md`). If that script is missing, `src/js/hardware-3d.js` builds the board from rounded boxes, cylinders and pin strips. |
+| GLTFLoader + DRACOLoader | **Neither** | The baked geometry is decoded by `src/js/model-loader.js`; nothing is fetched or decompressed in the browser, and the DRACO decoder path in the plan pointed at a CDN. |
 | Labels positioned via CSS percentages | **HTML callouts in fixed columns, leader lines re-aimed each frame** | Percentages drift as parts move. `view.project(part)` gives the part's screen position; the label stays put and only its leader moves. |
 | `renderer.outputColorSpace`, `THREE.SRGBColorSpace` | `renderer.outputEncoding`, `THREE.sRGBEncoding`, `ColorManagement.legacyMode = false` | r149 spellings. Without the colour-management flag every material renders washed out. |
 
-Still open from the plan: camera orbit, depth of field, drag-to-rotate, and the
-Blender path if the procedural board ever stops being good enough.
+Still open from the plan: camera orbit, depth of field and drag-to-rotate.
 
 **Original target state:** WebGL-rendered 3D model with PBR materials, realistic lighting, smooth camera movement
 

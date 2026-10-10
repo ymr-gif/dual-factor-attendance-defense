@@ -15,8 +15,8 @@ The deck is opened straight from the filesystem. On `file://`:
 
 - `fetch()` / `XMLHttpRequest` of a `.glb` is CORS-blocked
 - `GLTFLoader` only ships as an ES module, and ES modules do not load either
-- three.js dropped its classic-script builds after r149, which is why the deck
-  pins r149
+- three.js deprecated its classic-script build in r150 and removed it in r161.
+  The deck pins r149, the last release that loads it without a console warning
 
 So the model is **baked at authoring time** into base64 typed arrays inside a
 plain script. Nothing is fetched, nothing is decompressed, and the same file

@@ -30,6 +30,7 @@ ppt-js/
 │   │   └── model-loader.js   # Builds meshes from baked Blender models
 │   └── vendor/
 │       ├── anime.umd.min.js  # anime.js v4.5.0, local copy
+│       ├── gsap.min.js       # GSAP 3.12.5, local copy
 │       └── three.min.js      # three.js r149, local copy
 ├── src/models/               # Baked Blender models (arduino, vtuber, phone)
 ├── tools/
@@ -44,20 +45,22 @@ ppt-js/
 - **CSS3** — custom properties, flexbox, transforms, transitions
 - **Vanilla JS** — no framework, no build tools
 - **anime.js v4.5.0** — animation engine, loaded locally
+- **GSAP 3.12.5** — the phone entrance on slide 4, loaded locally
+- **three.js r149** — the WebGL scenes, loaded locally
 
 ## Dependencies
 
 | Package | Version | Source | Purpose |
 |---------|---------|--------|---------|
 | anime.js | 4.5.0 | `src/vendor/` (CDN fallback) | Animation engine |
+| GSAP | 3.12.5 | `src/vendor/` (CDN fallback) | Phone entrance on slide 4 (`phone-3d.js`) |
 | three.js | r149 | `src/vendor/` | WebGL rendering — title board, slide 3 vtuber, slide 4 phone |
 
-r149 is deliberate: it is the last release shipping a plain-script build. ES
-modules and import maps do not load over `file://`, and the deck has to run from
-the filesystem with no network.
-| Three.js | 0.170.0 | CDN (import map) | WebGL 3D rendering |
-| GLTFLoader | (Three.js addon) | CDN | Load .glb 3D models |
-| DRACOLoader | (Three.js addon) | CDN | Decompress Draco geometry |
+r149 is deliberate. ES modules and import maps do not load over `file://`, and
+the deck has to run from the filesystem with no network, so it needs the
+plain-script build. r149 is the last release whose plain-script build loads
+without a deprecation warning. Releases up to r160 still ship it; r161 removed
+it.
 
 Load order in `index.html`:
 
@@ -92,8 +95,8 @@ fires if the vendored file is missing.
 | 15 | `scale` | Interpretation ranges |
 | 16 | `thanks` | Thank you |
 
-Scope/Delimitation and Expected Output slides were cut from the deck (see
-the spoken Q&A covers that content instead).
+Scope/Delimitation and Expected Output slides were cut from the deck; the
+spoken Q&A covers that content instead.
 
 ## DOM Structure
 
@@ -194,10 +197,10 @@ would stay half-drawn forever.
 
 | Key | Action |
 |-----|--------|
-| `→` / `Space` / `Click` | Next slide |
+| `→` / `Space` / `Click` | Next step of the current slide, then the next slide |
 | `←` | Previous slide |
 | `F` | Toggle fullscreen |
-| `R` | Restart |
+| `R` | Back to the first slide. On the first slide, replays it |
 
 ## Slide 8 Scene
 
@@ -212,8 +215,9 @@ any more.
 ## Title Slide Scene
 
 Step 2 of the title (`title()`'s `step2` in `animations.js`) hands off to
-WebGL. `hardware-3d.js` (`window.hardware3D`) builds the board from
-primitives, lights it with a procedural studio environment, and exposes
+WebGL. `hardware-3d.js` (`window.hardware3D`) builds the board from the baked
+model in `src/models/arduino-model.js` (from primitives if that script is
+missing), lights it with a procedural studio environment, and exposes
 `parts`/`rest`/`riseFor(name)` so each part can rise off the board on its own
 staggered tween. Three additive "shock ring" meshes (`api.shock`,
 `shockRest`) sit flat on the board and expand outward with a short alpha
@@ -224,9 +228,9 @@ rest, rings back to `shockRest`) so a revisit never opens on a spent blast.
 `docs/3D_DECONSTRUCTION.md`, though its slide-8-specific framing is now
 historical (the mechanism it describes lives here).
 
-A modelled board can replace the built-in geometry: `tools/model/bake.js` turns
-a `.glb` into base64 geometry that loads without a fetch or a loader, which is
-what `file://` forces. The handover spec is in `docs/3D_MODEL_PIPELINE.md`.
+The baked model comes from `tools/model/bake.js`, which turns a `.glb` into
+base64 geometry that loads without a fetch or a loader, which is what `file://`
+forces. The handover spec is in `docs/3D_MODEL_PIPELINE.md`.
 
 ## Slide 3 Scene
 
@@ -243,15 +247,9 @@ turntable. `stopAll()` halts the render loop on slide change.
 
 ## 3D Exploded View
 
-The title slide includes a hyper-realistic 3D exploded view of the Arduino
-Uno, inspired by Apple's product visualizations — moved here from slide 8,
-which now only shows the SVG breadboard rig. See `docs/3D_DECONSTRUCTION.md`
-for full technical details on:
-
-- Blender workflow (modeling, materials, export)
-- Three.js integration (GLTF loading, PBR rendering)
-- Animation sequence (assembled → exploded)
-- File structure and dependencies
+The title slide's exploded view of the Arduino Uno moved here from slide 8,
+which now only shows the SVG breadboard rig. `docs/3D_DECONSTRUCTION.md` is the
+original plan for the effect; the table near its top lists what shipped instead.
 
 ## Theming
 

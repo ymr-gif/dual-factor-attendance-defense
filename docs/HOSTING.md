@@ -62,7 +62,7 @@ All assets use relative paths — works offline.
 ### Before the Day
 - [ ] Test GitHub Pages URL loads on laptop
 - [ ] Test local `index.html` loads offline
-- [ ] Verify fullscreen works (F11 or button)
+- [ ] Verify fullscreen works (`F` key, or F11)
 - [ ] Verify keyboard navigation (←→ Space)
 - [ ] Test on projector resolution (1920x1080)
 
@@ -84,13 +84,14 @@ All assets use relative paths — works offline.
 
 ## Repository Structure for Pages
 
-GitHub Pages serves from repo root. Ensure `index.html` is at root:
+The workflow uploads the whole repository, so `index.html` has to be at the root:
 ```
 repo/
-├── index.html          ← Pages serves this
+├── index.html          ← the deck
 ├── src/
 │   ├── css/
 │   ├── js/
-│   └── assets/
-└── docs/               ← Not served (docs only)
+│   ├── models/
+│   └── vendor/
+└── docs/               ← uploaded as well; the deck does not link to it
 ```

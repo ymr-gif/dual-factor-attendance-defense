@@ -23,13 +23,12 @@ Defense panel / thesis committee
 
 ## Design Philosophy
 
-- **Minimal text** — max 3-5 words per slide
+- **Little text** — labels and short lines, not paragraphs
 - **Animation-driven** — visuals carry the story
 - **Presenter narrates** — slides are visual anchors
-- Think Apple keynote meets motion graphics
 
 ## Tech Stack
 
 - Vanilla HTML/CSS/JS (no framework)
-- anime.js v4.5.0 and three.js r149, vendored locally in `src/vendor/`, CDN as offline-first fallback only
+- anime.js v4.5.0, GSAP 3.12.5 and three.js r149, vendored in `src/vendor/`. anime.js and GSAP fall back to a CDN if the local file is missing
 - No build tools required
