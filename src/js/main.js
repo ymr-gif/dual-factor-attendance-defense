@@ -13,10 +13,10 @@
   // Counter total is derived from the DOM — adding a slide needs no edit here
   if (counterTotal) counterTotal.textContent = totalSlides;
 
-  function updateProgress() {
-    const pct = (currentSlide / totalSlides) * 100;
+  function updateProgress(slideNum = currentSlide) {
+    const pct = (slideNum / totalSlides) * 100;
     progressFill.style.width = pct + '%';
-    counterCurrent.textContent = currentSlide;
+    counterCurrent.textContent = slideNum;
   }
 
   function goToSlide(num) {
@@ -40,7 +40,8 @@
       newEl.classList.add('active');
       window.slideFit.schedule();
 
-      updateProgress();
+      // currentSlide only changes once the scroll has finished
+      updateProgress(num);
 
       // Animate the scroll transition (outgoing slide keeps its styles)
       slideAnimations.rqScrollTransition(currentEl, newEl, () => {
@@ -92,8 +93,20 @@
   }
 
   function restart() {
-    goToSlide(1);
-    masterTimeline.resetAll();
+    if (isAnimating) return;
+
+    if (currentSlide !== 1) {
+      goToSlide(1);
+      return;
+    }
+
+    // Already on the first slide: replay it from its first step
+    isAnimating = true;
+    masterTimeline.resetSlide(1);
+    requestAnimationFrame(() => {
+      masterTimeline.playSlide(1);
+      isAnimating = false;
+    });
   }
 
   function toggleFullscreen() {
@@ -123,10 +136,6 @@
       case 'r':
       case 'R':
         restart();
-        break;
-      case 'p':
-      case 'P':
-        // Pause — reserved for future use
         break;
     }
   });

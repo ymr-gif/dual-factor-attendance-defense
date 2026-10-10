@@ -31,7 +31,7 @@ which uses `sharp`. Presenting the deck does not need it.
 | `Right arrow` or `Space` | Plays the next step of the current slide. After the last step, moves to the next slide |
 | `Left arrow` | Moves to the previous slide, which replays from its first step. There is no step back within a slide |
 | `F` | Toggles fullscreen |
-| `R` | Returns to the first slide |
+| `R` | Returns to the first slide. On the first slide, replays it from its first step |
 | Click | Same as `Right arrow` |
 | Swipe left, on a touch screen | Same as `Right arrow` |
 | Swipe right, on a touch screen | Same as `Left arrow` |

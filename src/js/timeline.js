@@ -86,11 +86,6 @@ const masterTimeline = {
       this.currentSlide = null;
     }
   },
-
-  resetAll() {
-    this.currentSlide = null;
-    this.stepped = {};
-  },
 };
 
 window.masterTimeline = masterTimeline;

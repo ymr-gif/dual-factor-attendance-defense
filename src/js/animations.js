@@ -18,7 +18,10 @@ const slideAnimations = {
       const main = q(el, '.title-main');
       const rest = q(el, '.title-rest');
       const board3d = q(el, '.title-board-3d');
-      utils.set(intro, { opacity: 0 });
+      // y: 0 undoes the lift step 2 gave the intro on an earlier visit. anime keeps
+      // the last transform values per element, and stripping the style attribute
+      // does not clear them.
+      utils.set(intro, { opacity: 0, y: 0 });
       utils.set(school, { opacity: 0 });
       main.innerHTML = 'S.A.F.E.';
       utils.set(main, { opacity: 0 });
